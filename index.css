@@ -47,8 +47,17 @@ body {
 
     z-index: 9999;
 }
-.tg-webapp #top-menu { top: calc(var(--safe-top) + 6px) !important; }
+.tg-webapp #top-menu { top: calc(var(--safe-top) + 6px) !important; padding: 8px 12px !important; border-radius: 14px !important; }
 .tg-webapp #bottom-menu { bottom: calc(var(--safe-bottom) + 10px) !important; }
+/* compact mode for Telegram WebApp to reduce visual scale */
+.tg-webapp { font-size: 15px !important; }
+.tg-webapp #predict-filters { left: 12px !important; right: auto !important; top: calc(var(--safe-top) + 56px) !important; font-size: 17px !important; padding: 6px 8px !important; border-radius: 22px !important; }
+.tg-webapp .search-bar { top: calc(var(--safe-top) + 56px) !important; max-width: 360px !important; padding: 8px 12px !important; }
+.tg-webapp .nav-predict { right: 8px !important; top: calc(var(--safe-top) + 56px) !important; padding: 6px 8px !important; }
+.tg-webapp .predict-card { padding: 10px 16px !important; }
+.tg-webapp .predict-card .btn-yes, .tg-webapp .predict-card .btn-no { padding: 8px 20px !important; }
+.tg-webapp #bottom-menu { width: calc(100% - 16px) !important; }
+
 .bot-name {
     color: rgb(247, 247, 247);
     font-size: 20px;
@@ -134,20 +143,27 @@ img, svg { max-width: 100%; height: auto; display: block; }
     z-index: 8888;
 }
 #predict-filters {
-    position:fixed;
+    position: fixed;
     top: 68px;
+    left: 12px; /* moved to the left as requested */
+    right: auto;
     background: none;
-    border:none;
+    border: none;
     color: #aaaaaadc;
-    font-size:22px;
-    left:243px;
-    display:flex;
-    
-    background-color: #2f3f4f ;
-    border-radius:35px;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background-color: #2f3f4f;
+    padding: 6px 8px;
+    border-radius: 24px;
     cursor: pointer;
     z-index: 8888;
+    box-sizing: border-box;
+    min-width: 40px;
 }
+
 
 
 
@@ -424,7 +440,34 @@ img, svg { max-width: 100%; height: auto; display: block; }
 @media (max-width: 420px) {
     .filter-grid { grid-template-columns: repeat(2, 1fr); }
     #menu-predict-filters { width: 90%; }
+
+    /* smaller overall UI on narrow screens */
+    html, body { font-size: 14px !important; }
+    #top-menu { padding: 8px 12px; border-radius: 14px; }
+    .bot-name { font-size: 18px; }
+    .search-bar { top: 56px; max-width: 320px; padding: 8px 12px; border-radius: 28px; }
+    .nav-predict { top: 56px; right: 8px; min-width: 40px; padding: 6px 8px; }
+    #predict-filters { top: 56px; right: 64px; font-size: 18px; padding: 6px 8px; }
+    #bottom-menu { width: calc(100% - 16px); height: 52px; }
+
+    .predict-card { width: 96%; padding: 12px 18px; min-height: 260px; }
+    .predict-card .btn-yes, .predict-card .btn-no { padding: 8px 18px; font-size: 14px; }
+    .pm-right { width: 110px; }
+    .pm-percent { font-size: 16px; }
+    #predicts-list { margin-top: 110px; }
 }
+
+/* slightly larger tweak for small tablets */
+@media (max-width: 480px) {
+    html, body { font-size: 14px !important; }
+    .search-bar { max-width: 320px; }
+    #predict-filters { left: 8px; top: 54px; font-size: 16px; padding: 6px 8px; }
+    .predict-card { padding: 10px 14px; }
+    .predict-card .btn-yes, .predict-card .btn-no { padding: 8px 14px; font-size: 13px; }
+    .pm-right { width: 100px; }
+    #predicts-list { margin-top: 100px; }
+}
+
 
 
 /* modal */
