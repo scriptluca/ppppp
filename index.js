@@ -1,3 +1,35 @@
+// Fix mobile vh, detect Telegram WebApp, and helper to re-parent fixed elements
+(function(){
+  const setVh = () => document.documentElement.style.setProperty('--vh', `${window.innerHeight * 0.01}px`);
+  setVh();
+  window.addEventListener('resize', setVh);
+
+  const isTelegram = /Telegram/.test(navigator.userAgent) || (window.Telegram && window.Telegram.WebApp);
+  if (isTelegram) document.documentElement.classList.add('tg-webapp');
+
+  // ensure fixed-position elements are actually children of body if ancestor transforms break them
+  window.ensureFixed = function ensureFixed(el) {
+    if (!el || !el.parentElement) return;
+    let p = el.parentElement;
+    while (p && p !== document.body) {
+      const style = getComputedStyle(p);
+      if (style.transform !== 'none' || style.backdropFilter !== 'none') {
+        document.body.appendChild(el);
+        return;
+      }
+      p = p.parentElement;
+    }
+  };
+
+  // after DOM ready, move problematic elements
+  document.addEventListener('DOMContentLoaded', () => {
+    ['top-menu','bottom-menu','menu-addpredict','menu-predict-filters','bet-modal','buy-menu'].forEach(id=>{
+      const el = document.getElementById(id);
+      if (el) ensureFixed(el);
+    });
+  });
+})();
+
 function switchTab(tabName) {
   // Nascondi tutto
   document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
