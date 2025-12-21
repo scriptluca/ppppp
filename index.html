@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DeltaPredict</title>
+    <link rel="stylesheet" href="index.css">
+    <link href='https://cdn.boxicons.com/3.0.6/fonts/basic/boxicons.min.css' rel='stylesheet'>
+    <style>
+        #message-sent { display: none; text-align: center; color: #9fd3a3; margin-top: 8px; font-size: 14px; }
+    </style>
+</head>
+
+<body>
+  <div id="overlay"></div>
+  <nav id="top-menu" onclick="switchTab('markets')"> 
+    <img src="Gemini_Generated_Image_lua8pdlua8pdlua8-removebg-preview.png" alt="DeltaPredict logo" class="logo">
+    <span class="bot-name">Predict</span>
+        
+  </nav>
+
+  <div id="markets" class="tab-content active">
+    <nav class="search-bar"> 
+        <i class='bx  bx-chart-line'></i>
+        <input type="text" placeholder="Search..." id="searchInput">
+        <button id="sent-search"> 
+            <i class='bxr  bx-send-alt-2'></i> 
+        </button>
+    </nav>
+
+    <button id="predict-filters">
+        <i class='bxr  bx-menu-search'></i> 
+    </button>
+    <nav class="nav-predict">
+        <button id="predict-create">
+        <i class='bx  bx-message-circle-edit'></i> 
+        </button>
+
+    </nav >
+
+    <div id="menu-predict-filters" role="dialog" aria-hidden="true">
+        <h2 class="filters-title">What do you want to see?</h2>
+        <div class="filter-grid">
+            <button class="filter-btn" data-filter="sports" id="btn-sports">#sports</button>
+            <button class="filter-btn" data-filter="finance" id="btn-finance">#finance</button>
+            <button class="filter-btn" data-filter="politics" id="btn-politics">#politics</button>
+
+            <button class="filter-btn" data-filter="culture" id="btn-culture">#culture</button>
+            <button class="filter-btn" data-filter="world" id="btn-world">#world</button>
+            <button class="filter-btn" data-filter="tech" id="btn-tech">#tech</button>
+        </div>
+        <div class="filter-actions">
+            <button id="clear-filters" class="filter-action ghost">Clear</button>
+            <button id="apply-filters" class="filter-action primary">Apply</button>
+        </div>
+    </div>
+
+
+
+
+
+
+    <div id="menu-addpredict" class="add-predict-menu">
+        <h2>Suggest your predict!</h2>
+        <button id="hiw"><u>How it works?</u></button>
+        <input type="text" id="predict-title" placeholder="Title (ex. will BTC reach 50k$ in 2024?)">
+        <textarea id="predict-description" placeholder="Description"></textarea>
+        <button id="sent-predict-button">send</button>
+    </div>
+    <div id="message-sent">your idea has been sent! </div>
+    <div id="hiw-display" role="dialog" aria-hidden="true" aria-labelledby="hiw-title">
+        <button id="hiw-close" class="close-btn" aria-label="Close">×</button>
+        <h3 id="hiw-title">How it works?</h3>
+        <p>To create a new Predict, it must first be approved and listed by our team. Please fill out all required fields, including the Predict title and description. Once submitted, our team will review your request and approve it if it meets the guidelines.</p>
+    </div>
+
+    <!-- Bet modal -->
+    <div id="bet-modal" role="dialog" aria-hidden="true" aria-labelledby="bet-title">
+        <div class="bet-content">
+            <h2 id="bet-title">Place your bet</h2>
+            <p id="bet-side">Position: </p>
+            <label for="bet-amount">Stars to stake</label>
+            <input type="number" id="bet-amount" min="0" step="2" placeholder="Enter number of stars">
+            <div id="bet-error" aria-live="polite"></div>
+            <div class="bet-actions">
+                <button id="bet-cancel">Cancel</button>
+                <button id="bet-confirm" class="confirm">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="predicts-list"></div>
+  </div>
+  
+  <!--mostrare predicts attivi, statistiche  , simile ad exc-->
+  <div id="earn" class="tab-content">
+    <h1>Earn rewards in just a few steps!..</h1>
+
+
+
+
+  </div>
+
+
+     <!--guadagni portando amici che depositano, noon so se mettere withdraw qui  ) -->
+  <div id="wallet" class="tab-content">
+    <div class="circle-value">
+        <div class="circle-number">
+            <i class='bx  bx-dollar'></i> 
+            <b><span id="textsaldo">600000000</span></b>
+        </div>
+        <button>
+            <i class='bx  bx-arrow-left-right'></i> 
+            <span>withdraw</span>
+        </button>
+
+    </div>
+        <button onclick="    " class="deposit">
+            <i class='bx  bx-arrow-to-bottom'></i> 
+            <span>Deposit</span>
+        </button>
+        <button id="buy" class="buy">
+            <i class='bxr  bx-cart-plus'></i> 
+            <span>Buy</span>
+        </button>
+    
+    <h1><b>Active positions</b> </h1>    
+    <div id="buy-menu" role="dialog" aria-hidden="true" class="buy-menu" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); z-index:10001;">
+        <button class="close-btn" id="buy-close" aria-label="Close">×</button>
+        <h3 class="buy-title">Buy Stars</h3>
+        <p class="buy-desc">Choose an amount of stars to purchase. Prices are in USD.</p>
+        <div class="buy-grid">
+            <button class="buy-amount" data-amount="15">$15</button>
+            <button class="buy-amount" data-amount="25">$25</button>
+            <button class="buy-amount" data-amount="50">$50</button>
+            <button class="buy-amount" data-amount="100">$100</button>
+        </div>
+        <label class="buy-custom-label">Custom amount</label>
+        <input id="buy-custom" type="number" min="1" placeholder="Enter $ amount" />
+        <div class="buy-actions">
+            <button id="buy-cancel" class="filter-action ghost">Cancel</button>
+            <button id="buy-confirm" class="filter-action primary">Buy</button>
+        </div>
+        <div id="buy-message" style="display:none; margin-top:8px; color:#9fd3a3; text-align:center;">Purchase successful!</div>
+    </div>
+    
+
+
+
+
+
+
+
+  </div>
+  <!--comprare stellina valuta gioco (NN stellina vera , prezzo maggiore di quello di frag , ) -->
+  <div id="ranking" class="tab-content">
+    <div class="podio">
+        <div class="podio-block second">2</div> 
+        <div class="podio-block first">1</div> 
+        <div class="podio-block third">3</div>  
+    </div>
+
+
+
+
+
+
+
+
+
+
+    
+  </div>
+
+  
+
+<nav id="bottom-menu" class="bottom-nav">
+
+    <button onclick="switchTab('markets')" class="nav-item">
+        <img src="Gemini_Generated_Image_lua8pdlua8pdlua8-removebg-preview.png"
+            alt="DeltaPredict logo"
+            class="nav-logo">
+    </button>
+
+
+    <button onclick="switchTab('earn')" class="nav-item">
+        <i class='bx bx-dollar-circle'></i>
+        <span>Earn</span>
+    </button>
+
+    <button onclick="switchTab('wallet')" class="nav-item">
+        <i class='bx bx-wallet-note'></i>
+        <span>Wallet</span>
+    </button>
+
+    <button onclick="switchTab('ranking')" class="nav-item">
+        <i class='bxr  bx-trophy-star'></i> 
+        <span>Ranking</span>
+    </button>
+
+</nav>
+
+
+
+
+
+
+
+
+
+
+
+
+<script src="index.js"></script>
+</body>
