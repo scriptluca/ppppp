@@ -333,6 +333,14 @@ document.addEventListener('click', (e) => {
     if (buyCustom) buyCustom.value = '';
 });
 
+if (buyCustom) {
+    buyCustom.addEventListener('input', () => {
+        buyMenu
+            ?.querySelectorAll('.buy-amount.selected')
+            .forEach(b => b.classList.remove('selected'));
+    });
+}
+
 if (buyConfirm) buyConfirm.onclick = () => {
     let amount = null;
     const sel = buyMenu && buyMenu.querySelector('.buy-amount.selected');
@@ -369,6 +377,7 @@ if (menuPredictFilters) {
     if (clearBtn) clearBtn.onclick = () => {
         filterButtons.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed', 'false'); });
     };
+    
 
     const applyBtn = document.getElementById('apply-filters');
     if (applyBtn) applyBtn.onclick = () => {
@@ -499,6 +508,5 @@ document.addEventListener('keydown', (e) => {
         }
     }
 });
-
 
 
