@@ -4,7 +4,21 @@
     --safe-top: env(safe-area-inset-top, 44px);
     --safe-bottom: env(safe-area-inset-bottom, 34px);
 }
-
+* {
+    -webkit-user-select: none; /* Safari / Telegram iOS */
+    -ms-user-select: none;     /* Edge */
+    user-select: none;         /* Standard */
+    -webkit-tap-highlight-color: transparent; /* toglie il quadrato blu */
+}
+input, textarea {
+    user-select: text;
+    -webkit-user-select: text;
+}
+button {
+    outline: none;
+    background-clip: padding-box;
+    -webkit-tap-highlight-color: transparent;
+}
 html.tg-webapp {
     zoom: 1;
     --safe-top: var(--tg-safe-area-inset-top, 44px);
@@ -1064,4 +1078,5 @@ img, svg { max-width: 100%; height: auto; display: block; }
         font-size: 14px; /* Font leggermente più piccolo */
     }
 }
+
 
