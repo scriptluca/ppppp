@@ -58,16 +58,7 @@ body {
 
     z-index: 9999;
 }
-.tg-webapp #top-menu { top: calc(var(--safe-top) + 6px) !important; padding: 8px 12px !important; border-radius: 14px !important; }
-.tg-webapp #bottom-menu { bottom: calc(var(--safe-bottom) + 10px) !important; }
-/* compact mode for Telegram WebApp to reduce visual scale */
-.tg-webapp { font-size: 15px !important; }
-.tg-webapp #predict-filters { left: 12px !important; right: auto !important; top: calc(var(--safe-top) + 56px) !important; font-size: 17px !important; padding: 6px 8px !important; border-radius: 22px !important; }
-.tg-webapp .search-bar { top: calc(var(--safe-top) + 56px) !important; max-width: 360px !important; padding: 8px 12px !important; }
-.tg-webapp .nav-predict { right: 8px !important; top: calc(var(--safe-top) + 56px) !important; padding: 6px 8px !important; }
-.tg-webapp .predict-card { padding: 10px 16px !important; }
-.tg-webapp .predict-card .btn-yes, .tg-webapp .predict-card .btn-no { padding: 8px 20px !important; }
-.tg-webapp #bottom-menu { width: calc(100% - 16px) !important; }
+
 
 .bot-name {
     color: rgb(247, 247, 247);
@@ -848,3 +839,4 @@ img, svg { max-width: 100%; height: auto; display: block; }
   transform: translateY(-10px);
   box-shadow: 0 20px 30px rgba(0,0,0,0.3);
 }
+
