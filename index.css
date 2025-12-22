@@ -77,26 +77,24 @@ img, svg { max-width: 100%; height: auto; display: block; }
 .search-bar {
     position: fixed;
     top: 60px;
-    left: 12px; /* left-aligned */
+    left: 12px; /* shorter, left-aligned */
     right: auto;
     width: auto;
-    max-width: 180px; /* make it shorter */
-    min-width: 110px;
+    max-width: 210px; /* small search followed by filter */
+    min-width: 120px;
     color: #aaaaaadc;
 
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
     
     background-color: #2f3f4f ;
-    padding: 6px 8px;
-    border-radius:26px;
-    padding-bottom:4px;
+    padding: 8px 10px;
+    border-radius:28px;
+    padding-bottom:5px;
     z-index: 8888;
     box-sizing: border-box;
 }
-.search-bar input { font-size: 14px; }
-.search-bar input::placeholder { font-size: 13px; }
 #sent-search {
     background: none;
     border:none;
@@ -148,8 +146,8 @@ img, svg { max-width: 100%; height: auto; display: block; }
 }
 #predict-filters {
     position: fixed;
-    top: 60px; /* will be adjusted by JS to line up vertically */
-    left: auto; /* JS will compute left */
+    top: 60px; /* align with search bar */
+    left: calc(12px + 210px + 8px); /* immediately to the right of the small search bar */
     right: auto;
     background: none;
     border: none;
@@ -166,7 +164,6 @@ img, svg { max-width: 100%; height: auto; display: block; }
     z-index: 8888;
     box-sizing: border-box;
     min-width: 40px;
-    transition: left .12s ease, top .12s ease;
 }
 
 
@@ -217,24 +214,22 @@ img, svg { max-width: 100%; height: auto; display: block; }
 }
 
 .circle-value {
-    width: 180px;        
-    height: 180px;
+    width: 220px;        
+    height: 220px;
     border-radius: 50%; 
-    border: 2px solid #2f3f4f;  
+    border: 2.2px solid #2f3f4f;  
     background-color: transparent;  
 
-    box-shadow: 0 0 14px rgba(0,0,0,0.40);
+    box-shadow: 0 0 18px rgba(0,0,0,0.45);
 
     display: flex;
     flex-direction: column;
-    gap:12px;
+    gap:18px;
     align-items: center;
     justify-content: center;
 
-    margin: 36px auto; 
+    margin: 45px auto; 
 }
-.deposit, .buy { padding: 12px 14px; font-size: 18px; width: 84%; max-width: 360px; }
-#textsaldo { font-size: clamp(18px, 6.5vw, 30px); }
 .circle-value button {
     background: none;
     color:#495d72;
@@ -449,25 +444,19 @@ img, svg { max-width: 100%; height: auto; display: block; }
     #menu-predict-filters { width: 90%; }
 
     /* smaller overall UI on narrow screens */
-    html, body { font-size: 13px !important; }
+    html, body { font-size: 14px !important; }
     #top-menu { padding: 8px 12px; border-radius: 14px; }
-    .bot-name { font-size: 17px; }
-    .search-bar { top: calc(var(--safe-top) + 52px); max-width: 120px; padding: 6px 8px; border-radius: 24px; }
-    .nav-predict { top: calc(var(--safe-top) + 52px); right: 8px; min-width: 40px; padding: 6px 8px; }
-    /* when there is no space, stack filter under search */
-    #predict-filters.stacked { left: 12px !important; top: calc(var(--safe-top) + 52px + 40px) !important; }
+    .bot-name { font-size: 18px; }
+    .search-bar { top: 56px; max-width: 320px; padding: 8px 12px; border-radius: 28px; }
+    .nav-predict { top: 56px; right: 8px; min-width: 40px; padding: 6px 8px; }
+    #predict-filters { top: 56px; right: 64px; font-size: 18px; padding: 6px 8px; }
     #bottom-menu { width: calc(100% - 16px); height: 52px; }
 
-    .predict-card { width: 96%; padding: 12px 16px; min-height: 240px; }
-    .predict-card .btn-yes, .predict-card .btn-no { padding: 6px 14px; font-size: 13px; }
-    .pm-right { width: 100px; }
-    .pm-percent { font-size: 15px; }
-    #predicts-list { margin-top: 100px; }
-
-    /* wallet smaller */
-    .circle-value { width: 150px; height: 150px; margin: 28px auto; }
-    .deposit, .buy { padding: 12px 10px; font-size: 16px; width: 84%; }
-    #textsaldo { font-size: clamp(16px, 6vw, 24px); }
+    .predict-card { width: 96%; padding: 12px 18px; min-height: 260px; }
+    .predict-card .btn-yes, .predict-card .btn-no { padding: 8px 18px; font-size: 14px; }
+    .pm-right { width: 110px; }
+    .pm-percent { font-size: 16px; }
+    #predicts-list { margin-top: 110px; }
 }
 
 /* slightly larger tweak for small tablets */
