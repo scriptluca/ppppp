@@ -27,39 +27,6 @@
       const el = document.getElementById(id);
       if (el) ensureFixed(el);
     });
-
-    // position filter button next to search bar and keep it responsive
-    const positionFilter = () => {
-      const search = document.querySelector('.search-bar');
-      const filter = document.getElementById('predict-filters');
-      if (!search || !filter) return;
-      // reset stacked class
-      filter.classList.remove('stacked');
-      const sRect = search.getBoundingClientRect();
-      const gap = 8;
-      // ensure we measure after possible reflow
-      requestAnimationFrame(() => {
-        const fW = filter.offsetWidth || 48;
-        let left = Math.round(sRect.right + gap);
-        const margin = 12;
-        // if it would overflow, stack it under the search bar
-        if (left + fW + margin > window.innerWidth) {
-          filter.classList.add('stacked');
-          filter.style.left = (12) + 'px';
-          filter.style.top = (sRect.bottom + gap) + 'px';
-        } else {
-          filter.style.left = left + 'px';
-          // vertically center with search bar
-          filter.style.top = Math.round(sRect.top + (sRect.height - filter.offsetHeight)/2) + 'px';
-        }
-      });
-    };
-
-    positionFilter();
-    window.addEventListener('resize', positionFilter);
-    // also reposition after theme/menu changes that might affect sizes
-    const obs = new MutationObserver(positionFilter);
-    obs.observe(document.body, { attributes: true, childList: true, subtree: true });
   });
 })();
 
