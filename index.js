@@ -33,14 +33,7 @@
 })();
 
 
-  // after DOM ready, move problematic elements
-  document.addEventListener('DOMContentLoaded', () => {
-    ['top-menu','bottom-menu','menu-addpredict','menu-predict-filters','bet-modal','buy-menu'].forEach(id=>{
-      const el = document.getElementById(id);
-      if (el) ensureFixed(el);
-    });
-  });
-})();
+
 
 function switchTab(tabName) {
   // Nascondi tutto
@@ -506,5 +499,6 @@ document.addEventListener('keydown', (e) => {
         }
     }
 });
+
 
 
