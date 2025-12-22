@@ -985,7 +985,7 @@ img, svg { max-width: 100%; height: auto; display: block; }
     .search-bar { 
         top: 56px; 
         left: 8px;
-        width: calc(100% - 110px); /* Dinamica: tutto lo spazio meno i bottoni */
+        width: 40%; /* Dinamica: tutto lo spazio meno i bottoni */
         padding: 0 10px;
     }
     
@@ -1049,7 +1049,7 @@ img, svg { max-width: 100%; height: auto; display: block; }
     /* Mobile molto piccolo: riduciamo i margini */
     .search-bar {
         left: 8px;
-        width: calc(100% - 100px); /* Ancora più spazio per la search */
+        width: 40%; /* Ancora più spazio per la search */
     }
     
     #predict-filters { 
@@ -1064,3 +1064,4 @@ img, svg { max-width: 100%; height: auto; display: block; }
         font-size: 14px; /* Font leggermente più piccolo */
     }
 }
+
