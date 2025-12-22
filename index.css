@@ -214,85 +214,121 @@ img, svg { max-width: 100%; height: auto; display: block; }
 }
 
 .circle-value {
-    width: 220px;        
-    height: 220px;
-    border-radius: 50%; 
-    border: 2.2px solid #2f3f4f;  
-    background-color: transparent;  
+    width: 260px;
+    height: 260px;
+    border-radius: 50%;
+    border: 2.2px solid #2f3f4f;
+    background-color: transparent;
 
-    box-shadow: 0 0 18px rgba(0,0,0,0.45);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.55);
 
     display: flex;
     flex-direction: column;
-    gap:18px;
+    gap:14px;
     align-items: center;
     justify-content: center;
 
-    margin: 45px auto; 
+    margin: 70px auto 12px; /* lowered and tighter bottom spacing */
+    transition: width 180ms ease, height 180ms ease, margin 180ms ease;
+    max-width: calc(100% - 40px);
 }
 .circle-value button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
     background: none;
-    color:#495d72;
-    border:none;
-    font-size:23px;
-    cursor:pointer;
-    align-items: center; 
+    color: #cbd6de;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    padding: 6px 10px;
+    border-radius: 10px;
+    transition: background .12s ease, transform .08s ease;
 }
+.circle-value button i {
+    font-size:18px;
+    color:#cfdbe5;
+    line-height:1;
+    display:inline-flex;
+    align-items:center;
+}
+.circle-value button span { display:inline-block; }
+.circle-value button:hover { background: rgba(255,255,255,0.02); transform: translateY(-2px); }
 #textsaldo {
     color: white;
-    font-weight:  Arial;
-    font-size: clamp(20px, 8vw, 39px); 
-
-}
+    font-weight: 700;
+    font-family: Arial, sans-serif;
+    font-size: clamp(12px, 4.8vw, 34px); /* allow smaller sizes for very long numbers */
+    display: block;
+    text-align: center;
+    margin: 0 auto;
+    line-height: 1;
+    letter-spacing: 0.2px;
+    padding: 0 6px; /* give a little horizontal breathing room */
+    word-break: break-word; /* allow wrapping on very small screens */
+    hyphens: auto;
+}  
 
 .circle-number {
-    display: flex;            
-    align-items: center;      
-    gap: 2.5px;                 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px; /* reduced gap to bring icon and number closer */
+    width: 100%;
+    text-align: center;
 }
 .circle-number i {
-    font-size:40px;          
+    font-size:32px; /* slightly smaller to balance with long numbers */
     color: white;
+    flex: 0 0 auto;
 }
+.circle-number b, .circle-number #textsaldo { display:inline-block; vertical-align: middle; }
 
 
 .deposit {
-    font-size:25px;
-    border:none;
-    margin: 23px auto;
-    width: 90%;
-    color: #aaaaaadc;
+    font-size:18px;
+    border: none;
+    margin: 12px auto 6px auto; /* tightened vertical spacing */
+    width: 260px; /* same width as circle for alignment */
+    max-width: calc(100% - 40px);
+    color: #cbd6de;
 
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    gap: 2px;
+    justify-content: center; /* center icon + text */
+    gap: 10px;
     
-    background-color: #2f3f4f ;
-    padding: 19px 20px;
-    border-radius:20px;
+    background-color: #2f3f4f;
+    padding: 12px 14px;
+    border-radius:12px;
 
-    cursor:pointer;
-
+    cursor: pointer;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.35);
 }
+.deposit i { font-size:20px; display:inline-flex; align-items:center; }
+.deposit span { display:inline-block; }
 
 .buy {
-    font-size:25px;
-    border:none;
-    margin: 30px auto;
-    width: 90%;
-    color: #aaaaaadc;
+    font-size:18px;
+    border: none;
+    margin: 6px auto 18px auto; /* tightened vertical spacing, small bottom breathing */
+    width: 88%;
+    color: #cbd6de;
 
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    gap: 2px;
+    justify-content: center; /* center icon + text */
+    gap: 10px;
     
-    background-color: #2f3f4f ;
-    padding: 19px 20px;
-    border-radius:20px;
+    background-color: #2f3f4f;
+    padding: 12px 14px;
+    border-radius:12px;
 
-    cursor:pointer;
-
+    cursor: pointer;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.35);
 }
+.buy i { font-size:20px; display:inline-flex; align-items:center; }
+.buy span { display:inline-block; }
 
 #buy-menu {
     position: fixed;
@@ -326,17 +362,19 @@ img, svg { max-width: 100%; height: auto; display: block; }
 
 
 #wallet h1 {
-    font-weight: bolder;
-    color: #aaaaaadc;
-    background-color:#2f3f4f ;
-    padding: 11px 11px;
+    font-weight: 800;
+    color: #e6eef3;
+    background-color: rgba(47,63,79,0.92);
+    padding: 10px 14px;
     display: flex;
-    box-align: center;
-    justify-content: center;;
-    width: 32%;
-    border-radius:23px;
-    font-size: 22px;
-    margin:23px auto;
+    align-items: center;
+    justify-content: center;
+    width: 54%;
+    border-radius:16px;
+    font-size: 18px;
+    margin:18px auto 10px auto;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
 }
 
 #earn h1 {
