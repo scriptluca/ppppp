@@ -2,7 +2,9 @@
 (function(){
   const setVh = () => document.documentElement.style.setProperty('--vh', `${window.innerHeight * 0.01}px`);
   setVh();
+
   window.addEventListener('resize', setVh);
+  window.addEventListener('orientationchange', setVh); // <<--- aggiunto
 
   const isTelegram = /Telegram/.test(navigator.userAgent) || (window.Telegram && window.Telegram.WebApp);
   if (isTelegram) document.documentElement.classList.add('tg-webapp');
@@ -20,6 +22,16 @@
       p = p.parentElement;
     }
   };
+
+  // after DOM ready, move problematic elements
+  document.addEventListener('DOMContentLoaded', () => {
+    ['top-menu','bottom-menu','menu-addpredict','menu-predict-filters','bet-modal','buy-menu'].forEach(id=>{
+      const el = document.getElementById(id);
+      if (el) ensureFixed(el);
+    });
+  });
+})();
+
 
   // after DOM ready, move problematic elements
   document.addEventListener('DOMContentLoaded', () => {
@@ -494,4 +506,5 @@ document.addEventListener('keydown', (e) => {
         }
     }
 });
+
 
