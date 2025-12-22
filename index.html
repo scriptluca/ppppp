@@ -109,8 +109,8 @@
   <div id="wallet" class="tab-content">
     <div class="circle-value">
         <div class="circle-number">
-            <i class='bx  bx-dollar'></i> 
-            <b><span id="textsaldo">600000000</span></b>
+            <span class="currency">$</span>
+            <b><span id="textsaldo">600</span></b>
         </div>
         <button>
             <i class='bx  bx-arrow-left-right'></i> 
@@ -118,7 +118,8 @@
         </button>
 
     </div>
-        <button onclick="    " class="deposit">
+    <div class="wallet-actions">
+        <button onclick="" class="deposit">
             <i class='bx  bx-arrow-to-bottom'></i> 
             <span>Deposit</span>
         </button>
@@ -126,7 +127,8 @@
             <i class='bxr  bx-cart-plus'></i> 
             <span>Buy</span>
         </button>
-    
+    </div>
+
     <h1><b>Active positions</b> </h1>    
     <div id="buy-menu" role="dialog" aria-hidden="true" class="buy-menu" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); z-index:10001;">
         <button class="close-btn" id="buy-close" aria-label="Close">×</button>
