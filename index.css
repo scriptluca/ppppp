@@ -245,52 +245,76 @@ img, svg { max-width: 100%; height: auto; display: block; }
     border-radius: 10px;
     transition: background .12s ease, transform .08s ease;
 }
-.circle-value button i {
-    font-size:18px;
-    color:#cfdbe5;
-    line-height:1;
-    display:inline-flex;
-    align-items:center;
+
+.circle-value button:hover {
+    background: rgba(255,255,255,0.02);
+    transform: translateY(-2px);
 }
-.circle-value button span { display:inline-block; }
-.circle-value button:hover { background: rgba(255,255,255,0.02); transform: translateY(-2px); }
-#textsaldo {
-    color: white;
-    font-weight: 700;
-    font-family: Arial, sans-serif;
-    font-size: clamp(12px, 4.8vw, 34px); /* allow smaller sizes for very long numbers */
-    display: block;
-    text-align: center;
-    margin: 0 auto;
-    line-height: 1;
-    letter-spacing: 0.2px;
-    padding: 0 6px; /* give a little horizontal breathing room */
-    word-break: break-word; /* allow wrapping on very small screens */
-    hyphens: auto;
-}  
+
+/* ===== SALDO ===== */
 
 .circle-number {
-    display: flex;
-    align-items: center;
+    display: inline-flex;
+    align-items: baseline; /* 🔑 allineamento perfetto */
     justify-content: center;
-    gap: 4px; /* reduced gap to bring icon and number closer */
-    width: 100%;
-    text-align: center;
+    gap: 6px;
 }
-.circle-number i {
-    font-size:32px; /* slightly smaller to balance with long numbers */
-    color: white;
-    flex: 0 0 auto;
-}
-.circle-number b, .circle-number #textsaldo { display:inline-block; vertical-align: middle; }
 
+/* simbolo valuta (tipografico, NON icona) */
+.currency {
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    font-weight: 580;
+    font-size: clamp(40px, 12vw, 56px);
+    color: #f5f7fa;
+    line-height: 1;
+    opacity: 0.85;
+}
+
+
+#textsaldo {
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    font-weight: 540;
+
+    font-size: clamp(40px, 12vw, 56px);
+    line-height: 1;
+    letter-spacing: -0.2px;
+
+    color: #ffffff;
+
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-feature-settings: "tnum" 1;
+
+    padding: 0;
+    margin: 0;
+}
+
+/* pulsante sotto il cerchio */
+.circle-value > button {
+    margin-top: 8px;
+}
+
+
+/* container to align deposit and buy side-by-side */
+.wallet-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin: 9px auto 18px auto;
+    width: 100%;
+    max-width: 640px;
+
+    padding: 0 12px;
+    box-sizing: border-box;
+}
 
 .deposit {
     font-size:18px;
     border: none;
-    margin: 12px auto 6px auto; /* tightened vertical spacing */
-    width: 260px; /* same width as circle for alignment */
-    max-width: calc(100% - 40px);
+    flex: 1;
+    width: auto;
+    max-width: 320px;
+    min-width: 120px;
     color: #cbd6de;
 
     display: inline-flex;
@@ -311,8 +335,10 @@ img, svg { max-width: 100%; height: auto; display: block; }
 .buy {
     font-size:18px;
     border: none;
-    margin: 6px auto 18px auto; /* tightened vertical spacing, small bottom breathing */
-    width: 88%;
+    flex: 1;
+    width: auto;
+    max-width: 320px;
+    min-width: 120px;
     color: #cbd6de;
 
     display: inline-flex;
@@ -329,6 +355,11 @@ img, svg { max-width: 100%; height: auto; display: block; }
 }
 .buy i { font-size:20px; display:inline-flex; align-items:center; }
 .buy span { display:inline-block; }
+
+@media (max-width: 420px) {
+    .wallet-actions { flex-direction: column; gap: 8px; padding: 0; }
+    .deposit, .buy { max-width: 100%; width: 100%; min-width: 0; }
+}
 
 #buy-menu {
     position: fixed;
