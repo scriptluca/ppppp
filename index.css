@@ -110,7 +110,7 @@ img, svg { max-width: 100%; height: auto; display: block; }
     top: 60px;
     left: 12px;
     /* Larghezza dinamica: occupa tutto lo spazio disponibile meno i 2 bottoni a destra */
-    width: calc(100% - 120px); 
+    width: 40%; 
     height: 42px;
     
     background-color: #2f3f4f;
@@ -132,6 +132,11 @@ img, svg { max-width: 100%; height: auto; display: block; }
     cursor: pointer;
     display: flex;
     align-items: center;
+}
+
+.search-bar i {
+    font-size: 20px;
+    color: #aaaaaadc;
 }
 
 .search-bar input {
@@ -162,14 +167,13 @@ img, svg { max-width: 100%; height: auto; display: block; }
 #predict-filters {
     position: fixed;
     top: 60px;
-    right: 64px; /* 12px (margine) + 44px (create) + 8px (gap) */
-    left: auto;
+    left: 44%;
     
     width: 44px;
     height: 42px;
     
     background-color: #2f3f4f;
-    border-radius: 50%;
+    border-radius: 45%;
     border: none;
     color: #aaaaaadc;
     font-size: 20px;
@@ -188,12 +192,11 @@ img, svg { max-width: 100%; height: auto; display: block; }
     top: 60px;
     right: 12px;
     left: auto;
-    
-    width: 44px;
-    height: 42px;
-    
+
+    width: 45px;
+    height: 43.5px;
     background-color: #2f3f4f;
-    border-radius: 50%;
+    border-radius: 47%;
     
     display: flex;
     align-items: center;
@@ -202,7 +205,10 @@ img, svg { max-width: 100%; height: auto; display: block; }
     z-index: 8888;
     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
-
+.nav-predict i {
+    font-size: 28px;
+    color: #aaaaaadc;
+}
 /* Telegram WebApp Overrides */
 .tg-webapp .search-bar,
 .tg-webapp #predict-filters,
