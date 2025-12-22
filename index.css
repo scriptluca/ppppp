@@ -4,6 +4,13 @@
     --safe-top: env(safe-area-inset-top, 44px);
     --safe-bottom: env(safe-area-inset-bottom, 34px);
 }
+img {
+    pointer-events: none;
+    -webkit-user-drag: none;
+    user-drag: none;
+    user-select: none;
+}
+
 * {
     -webkit-user-select: none; /* Safari / Telegram iOS */
     -ms-user-select: none;     /* Edge */
@@ -1078,6 +1085,7 @@ img, svg { max-width: 100%; height: auto; display: block; }
         font-size: 14px; /* Font leggermente più piccolo */
     }
 }
+
 
 
 
