@@ -6,25 +6,24 @@
 }
 
 html.tg-webapp {
+    zoom: 1;
     --safe-top: var(--tg-safe-area-inset-top, 44px);
     --safe-bottom: var(--tg-safe-area-inset-bottom, 34px);
 }
 
 /* --- FIX PER DESKTOP (Windows/Mac/Web) --- */
 html.platform-desktop {
-    --safe-top: 10px !important;    /* Poco spazio, giusto un margine estetico */
-    --safe-bottom: 20px !important; /* Margine per il bottom menu */
-    max-width: 600px; /* Limita larghezza su schermi grandi */
-    margin: 0 auto;   /* Centra l'app */
-    border-left: 1px solid #2f3f4f; /* Opzionale: bordi estetici */
+    --safe-top: 10px !important;
+    --safe-bottom: 20px !important;
+    max-width: 600px;
+    margin: 0 auto;
+    border-left: 1px solid #2f3f4f;
     border-right: 1px solid #2f3f4f;
 }
 
-/* Su desktop nascondiamo elementi se necessario o adattiamo */
 html.platform-desktop .search-bar,
 html.platform-desktop #predict-filters,
 html.platform-desktop .nav-predict {
-    /* Resetta il calcolo mobile e usa valori fissi puliti */
     top: 20px !important; 
 }
 
@@ -105,23 +104,24 @@ body {
 
 img, svg { max-width: 100%; height: auto; display: block; }
 
-/* === SEARCH BAR + FILTERS + CREATE BUTTON === */
+/* === SEARCH BAR + FILTERS + CREATE BUTTON (OPTIMIZED) === */
 .search-bar {
     position: fixed;
     top: 60px;
     left: 12px;
-    width: 180px;
-    max-width: calc(100vw - 180px); /* Lascia spazio a filtri + create */
+    /* Larghezza dinamica: occupa tutto lo spazio disponibile meno i 2 bottoni a destra */
+    width: calc(100% - 120px); 
     height: 42px;
-    color: #aaaaaadc;
+    
+    background-color: #2f3f4f;
+    border-radius: 28px;
+    
     display: flex;
     align-items: center;
-    gap: 8px;
-    background-color: #2f3f4f;
-    padding: 0 10px;
-    border-radius: 28px;
-    z-index: 8888;
+    padding: 0 12px;
     box-sizing: border-box;
+    z-index: 8888;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
 #sent-search {
@@ -130,17 +130,20 @@ img, svg { max-width: 100%; height: auto; display: block; }
     color:#aaaaaadc;
     font-size:20px;
     cursor: pointer;
+    display: flex;
+    align-items: center;
 }
 
 .search-bar input {
+    flex: 1;
     background: none;
     border: none;
     outline: none;
     color: rgb(240, 240, 240);
     font-size: 15px;
     width: 100%;
-    height: 100%;
     min-width: 0;
+    margin-left: 6px;
 }
 
 .search-bar input::placeholder {
@@ -155,56 +158,56 @@ img, svg { max-width: 100%; height: auto; display: block; }
     cursor: pointer;
 }
 
+/* BOTTONE FILTRI - Ancorato a destra prima del Create */
+#predict-filters {
+    position: fixed;
+    top: 60px;
+    right: 64px; /* 12px (margine) + 44px (create) + 8px (gap) */
+    left: auto;
+    
+    width: 44px;
+    height: 42px;
+    
+    background-color: #2f3f4f;
+    border-radius: 50%;
+    border: none;
+    color: #aaaaaadc;
+    font-size: 20px;
+    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 8888;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+/* BOTTONE CREATE - Estrema destra */
 .nav-predict {
     position: fixed;
     top: 60px;
     right: 12px;
     left: auto;
+    
     width: 44px;
     height: 42px;
-    min-width: 44px;
-    color: #aaaaaadc;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    
     background-color: #2f3f4f;
-    padding: 0;
     border-radius: 50%;
-    cursor: pointer;
-    z-index: 8888;
-}
-
-#predict-filters {
-    position: fixed;
-    top: 60px;
-    left: 204px; /* 12px (left search) + 180px (search width) + 12px (gap) */
-    right: auto;
-    width: 44px;
-    height: 42px;
-    min-width: 44px;
-    background: #2f3f4f;
-    border: none;
-    color: #aaaaaadc;
-    font-size: 18px;
+    
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0;
-    border-radius: 50%;
     cursor: pointer;
     z-index: 8888;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
+/* Telegram WebApp Overrides */
 .tg-webapp .search-bar,
 .tg-webapp #predict-filters,
 .tg-webapp .nav-predict {
     top: calc(var(--safe-top) + 56px) !important;
-}
-.tg-webapp .search-bar {
-    max-width: 140px !important;
-}
-.tg-webapp #predict-filters {
-    left: calc(12px + 140px + 8px) !important; /* Adatta alla search più corta */
 }
 
 /* === BOTTOM MENU === */
@@ -972,20 +975,23 @@ img, svg { max-width: 100%; height: auto; display: block; }
     #top-menu { padding: 8px 12px; border-radius: 14px; }
     .bot-name { font-size: 18px; }
     
+    /* Search bar allungata su mobile */
     .search-bar { 
         top: 56px; 
-        width: 130px;
-        max-width: calc(100vw - 200px);
         left: 8px;
+        width: calc(100% - 110px); /* Dinamica: tutto lo spazio meno i bottoni */
+        padding: 0 10px;
     }
+    
+    /* Filtri ancorati a destra */
+    #predict-filters { 
+        top: 56px; 
+        right: 60px;
+    }
+    
     .nav-predict { 
         top: 56px; 
         right: 8px; 
-    }
-    
-    #predict-filters { 
-        top: 56px; 
-        left: 150px; /* 8px + 130px + 12px */
     }
     
     #bottom-menu { 
@@ -1033,42 +1039,22 @@ img, svg { max-width: 100%; height: auto; display: block; }
     }
 }
 
-@media (max-width: 480px) {
-    html, body { font-size: 14px !important; }
-    
-    .search-bar { 
-        width: 150px;
-    }
-    
-    #predict-filters { 
-        left: 170px; /* 8px + 150px + 12px */
-    }
-    
-    .predict-card { padding: 10px 14px; }
-    
-    .predict-card .btn-yes, 
-    .predict-card .btn-no { 
-        padding: 8px 14px; 
-        font-size: 13px; 
-    }
-    
-    .pm-right { width: 100px; }
-    #predicts-list { margin-top: 100px; }
-}
-
-/* Responsive mobile molto piccolo */
 @media (max-width: 380px) {
+    /* Mobile molto piccolo: riduciamo i margini */
     .search-bar {
-        width: 110px;
         left: 8px;
+        width: calc(100% - 100px); /* Ancora più spazio per la search */
     }
+    
     #predict-filters { 
-        left: 130px; /* 8px + 110px + 12px */
+        right: 54px;
     }
     
     .nav-predict { 
-        right: 8px;
+        right: 6px;
+    }
+    
+    .search-bar input {
+        font-size: 14px; /* Font leggermente più piccolo */
     }
 }
-
-
