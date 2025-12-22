@@ -64,7 +64,7 @@ body {
 /* compact mode for Telegram WebApp to reduce visual scale */
 .tg-webapp { font-size: 15px !important; }
 .tg-webapp #predict-filters { left: 12px !important; right: auto !important; top: calc(var(--safe-top) + 56px) !important; font-size: 17px !important; padding: 6px 8px !important; border-radius: 22px !important; }
-.tg-webapp .search-bar { top: calc(var(--safe-top) + 56px) !important; max-width: 120px !important; padding: 8px 12px !important; }
+.tg-webapp .search-bar { top: calc(var(--safe-top) + 56px) !important; max-width: 159px !important; padding: 8px 12px !important; }
 .tg-webapp .nav-predict { right: 8px !important; top: calc(var(--safe-top) + 56px) !important; padding: 6px 8px !important; }
 .tg-webapp .predict-card { padding: 5% 40% !important; }
 .tg-webapp .predict-card .btn-yes, .tg-webapp .predict-card .btn-no { padding: 8px 20px !important; }
@@ -849,5 +849,6 @@ img, svg { max-width: 100%; height: auto; display: block; }
   transform: translateY(-10px);
   box-shadow: 0 20px 30px rgba(0,0,0,0.3);
 }
+
 
 
