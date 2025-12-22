@@ -9,6 +9,14 @@ html.tg-webapp {
     --safe-top: var(--tg-safe-area-inset-top, env(safe-area-inset-top, 0px));
     --safe-bottom: var(--tg-safe-area-inset-bottom, env(safe-area-inset-bottom, 0px));
 }
+html.platform-desktop {
+    --safe-top: 10px !important;    /* Poco spazio, giusto un margine estetico */
+    --safe-bottom: 20px !important; /* Margine per il bottom menu */
+    max-width: 600px; /* Limita larghezza su schermi grandi */
+    margin: 0 auto;   /* Centra l'app */
+    border-left: 1px solid #2f3f4f; /* Opzionale: bordi estetici */
+    border-right: 1px solid #2f3f4f;
+}
 
 html, body {
     height: calc(var(--vh, 1vh) * 100);
@@ -1052,3 +1060,4 @@ img, svg { max-width: 100%; height: auto; display: block; }
         right: 8px;
     }
 }
+
