@@ -1,218 +1,776 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-    <title>DeltaPredict</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="index.css">
-    <link href='https://cdn.boxicons.com/3.0.6/fonts/basic/boxicons.min.css' rel='stylesheet'>
-    <style>
-        #message-sent { display: none; text-align: center; color: #9fd3a3; margin-top: 8px; font-size: 14px; }
-    </style>
-</head>
+:root {
+    --vh: 1vh;
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
 
-<body>
-  <div id="overlay"></div>
-  <nav id="top-menu" onclick="switchTab('markets')"> 
-    <img src="Gemini_Generated_Image_lua8pdlua8pdlua8-removebg-preview.png" alt="DeltaPredict logo" class="logo">
-    <span class="bot-name">Predict</span>
-        
-  </nav>
+/* global mobile fixes */
+html, body {
+    height: calc(var(--vh, 1vh) * 100);
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden; /* prevent horizontal scroll */
+    overflow-y: auto;   /* only vertical scrolling */
+    -webkit-overflow-scrolling: touch; /* smooth scrolling on iOS */
+    touch-action: pan-y; /* allow vertical pan only */
+    font-size: 16px !important;
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif !important;
+}
 
-  <div id="markets" class="tab-content active">
-    <nav class="search-bar"> 
-        <i class='bx  bx-chart-line'></i>
-        <input type="text" placeholder="Search..." id="searchInput">
-        <button id="sent-search"> 
-            <i class='bxr  bx-send-alt-2'></i> 
-        </button>
-    </nav>
+.tab-content { display: none; position: absolute; top: 0; width: 100%; }
+.tab-content.active { display: block; }
+.bottom-nav { position: fixed; bottom: 0; width: 100%; }
 
-    <button id="predict-filters">
-        <i class='bxr  bx-menu-search'></i> 
-    </button>
-    <nav class="nav-predict">
-        <button id="predict-create">
-        <i class='bx  bx-message-circle-edit'></i> 
-        </button>
+body {
+    background-color: #1e2b3b;
+}
+#top-menu {
+    position: fixed;
+    top: 1.5px;
+    left: 6px;
+    right: 6px;
+    width: auto;
+    max-width: calc(100% - 12px);
+    box-sizing: border-box;
+    margin: 0 auto;
 
-    </nav >
-
-    <div id="menu-predict-filters" role="dialog" aria-hidden="true">
-        <h2 class="filters-title">What do you want to see?</h2>
-        <div class="filter-grid">
-            <button class="filter-btn" data-filter="sports" id="btn-sports">#sports</button>
-            <button class="filter-btn" data-filter="finance" id="btn-finance">#finance</button>
-            <button class="filter-btn" data-filter="politics" id="btn-politics">#politics</button>
-
-            <button class="filter-btn" data-filter="culture" id="btn-culture">#culture</button>
-            <button class="filter-btn" data-filter="world" id="btn-world">#world</button>
-            <button class="filter-btn" data-filter="tech" id="btn-tech">#tech</button>
-        </div>
-        <div class="filter-actions">
-            <button id="clear-filters" class="filter-action ghost">Clear</button>
-            <button id="apply-filters" class="filter-action primary">Apply</button>
-        </div>
-    </div>
-
-
-
-
-
-
-    <div id="menu-addpredict" class="add-predict-menu">
-        <h2>Suggest your predict!</h2>
-        <button id="hiw"><u>How it works?</u></button>
-        <input type="text" id="predict-title" placeholder="Title (ex. will BTC reach 50k$ in 2024?)">
-        <textarea id="predict-description" placeholder="Description"></textarea>
-        <button id="sent-predict-button">send</button>
-    </div>
-    <div id="message-sent">your idea has been sent! </div>
-    <div id="hiw-display" role="dialog" aria-hidden="true" aria-labelledby="hiw-title">
-        <button id="hiw-close" class="close-btn" aria-label="Close">×</button>
-        <h3 id="hiw-title">How it works?</h3>
-        <p>To create a new Predict, it must first be approved and listed by our team. Please fill out all required fields, including the Predict title and description. Once submitted, our team will review your request and approve it if it meets the guidelines.</p>
-    </div>
-
-    <!-- Bet modal -->
-    <div id="bet-modal" role="dialog" aria-hidden="true" aria-labelledby="bet-title">
-        <div class="bet-content">
-            <h2 id="bet-title">Place your bet</h2>
-            <p id="bet-side">Position: </p>
-            <label for="bet-amount">Stars to stake</label>
-            <input type="number" id="bet-amount" min="0" step="2" placeholder="Enter number of stars">
-            <div id="bet-error" aria-live="polite"></div>
-            <div class="bet-actions">
-                <button id="bet-cancel">Cancel</button>
-                <button id="bet-confirm" class="confirm">Confirm</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="predicts-list"></div>
-  </div>
-  
-  <!--mostrare predicts attivi, statistiche  , simile ad exc-->
-  <div id="earn" class="tab-content">
-    <h1>Earn rewards in just a few steps!..</h1>
-
-
-
-
-  </div>
-
-
-     <!--guadagni portando amici che depositano, noon so se mettere withdraw qui  ) -->
-  <div id="wallet" class="tab-content">
-    <div class="circle-value">
-        <div class="circle-number">
-            <i class='bx  bx-dollar'></i> 
-            <b><span id="textsaldo">600000000</span></b>
-        </div>
-        <button>
-            <i class='bx  bx-arrow-left-right'></i> 
-            <span>withdraw</span>
-        </button>
-
-    </div>
-        <button onclick="    " class="deposit">
-            <i class='bx  bx-arrow-to-bottom'></i> 
-            <span>Deposit</span>
-        </button>
-        <button id="buy" class="buy">
-            <i class='bxr  bx-cart-plus'></i> 
-            <span>Buy</span>
-        </button>
+    display: flex;
+    align-items: center;
+    gap: 5px;
     
-    <h1><b>Active positions</b> </h1>    
-    <div id="buy-menu" role="dialog" aria-hidden="true" class="buy-menu" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); z-index:10001;">
-        <button class="close-btn" id="buy-close" aria-label="Close">×</button>
-        <h3 class="buy-title">Buy Stars</h3>
-        <p class="buy-desc">Choose an amount of stars to purchase. Prices are in USD.</p>
-        <div class="buy-grid">
-            <button class="buy-amount" data-amount="15">$15</button>
-            <button class="buy-amount" data-amount="25">$25</button>
-            <button class="buy-amount" data-amount="50">$50</button>
-            <button class="buy-amount" data-amount="100">$100</button>
-        </div>
-        <label class="buy-custom-label">Custom amount</label>
-        <input id="buy-custom" type="number" min="1" placeholder="Enter $ amount" />
-        <div class="buy-actions">
-            <button id="buy-cancel" class="filter-action ghost">Cancel</button>
-            <button id="buy-confirm" class="filter-action primary">Buy</button>
-        </div>
-        <div id="buy-message" style="display:none; margin-top:8px; color:#9fd3a3; text-align:center;">Purchase successful!</div>
-    </div>
+    background-color: #2f3f4f;
+    padding: 10px 16px;
+    border-radius:15px;
+
+    z-index: 9999;
+}
+.tg-webapp #top-menu { top: calc(var(--safe-top) + 6px) !important; padding: 8px 12px !important; border-radius: 14px !important; }
+.tg-webapp #bottom-menu { bottom: calc(var(--safe-bottom) + 10px) !important; }
+/* compact mode for Telegram WebApp to reduce visual scale */
+.tg-webapp { font-size: 15px !important; }
+.tg-webapp #predict-filters { left: 12px !important; right: auto !important; top: calc(var(--safe-top) + 56px) !important; font-size: 17px !important; padding: 6px 8px !important; border-radius: 22px !important; }
+.tg-webapp .search-bar { top: calc(var(--safe-top) + 56px) !important; max-width: 360px !important; padding: 8px 12px !important; }
+.tg-webapp .nav-predict { right: 8px !important; top: calc(var(--safe-top) + 56px) !important; padding: 6px 8px !important; }
+.tg-webapp .predict-card { padding: 10px 16px !important; }
+.tg-webapp .predict-card .btn-yes, .tg-webapp .predict-card .btn-no { padding: 8px 20px !important; }
+.tg-webapp #bottom-menu { width: calc(100% - 16px) !important; }
+
+.bot-name {
+    color: rgb(247, 247, 247);
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.logo {
+    width: 30px;
+    height: 30px;
+    background-color: none;
+    padding: 0;
+}
+
+/* prevent any image/svg from overflowing horizontally */
+img, svg { max-width: 100%; height: auto; display: block; }
+
+.search-bar {
+    position: fixed;
+    top: 60px;
+    left: 12px; /* shorter, left-aligned */
+    right: auto;
+    width: auto;
+    max-width: 210px; /* small search followed by filter */
+    min-width: 120px;
+    color: #aaaaaadc;
+
+    display: flex;
+    align-items: center;
+    gap: 8px;
     
+    background-color: #2f3f4f ;
+    padding: 8px 10px;
+    border-radius:28px;
+    padding-bottom:5px;
+    z-index: 8888;
+    box-sizing: border-box;
+}
+#sent-search {
+    background: none;
+    border:none;
+    color:#aaaaaadc;
+    font-size:20px;
+    cursor: pointer;
+}
+.search-bar input {
+    background: none;
+    border: none;
+    outline: none;
 
+    color: rgb(240, 240, 240);
+    font-size: 15px;
+    width: 100%;
+}
 
+.search-bar input::placeholder {
+    color: #aaaaaadc;
+}
+#predict-create {
+    background: none;
+    border:none;
+    color:#aaaaaadc;
+    font-size:27px;
+    cursor: pointer;
+}
+.nav-predict {
+    position: fixed;
+    top: 60px;
+    right: 6px;
+    left: auto;
+    width: auto;
+    min-width: 44px;
+    color: #aaaaaadc;
 
-
-
-
-
-  </div>
-  <!--comprare stellina valuta gioco (NN stellina vera , prezzo maggiore di quello di frag , ) -->
-  <div id="ranking" class="tab-content">
-    <div class="podio">
-        <div class="podio-block second">2</div> 
-        <div class="podio-block first">1</div> 
-        <div class="podio-block third">3</div>  
-    </div>
-
-
-
-
-
-
-
-
-
-
+    display: flex;
+    align-items: center;
+    justify-content: center;
     
-  </div>
+    background-color: #2f3f4f ;
+    padding: 2.2px 10px;
+    padding-right: 9px;
+    padding-bottom:0.5px;
+    padding-top:3px;
+    border-radius:35.7px;
+    cursor: pointer;
+    z-index: 8888;
+}
+#predict-filters {
+    position: fixed;
+    top: 60px; /* align with search bar */
+    left: calc(12px + 210px + 8px); /* immediately to the right of the small search bar */
+    right: auto;
+    background: none;
+    border: none;
+    color: #aaaaaadc;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-  
-
-<nav id="bottom-menu" class="bottom-nav">
-
-    <button onclick="switchTab('markets')" class="nav-item">
-        <img src="Gemini_Generated_Image_lua8pdlua8pdlua8-removebg-preview.png"
-            alt="DeltaPredict logo"
-            class="nav-logo">
-    </button>
-
-
-    <button onclick="switchTab('earn')" class="nav-item">
-        <i class='bx bx-dollar-circle'></i>
-        <span>Earn</span>
-    </button>
-
-    <button onclick="switchTab('wallet')" class="nav-item">
-        <i class='bx bx-wallet-note'></i>
-        <span>Wallet</span>
-    </button>
-
-    <button onclick="switchTab('ranking')" class="nav-item">
-        <i class='bxr  bx-trophy-star'></i> 
-        <span>Ranking</span>
-    </button>
-
-</nav>
-
-
-
+    background-color: #2f3f4f;
+    padding: 6px 8px;
+    border-radius: 24px;
+    cursor: pointer;
+    z-index: 8888;
+    box-sizing: border-box;
+    min-width: 40px;
+}
 
 
 
 
+#bottom-menu {
+    position: fixed;
+    bottom: 10px;        
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 25px;
+    width: calc(100% - 20px);
+    max-width: 900px;
+    height: 56px;
+    background-color: #2f3f4f;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    box-shadow: 0 14px 40px rgba(0, 0, 0, 0.75);
+    box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.6);
+    z-index: 1000;
+}
+
+#bottom-menu .nav-item {
+    background: none;     
+    border: none;        
+    padding: 0;
+    color: white;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+
+    cursor: pointer;
+    font-size: 14px;
+}
+
+#bottom-menu .nav-item i {
+    font-size: 24px;
+}
+
+#bottom-menu .nav-logo {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+}
+
+.circle-value {
+    width: 220px;        
+    height: 220px;
+    border-radius: 50%; 
+    border: 2.2px solid #2f3f4f;  
+    background-color: transparent;  
+
+    box-shadow: 0 0 18px rgba(0,0,0,0.45);
+
+    display: flex;
+    flex-direction: column;
+    gap:18px;
+    align-items: center;
+    justify-content: center;
+
+    margin: 45px auto; 
+}
+.circle-value button {
+    background: none;
+    color:#495d72;
+    border:none;
+    font-size:23px;
+    cursor:pointer;
+    align-items: center; 
+}
+#textsaldo {
+    color: white;
+    font-weight:  Arial;
+    font-size: clamp(20px, 8vw, 39px); 
+
+}
+
+.circle-number {
+    display: flex;            
+    align-items: center;      
+    gap: 2.5px;                 
+}
+.circle-number i {
+    font-size:40px;          
+    color: white;
+}
+
+
+.deposit {
+    font-size:25px;
+    border:none;
+    margin: 23px auto;
+    width: 90%;
+    color: #aaaaaadc;
+
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    
+    background-color: #2f3f4f ;
+    padding: 19px 20px;
+    border-radius:20px;
+
+    cursor:pointer;
+
+}
+
+.buy {
+    font-size:25px;
+    border:none;
+    margin: 30px auto;
+    width: 90%;
+    color: #aaaaaadc;
+
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    
+    background-color: #2f3f4f ;
+    padding: 19px 20px;
+    border-radius:20px;
+
+    cursor:pointer;
+
+}
+
+#buy-menu {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 320px;
+    background: #2f3f4f;
+    padding: 20px;
+    border-radius: 18px;
+    color:white;
+    display: none;
+    flex-direction: column;
+    gap: 14px;
+
+    z-index: 9999;
+}
+#buy-menu .buy-title { text-align: left; margin: 0; font-size: 18px; font-weight: 800; }
+#buy-menu .buy-desc { font-size: 13px; color: #cfdde4; margin: 6px 0 8px 0; }
+#buy-menu .buy-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+#buy-menu .buy-amount { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); padding: 10px; border-radius: 10px; cursor: pointer; color: #fff; font-weight: 700; }
+#buy-menu .buy-amount.selected { background: #37b24d; color: #06250b; border-color: transparent; box-shadow: 0 8px 20px rgba(55,178,77,0.12); }
+#buy-menu input#buy-custom { width:100%; padding:8px; border-radius:8px; border:1px solid #444; background:#1f2a33; color:white; margin-top:8px; }
+#buy-menu .buy-actions { display:flex; justify-content:flex-end; gap:8px; margin-top:12px; }
+#buy-menu .close-btn { position:absolute; top:8px; right:12px; background: transparent; border:none; color:#ddd; font-size:18px; cursor:pointer; }
 
 
 
 
 
-<script src="index.js"></script>
-</body>
+
+
+#wallet h1 {
+    font-weight: bolder;
+    color: #aaaaaadc;
+    background-color:#2f3f4f ;
+    padding: 11px 11px;
+    display: flex;
+    box-align: center;
+    justify-content: center;;
+    width: 32%;
+    border-radius:23px;
+    font-size: 22px;
+    margin:23px auto;
+}
+
+#earn h1 {
+    font-weight: bolder;
+    color: white;
+    font-size: 22px;
+
+    display: flex;
+    justify-content: center; 
+    align-items: center;      
+
+    margin-top: 62px;        
+}
+/* overlay with background blur */
+#overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(255,255,255,0.02); /* subtle tint to ensure backdrop-filter works on all browsers */
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    display: none;
+    z-index: 9000;
+    transition: backdrop-filter .18s ease, background-color .18s ease, opacity .18s ease;
+}
+
+#menu-predict-filters {
+    position: fixed;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 320px;
+    background: linear-gradient(180deg, rgba(47,63,79,0.98), #26343f);
+    padding: 18px 18px 14px 18px;
+    border-radius: 18px;
+    color:white;
+    display: none;
+    gap: 12px;
+
+    z-index: 9999;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.55);
+}
+#menu-predict-filters .filters-title {
+    text-align: center;
+    margin: 4px 0 8px 0;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.filter-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.filter-btn {
+    background: transparent;
+    color: #c7d2da;
+    border: 2px solid rgba(172,184,196,0.20);
+    padding: 10px 6px;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color .18s ease, border-width .18s ease, transform .12s ease, color .18s ease, box-shadow .18s ease;
+    text-align: center;
+}
+.filter-btn:hover {
+    transform: translateY(-2px);
+}
+
+/* active state: slightly thicker border and filled */
+.filter-btn.active {
+    border-width: 3.2px;
+    background: linear-gradient(180deg, #3bb04b, #2fa03e);
+    color: white;
+    box-shadow: 0 6px 18px rgba(47,160,62,0.22);
+}
+
+/* actions */
+.filter-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+}
+.filter-action {
+    padding: 8px 12px;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    font-weight: 700;
+}
+.filter-action.ghost {
+    background: transparent;
+    color: #c7d2da;
+    border: 1px solid rgba(172,184,196,0.12);
+}
+.filter-action.primary {
+    background: #37b24d;
+    color: white;
+}
+
+/* responsive: 2 columns on narrow screens */
+@media (max-width: 420px) {
+    .filter-grid { grid-template-columns: repeat(2, 1fr); }
+    #menu-predict-filters { width: 90%; }
+
+    /* smaller overall UI on narrow screens */
+    html, body { font-size: 14px !important; }
+    #top-menu { padding: 8px 12px; border-radius: 14px; }
+    .bot-name { font-size: 18px; }
+    .search-bar { top: 56px; max-width: 140px; padding: 8px 10px; border-radius: 28px; }
+    .nav-predict { top: 56px; right: 8px; min-width: 40px; padding: 6px 8px; }
+    /* keep filter immediate after small search bar */
+    #predict-filters { top: 56px; left: calc(12px + 140px + 8px) !important; right: auto !important; font-size: 16px; padding: 6px 8px; }
+    #bottom-menu { width: calc(100% - 16px); height: 52px; }
+
+    .predict-card { width: 96%; padding: 12px 18px; min-height: 260px; }
+    .predict-card .btn-yes, .predict-card .btn-no { padding: 8px 18px; font-size: 14px; }
+    .pm-right { width: 110px; }
+    .pm-percent { font-size: 16px; }
+    #predicts-list { margin-top: 110px; }
+
+    /* wallet smaller */
+    .circle-value { width: 180px; height: 180px; margin: 36px auto; }
+    .deposit, .buy { padding: 14px 12px; font-size: 18px; }
+    #textsaldo { font-size: clamp(16px, 6vw, 28px); }
+}
+
+/* slightly larger tweak for small tablets */
+@media (max-width: 480px) {
+    html, body { font-size: 14px !important; }
+    .search-bar { max-width: 320px; }
+    #predict-filters { left: 8px; top: 54px; font-size: 16px; padding: 6px 8px; }
+    .predict-card { padding: 10px 14px; }
+    .predict-card .btn-yes, .predict-card .btn-no { padding: 8px 14px; font-size: 13px; }
+    .pm-right { width: 100px; }
+    #predicts-list { margin-top: 100px; }
+}
+
+
+
+/* modal */
+#menu-addpredict {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 280px;
+    background: #2f3f4f;
+    padding: 20px;
+    border-radius: 18px;
+    color:white;
+    display: none;
+    flex-direction: column;
+    gap: 14px;
+
+    z-index: 9999;
+}
+#menu-addpredict h2 {
+    text-align: center;
+    margin-bottom:10px;
+}
+#menu-addpredict input {
+    background-color: #2f3f4f;
+    color: #aaaaaadc;
+    padding: 8px;
+    border-radius: 8px;
+    border-color: #aaaaaadc;
+}
+
+#menu-addpredict button {
+    background-color: #2f3f4f;
+    color: #aaaaaadc;
+    padding: 10px;
+    border-radius: 10px;
+    border-color: #aaaaaadc;
+    cursor: pointer;
+}
+#predict-description {
+    color:#aaaaaadc;;
+    background-color: #2f3f4f;
+    border-radius: 5px;
+    border-color: #aaaaaadc;
+
+}
+#hiw {
+    border:none;
+    font-size:15px;
+}
+#hiw-display {
+    position: fixed;
+    font-size:16px;
+    top: 50%;
+    left: 50%;
+    width: 280px;
+    background: #2f3f4f;
+    padding: 25px;
+    border-radius: 15px;
+    color: white;
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.96);
+    transition: opacity .18s ease, transform .18s ease;
+    pointer-events: none;
+    z-index: 10000;
+}
+#hiw-display.visible {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+    pointer-events: auto;
+}
+#hiw-display .close-btn {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    background: transparent;
+    border: none;
+    color: #ddd;
+    font-size: 20px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+
+#predicts-list {
+    margin: 120px auto 40px auto; 
+    padding: 0 12px;
+    width: 100%;
+    max-width: 1200px;
+    display: grid;
+    grid-template-columns: 1fr; 
+    gap: 28px;
+    align-items: start;
+    justify-items: center;
+    box-sizing: border-box;
+}
+
+
+.predict-card {
+    position: relative;
+    width: 92%;
+    max-width: 400px;
+    background: linear-gradient(180deg, #2b3a46, #24323a);
+    border-radius: 18px;
+    padding: 13px 30px  ;
+    color: #e6eef3;
+    box-shadow: 0 14px 56px rgba(0,0,0,0.56);
+    overflow: visible;
+    transition: transform .18s ease, box-shadow .18s ease;
+    min-height: 320px; 
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin: 0 auto; 
+}
+.predict-card:hover { transform: translateY(-8px) scale(1.01); box-shadow: 0 28px 72px rgba(0,0,0,0.68); }
+
+/* card body: title left aligned, description hidden */
+.predict-card .card-body { display: flex; flex-direction: column; gap: 12px; align-items: stretch; }
+.predict-card .predict-title { font-size: clamp(22px, 4.2vw, 32px); font-weight: 900; margin: 4px 0 0 0; color: #fff; text-align: left; }
+.predict-card .predict-desc { display:none !important; }
+
+/* footer: buttons centered horizontally and volume under them */
+.predict-card .card-footer { 
+    display: flex; 
+    flex-direction: column; 
+    justify-content: flex-start; 
+    align-items: flex-start;
+    gap: 16px; 
+    margin-top: 14px; 
+}
+
+.predict-card .actions { 
+    display: flex; 
+    gap: 18px; 
+    justify-content: flex-start; 
+    align-items: center; 
+}
+.predict-card .btn-yes, .predict-card .btn-no { padding: 10px 83px; border-radius: 18px; font-weight:900; font-size: 16px; }
+.predict-card .btn-yes { background: linear-gradient(180deg, #09e7276e, #2fa03e); border: none; color: #26ff12; }
+.predict-card .btn-no { background: linear-gradient(180deg, #fa373771, #f03e3ec2); border: none; color: rgb(255, 35, 35); }
+
+.predict-card  { font-size: 15px; color: #9fb0bb; font-weight: 800; margin-top: 6px; text-align:left; align-items: flex-start; }
+
+.btn-favourites { position: absolute; top: 14px; right: 16px; background: transparent; border:none; color: #dfeaf0; font-size:22px; }
+
+.prob-badge {
+    position: absolute;
+    right: 22px;
+    top: 50%;
+    transform: translateY(-50%) scale(.92);
+    width: 56px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: conic-gradient(#3bb04b 0%, rgba(255,255,255,0.06) 0% 100%);
+    border-radius: 50%;
+    color: #041a07;
+    font-weight: 900;
+    font-size: 13px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.32);
+    opacity: 0;
+    transition: transform .28s cubic-bezier(.2,.9,.3,1), opacity .22s ease, box-shadow .18s ease;
+}
+.prob-badge.visible { transform: translateY(-50%) scale(1); opacity: 1; }
+.prob-badge.complete { box-shadow: 0 12px 30px rgba(59,176,75,0.28), 0 0 0 6px rgba(59,176,75,0.06); transform: translateY(-50%) scale(1.04); }
+
+@media (max-width: 760px) {
+    .prob-badge { width: 48px; height: 48px; right: 14px; font-size: 12px; }
+}
+
+@media (max-width: 420px) {
+    .prob-badge { right: 10px; width: 44px; height: 44px; font-size: 11px; }
+}
+
+/* Polymarket-like card variant */
+.pm-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 12px 20px;
+    border-radius: 10px;
+    background: linear-gradient(180deg, #2f3f4f, #213038);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.45);
+    width: 100%;
+    min-height: 84px;
+}
+.pm-left { flex: 1 1 auto; display:flex; flex-direction:column; gap:4px; align-items: flex-start !important; text-align: left !important; }
+/* ensure every textual child is left-aligned (override other rules if needed) */
+.pm-left, .pm-left * { text-align: left !important; align-self: flex-start !important; }
+.pm-title { font-size: 18px; font-weight: 800; color: #fff; margin: 0; text-align: left; }
+.pm-meta { color: #9fb0bb; font-size: 13px; text-align: left; }
+.pm-actions { margin-top:6px; display:flex; gap:8px; justify-content: flex-start; }
+.pm-yes, .pm-no { padding: 8px 14px; border-radius: 12px; font-weight: 800; font-size: 13px; }
+.pm-yes { background: #37b24e93; color: #1fb638; border: none; }
+.pm-no { background: #fd191986; color: #f71111; border: none; }
+.pm-right { width: 200px; display:flex; flex-direction:column; align-items:center; gap:8px; }
+.pm-percent { font-size: 22px; font-weight: 900; color: #fff; }
+.pm-bar { width: 100%; height: 8px; background: rgba(255,255,255,0.06); border-radius: 8px; overflow: hidden; }
+.pm-bar-fill { height:100%; width:0%; background: linear-gradient(90deg,#2fb04a,#32a852); transition: width .3s linear; }
+.pm-percent.visible { opacity: 1; transform: translateY(0); }
+
+@media (max-width: 760px) {
+    .pm-right { width: 140px; }
+    .pm-percent { font-size: 18px; }
+}
+
+@media (max-width: 420px) {
+    .pm-right { width: 120px; }
+    .pm-percent { font-size: 16px; }
+}
+
+@media (max-width: 420px) {
+    #predicts-list { width: 96%; }
+    .predict-card { width: 96%; min-height: 260px; }
+}
+
+/* ensure favourite button is placed top-right in all cards */
+.btn-favourites{ position: absolute; top: 12px; right: 16px; color: #fff; background-color: transparent; font-size: 20px; border:none; cursor: pointer; }
+.predict-card .volume { 
+    font-size: 18px; 
+    color: #9fb0bb; 
+    font-weight: 800; 
+    margin-top: 6px; 
+    text-align: left; 
+    align-self: flex-start; 
+    width: 100%; 
+}
+
+/* Bet modal */
+#bet-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 355px;
+    background: #2f3f4f;
+    padding: 26px;
+    border-radius: 14px;
+    color: white;
+    display: none;
+    z-index: 11000;
+}
+
+
+
+
+
+#bet-modal[aria-hidden="false"] { display: block; }
+#bet-modal .bet-content label { display:block; margin-top:6px; font-size:14px; color:#ddd; }
+#bet-modal input#bet-amount { width: 100%; padding:8px; margin-top:6px; border-radius:6px; border:1px solid #555; background: #1f2a33; color:white; }
+#bet-error { color: #ffb3b3; min-height: 18px; margin-top:8px; }
+#bet-modal .bet-actions { display:flex; justify-content:flex-end; gap:8px; margin-top:12px; }
+#bet-modal button { padding: 8px 12px; border-radius:6px; border:none; cursor:pointer; }
+#bet-modal .confirm { background:#37b24d; color:white; }
+#bet-modal #bet-cancel { background:#444; color:white; }
+
+
+.podio {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 20px;
+  margin-top: 182px;
+}
+.podio-block {
+  width: 80px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  color: white;
+  font-size: 24px;
+  padding-bottom: 10px;
+  border-radius: 15px;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.3); 
+  transition: transform 0.3s;
+}
+.first {   
+  height: 180px;
+  background-color: rgba(255, 217, 0, 0.514);
+}
+.second {  
+  height: 140px;
+  background-color: rgba(192, 192, 192, 0.589);
+}
+.third {   
+  height: 120px;
+  background-color: #cd803296; 
+}
+.podio-block {
+  box-shadow: 0 20px 30px rgba(0,0,0,0.5);
+}
+.podio-block:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 20px 30px rgba(0,0,0,0.3);
+}
