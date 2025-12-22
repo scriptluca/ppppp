@@ -1,14 +1,16 @@
 :root {
     --vh: 1vh;
-    --safe-top: env(safe-area-inset-top, 0px);
-    --safe-bottom: env(safe-area-inset-bottom, 0px);
+    /* Default mobile (fallback sicuro) */
+    --safe-top: env(safe-area-inset-top, 44px);
+    --safe-bottom: env(safe-area-inset-bottom, 34px);
 }
 
 html.tg-webapp {
-    zoom: 1;
-    --safe-top: var(--tg-safe-area-inset-top, env(safe-area-inset-top, 0px));
-    --safe-bottom: var(--tg-safe-area-inset-bottom, env(safe-area-inset-bottom, 0px));
+    --safe-top: var(--tg-safe-area-inset-top, 44px);
+    --safe-bottom: var(--tg-safe-area-inset-bottom, 34px);
 }
+
+/* --- FIX PER DESKTOP (Windows/Mac/Web) --- */
 html.platform-desktop {
     --safe-top: 10px !important;    /* Poco spazio, giusto un margine estetico */
     --safe-bottom: 20px !important; /* Margine per il bottom menu */
@@ -16,6 +18,14 @@ html.platform-desktop {
     margin: 0 auto;   /* Centra l'app */
     border-left: 1px solid #2f3f4f; /* Opzionale: bordi estetici */
     border-right: 1px solid #2f3f4f;
+}
+
+/* Su desktop nascondiamo elementi se necessario o adattiamo */
+html.platform-desktop .search-bar,
+html.platform-desktop #predict-filters,
+html.platform-desktop .nav-predict {
+    /* Resetta il calcolo mobile e usa valori fissi puliti */
+    top: 20px !important; 
 }
 
 html, body {
@@ -1060,4 +1070,5 @@ img, svg { max-width: 100%; height: auto; display: block; }
         right: 8px;
     }
 }
+
 
