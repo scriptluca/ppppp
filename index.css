@@ -5,11 +5,12 @@
     --safe-bottom: env(safe-area-inset-bottom, 34px);
 }
 img {
-    pointer-events: none;
-    -webkit-user-drag: none;
-    user-drag: none;
-    user-select: none;
+    -webkit-user-drag: none;   /* Safari / WebView Telegram */
+    user-select: none;         /* Standard */
+    -webkit-user-select: none; /* Safari */
+    pointer-events: none;      /* evita click/long press sull’immagine */
 }
+
 
 * {
     -webkit-user-select: none; /* Safari / Telegram iOS */
@@ -1085,6 +1086,7 @@ img, svg { max-width: 100%; height: auto; display: block; }
         font-size: 14px; /* Font leggermente più piccolo */
     }
 }
+
 
 
 
