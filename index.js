@@ -155,66 +155,9 @@ if (openBtn) openBtn.onclick = () => {
 };
 
 
-function renderPredicts() {
-    const list = document.getElementById("predicts-list");
-    if (!list) return;
-    list.innerHTML = ""; // pulisce prima
-
-    predicts.forEach((predict, idx) => {
-        const card = document.createElement("div");
-        card.className = "predict-card";
-
-        // total volume in USD
-        const totalUsd = predict.totalUSD || 0;
-
-        card.innerHTML = `
-            <div class="pm-left">
-                <h1 class="pm-title" style="font-size:14.3px">${escapeHtml(predict.title)}</h1>
-                <div class="pm-meta"><span class="pm-volume">Vol: $${Number(totalUsd).toFixed(2)}</span></div>
-                <div class="pm-actions">
-                    <button class="pm-yes btn-yes" data-idx="${idx}">Yes</button>
-                    <button class="pm-no btn-no" data-idx="${idx}">No</button>
-                </div>
-            </div>
-            <div class="pm-right">
-                <div class="pm-percent" data-target="${yesPercent}">0%</div>
-                <div class="pm-bar" aria-hidden="true"><div class="pm-bar-fill" style="width:0%"></div></div>
-            </div>
-            <button class="btn-favourites" data-idx="${idx}" aria-label="favourite"><i class='bxr bx-bookmark-alt'></i></button>
-        `;
-
-        list.appendChild(card);
-    });
 
 
-
-
-
-
-
-    // attach handlers
-    list.querySelectorAll('.btn-yes').forEach(btn => btn.onclick = (e) => {
-        const idx = Number(btn.getAttribute('data-idx'));
-        openBetModal(idx, 'yes');
-    });
-    list.querySelectorAll('.btn-no').forEach(btn => btn.onclick = (e) => {
-        const idx = Number(btn.getAttribute('data-idx'));
-        openBetModal(idx, 'no');
-    });
-}
-document.addEventListener("click", (e) => {
-    const btn = e.target.closest(".btn-favourites");
-    if (!btn) return;
-
-    const icon = btn.querySelector("i");
-
-    icon.classList.toggle("bx-bookmark-alt");
-    icon.classList.toggle("bxs-bookmark");
-
-    btn.classList.toggle("active");
-});
-//btn.dataset.fav = btn.dataset.fav === "true" ? "false" : "true"; ti serve per collegamento a db e sapere quale delle sue icone ative x gettare poi.
-  
+ 
 
 
 
@@ -278,7 +221,32 @@ if (overlay) overlay.onclick = () => {
     }
     // also close bet modal if open
     if (betModal && betModal.getAttribute('aria-hidden') === 'false') closeBetModal();
+    if (cryptoMenu) {
+        cryptoMenu.style.display = 'none';
+        cryptoMenu.setAttribute('aria-hidden', 'true'); 
+    }
 };
+
+
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        if (cryptoMenu) {
+            cryptoMenu.style.display = 'none';
+            cryptoMenu.setAttribute('aria-hidden', 'true');
+        }
+    }
+});
+
+
+document.querySelectorAll(".crypto-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const crypto = btn.dataset.crypto;
+    console.log("Selected crypto:", crypto);
+    // → apri schermata deposito
+  });
+});
+
+
 
 const hiwClose = document.getElementById("hiw-close");
 if (hiwClose) hiwClose.onclick = () => {
@@ -305,6 +273,8 @@ const buyCancel = document.getElementById('buy-cancel');
 const buyConfirm = document.getElementById('buy-confirm');
 const buyCustom = document.getElementById('buy-custom');
 const buyMessage = document.getElementById('buy-message');
+const cryptoMenu = document.getElementById('crypto-menu');
+const cryptoClose = document.getElementById('crypto-close');
 
 if (buymenu) buymenu.onclick = () => {
     if (buyMenu) {
@@ -313,6 +283,7 @@ if (buymenu) buymenu.onclick = () => {
     }
     if (overlay) overlay.style.display = 'block';
 };
+
 
 if (buyClose) buyClose.onclick = () => {
     if (buyMenu) { buyMenu.style.display = 'none'; buyMenu.setAttribute('aria-hidden', 'true'); }
@@ -341,24 +312,98 @@ if (buyCustom) {
     });
 }
 
+
+// Modifica la funzione del pulsante Buy per aprire il menu crypto
 if (buyConfirm) buyConfirm.onclick = () => {
     let amount = null;
-    const sel = buyMenu && buyMenu.querySelector('.buy-amount.selected');
+    const sel = buyMenu.querySelector('.buy-amount.selected');
     if (sel) amount = Number(sel.dataset.amount);
     else amount = Number(buyCustom ? buyCustom.value : 0);
+
     if (!amount || !Number.isFinite(amount) || amount <= 0) {
-        if (buyMessage) { buyMessage.style.display = 'block'; buyMessage.textContent = 'Enter a valid amount.'; buyMessage.style.color = '#ffb3b3'; }
+        if (buyMessage) {
+            buyMessage.style.display = 'block';
+            buyMessage.textContent = 'Enter a valid amount.';
+            buyMessage.style.color = '#ffb3b3';
+        }
         return;
     }
-    if (buyMessage) { buyMessage.style.display = 'block'; buyMessage.textContent = `Purchased $${amount} stars!`; buyMessage.style.color = '#9fd3a3'; }
-    setTimeout(() => {
-        if (buyMenu) { buyMenu.style.display = 'none'; buyMenu.setAttribute('aria-hidden', 'true'); }
-        if (overlay) overlay.style.display = 'none';
-        if (buyMessage) buyMessage.style.display = 'none';
-        if (buyCustom) buyCustom.value = '';
-        buyMenu && buyMenu.querySelectorAll('.buy-amount.selected').forEach(b => b.classList.remove('selected'));
-    }, 1100);
+
+    // Chiudi il buy menu
+    if (buyMenu) {
+        buyMenu.style.display = 'none';
+        buyMenu.setAttribute('aria-hidden', 'true');
+    }
+
+    // Apri il crypto menu
+    if (cryptoMenu) {
+        cryptoMenu.style.display = 'flex'; // Usa flex invece di block
+        cryptoMenu.setAttribute('aria-hidden', 'false');
+    }
 };
+
+
+if (cryptoClose) cryptoClose.onclick = () => {
+    if (cryptoMenu) {
+        cryptoMenu.style.display = 'none';
+        cryptoMenu.setAttribute('aria-hidden', 'true');
+    }
+    // Ri-apri il menu di buy invece di chiudere tutto
+    if (buyMenu) {
+        buyMenu.style.display = 'block';
+        buyMenu.setAttribute('aria-hidden', 'false');
+    }
+    // NON nascondere l'overlay - lo lascia attivo per il menu buy
+};
+
+// SOSTITUISCI la funzione overlay.onclick con questa:
+overlay.onclick = () => {
+    // Se crypto menu è aperto, torna al menu buy
+    if (cryptoMenu && cryptoMenu.getAttribute('aria-hidden') === 'false') {
+        cryptoMenu.style.display = 'none';
+        cryptoMenu.setAttribute('aria-hidden', 'true');
+        if (buyMenu) {
+            buyMenu.style.display = 'block';
+            buyMenu.setAttribute('aria-hidden', 'false');
+        }
+        return; // Esci dalla funzione senza chiudere l'overlay
+    }
+    
+    // Altrimenti, chiudi tutto normalmente
+    if (menu) menu.style.display = "none";
+    if (menuPredictFilters) {
+        menuPredictFilters.style.display = "none";
+        menuPredictFilters.setAttribute('aria-hidden', 'true');
+    }
+    if (buyMenu) { 
+        buyMenu.style.display = 'none'; 
+        buyMenu.setAttribute('aria-hidden', 'true'); 
+    }
+    if (overlay) overlay.style.display = "none";
+    if (hiwDisplay) {
+        hiwDisplay.classList.remove("visible");
+        hiwDisplay.setAttribute('aria-hidden', 'true');
+    }
+    // also close bet modal if open
+    if (betModal && betModal.getAttribute('aria-hidden') === 'false') closeBetModal();
+};
+// Aggiungi anche la chiusura con ESC
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        if (cryptoMenu && cryptoMenu.getAttribute('aria-hidden') === 'false') {
+            cryptoMenu.style.display = 'none';
+            cryptoMenu.setAttribute('aria-hidden', 'true');
+        }
+    }
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    ['top-menu','bottom-menu','menu-addpredict','menu-predict-filters','bet-modal','buy-menu','crypto-menu'].forEach(id=>{
+      const el = document.getElementById(id);
+      if (el) ensureFixed(el);
+    });
+});
+
 
 
 // filter buttons behaviour: toggle active + aria-pressed
