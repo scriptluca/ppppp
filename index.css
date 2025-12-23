@@ -1000,7 +1000,7 @@ img, svg { max-width: 100%; height: auto; display: block; }
   height: 2px;                 
   background-color: #2f3f4f;   
   width: calc(100% - 22px);    /* 11px da entrambi i lati */
-  top: calc(var(--safe-top) + 70px) !important;
+  margin-top: calc(var(--safe-top) + 80px) !important;
   border-radius: 2px;          
 }
 
@@ -1019,16 +1019,16 @@ img, svg { max-width: 100%; height: auto; display: block; }
 .dropdown-btn {
   background-color: #1e2b3b;
   color: #fff;
-  padding: 7px 10px;
+  padding: 5px 7px;
   border: 1px solid #2f3f4f;
   border-radius: 10px;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 18px;
   min-width: 120px;
   text-align: center;
   transition: background 0.2s ease, border 0.2s ease;
 
-  margin-right: 17px; /* ⬅ sposta il bottone verso sinistra dal bordo */
+  margin-right: 13px; /* ⬅ sposta il bottone verso sinistra dal bordo */
 }
 
 
@@ -1197,6 +1197,7 @@ img, svg { max-width: 100%; height: auto; display: block; }
         font-size: 14px; /* Font leggermente più piccolo */
     }
 }
+
 
 
 
