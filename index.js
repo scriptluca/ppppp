@@ -332,7 +332,7 @@ document.addEventListener('click', (e) => {
     btn.classList.add('selected');
     if (buyCustom) buyCustom.value = '';
 });
-
+// autocompilazione imput amount conflitto con buy amount selez.
 if (buyCustom) {
     buyCustom.addEventListener('input', () => {
         buyMenu
@@ -508,5 +508,33 @@ document.addEventListener('keydown', (e) => {
         }
     }
 });
+
+
+
+
+const btn = document.getElementById("dropdownBtn");
+const dropdownMenuleader2= document.getElementById("dropdownMenuleader");
+const items = menu.querySelectorAll(".item");
+
+  // Apri / chiudi dropdown
+btn.addEventListener("click", (e) => {
+    e.stopPropagation(); // evita chiusura immediata
+    dropdownMenuleader2.classList.toggle("open");
+});
+
+  // Click su un'opzione
+items.forEach(item => {
+    item.addEventListener("click", () => {
+      btn.innerHTML = item.innerText + " ▾";
+      dropdownMenuleader2.classList.remove("open");
+    });
+});
+
+  // Chiude il menu se clicchi fuori
+document.addEventListener("click", () => {
+    dropdownMenuleader2.classList.remove("open");
+});
+
+
 
 
