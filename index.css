@@ -997,12 +997,15 @@ img, svg { max-width: 100%; height: auto; display: block; }
 }
 
 .line {
-  height: 2px;                 
-  background-color: #2f3f4f;   
-  width: calc(100% - 22px);    /* 11px da entrambi i lati */
-  margin-top: calc(var(--safe-top) + 80px) !important;
-  border-radius: 2px;          
+  height: 2px;
+  background-color: #2f3f4f;
+  width: calc(100% - 22px); /* 11px da entrambi i lati */
+  margin: 0 auto;           /* centrata orizzontalmente */
+  border-radius: 2px;
+  position: relative;
+  top: -8px;                /* sposta la linea 8px verso l’alto */
 }
+
 
 
 .upperpart-leader h1 {
@@ -1028,7 +1031,7 @@ img, svg { max-width: 100%; height: auto; display: block; }
   text-align: center;
   transition: background 0.2s ease, border 0.2s ease;
 
-  margin-right: 13px; /* ⬅ sposta il bottone verso sinistra dal bordo */
+  margin-right: 10px; /* ⬅ sposta il bottone verso sinistra dal bordo */
 }
 
 
@@ -1197,6 +1200,7 @@ img, svg { max-width: 100%; height: auto; display: block; }
         font-size: 14px; /* Font leggermente più piccolo */
     }
 }
+
 
 
 
