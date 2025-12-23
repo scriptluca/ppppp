@@ -1004,11 +1004,11 @@ img, svg { max-width: 100%; height: auto; display: block; }
   width: calc(100% - 22px); /* 11px da entrambi i lati */
   margin: 0 auto;           /* centrata orizzontalmente */
   border-radius: 2px;
-  position: absolute;
-  top: calc(var(--safe-top) + 92px); /* Ancorata sotto upperpart-leader */
+  position: relative;
+  top: calc(var(--safe-top) + 118px); /* Ancorata sotto upperpart-leader */
   left: 50%;
   transform: translateX(-50%);
-  z-index: 10;
+  z-index:10;
 }
 
 .upperpart-leader h1 {
@@ -1027,12 +1027,12 @@ img, svg { max-width: 100%; height: auto; display: block; }
 .dropdown-btn {
   background-color: #1e2b3b;
   color: #fff;
-  padding: 5px 7x; /* Ridotto il padding per dimensioni minori */
+  padding: 6px 7x; /* Ridotto il padding per dimensioni minori */
   border: 1px solid #2f3f4f;
   border-radius: 8px; /* Leggermente più piccolo */
   cursor: pointer;
   font-size: 14px; /* Font più piccolo */
-  min-width: 100px; /* Larghezza ridotta */
+  min-width: 95px; /* Larghezza ridotta */
   text-align: center;
   transition: background 0.2s ease, border 0.2s ease;
 }
@@ -1048,7 +1048,7 @@ img, svg { max-width: 100%; height: auto; display: block; }
   position: absolute;
   top: 120%; /* Posizionato sotto il bottone */
   right: 0; /* Allineato a destra */
-  width: 120px; /* Larghezza ridotta */
+  width: 140px; /* Larghezza ridotta */
   background-color: #161a22;
   border: 1px solid #2a2e39;
   border-radius: 8px;
@@ -1063,10 +1063,10 @@ img, svg { max-width: 100%; height: auto; display: block; }
 }
 
 .item {
-  padding: 8px 12px; /* Padding ridotto */
+  padding: 10px 14px; /* Padding ridotto */
   color: #cfd3da;
   cursor: pointer;
-  font-size: 13px; /* Font più piccolo */
+  font-size: 15px; /* Font più piccolo */
   transition: background 0.15s ease, color 0.15s ease;
 }
 
@@ -1201,6 +1201,7 @@ img, svg { max-width: 100%; height: auto; display: block; }
         font-size: 14px; /* Font leggermente più piccolo */
     }
 }
+
 
 
 
