@@ -1003,7 +1003,7 @@ img, svg { max-width: 100%; height: auto; display: block; }
   margin: 0 auto;           /* centrata orizzontalmente */
   border-radius: 2px;
   position: relative;
-  top: -8px;                /* sposta la linea 8px verso l’alto */
+  top: 15px;                /* sposta la linea 8px verso l’alto */
 }
 
 
@@ -1027,11 +1027,11 @@ img, svg { max-width: 100%; height: auto; display: block; }
   border-radius: 10px;
   cursor: pointer;
   font-size: 18px;
-  min-width: 120px;
+  min-width: 100px;
   text-align: center;
   transition: background 0.2s ease, border 0.2s ease;
 
-  margin-right: 10px; /* ⬅ sposta il bottone verso sinistra dal bordo */
+  margin-right: 5px; 
 }
 
 
@@ -1200,6 +1200,7 @@ img, svg { max-width: 100%; height: auto; display: block; }
         font-size: 14px; /* Font leggermente più piccolo */
     }
 }
+
 
 
 
