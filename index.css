@@ -983,6 +983,7 @@ img, svg { max-width: 100%; height: auto; display: block; }
 }
 
 /* === LEADERBOARD HEADER === */
+/* === LEADERBOARD HEADER === */
 .upperpart-leader {
     position: relative; /* normale scorrimento */
     top: 0; /* nessuna distanza relativa al viewport */
@@ -994,6 +995,7 @@ img, svg { max-width: 100%; height: auto; display: block; }
     box-sizing: border-box;
     top: calc(var(--safe-top) + 47px) !important;
     z-index: 10; /* abbastanza alto da non finire dietro elementi interni */
+    margin-bottom: 15px; /* Spazio per la linea */
 }
 
 .line {
@@ -1002,36 +1004,37 @@ img, svg { max-width: 100%; height: auto; display: block; }
   width: calc(100% - 22px); /* 11px da entrambi i lati */
   margin: 0 auto;           /* centrata orizzontalmente */
   border-radius: 2px;
-  position: relative;
-  top: 15px;                /* sposta la linea 8px verso l’alto */
+  position: absolute;
+  top: calc(var(--safe-top) + 80px); /* Ancorata sotto upperpart-leader */
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
 }
-
-
 
 .upperpart-leader h1 {
   color: #ffffff;
   font-size: 28px;
   font-weight: 600;
+  margin: 0; /* Rimuovi margini extra */
 }
 
 .dropdown-time-leader {
   position: relative;
+  margin-right: 5px; /* Sposta il dropdown più a destra */
 }
 
 
 .dropdown-btn {
   background-color: #1e2b3b;
   color: #fff;
-  padding: 5px 7px;
+  padding: 4px 6px; /* Ridotto il padding per dimensioni minori */
   border: 1px solid #2f3f4f;
-  border-radius: 10px;
+  border-radius: 8px; /* Leggermente più piccolo */
   cursor: pointer;
-  font-size: 18px;
-  min-width: 100px;
+  font-size: 14px; /* Font più piccolo */
+  min-width: 80px; /* Larghezza ridotta */
   text-align: center;
   transition: background 0.2s ease, border 0.2s ease;
-
-  margin-right: 5px; 
 }
 
 
@@ -1043,18 +1046,16 @@ img, svg { max-width: 100%; height: auto; display: block; }
 
 .dropdown-menuleader {
   position: absolute;
-  top: 115%;
-  left: 0;
-
-  width: 100%;
+  top: 120%; /* Posizionato sotto il bottone */
+  right: 0; /* Allineato a destra */
+  width: 120px; /* Larghezza ridotta */
   background-color: #161a22;
   border: 1px solid #2a2e39;
-  border-radius: 10px;
+  border-radius: 8px;
   display: none;
   overflow: hidden;
-
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-  z-index: 10;
+  z-index: 20; /* Sopra la linea */
 }
 
 .dropdown-menuleader.open {
@@ -1062,9 +1063,10 @@ img, svg { max-width: 100%; height: auto; display: block; }
 }
 
 .item {
-  padding: 10px 16px;
+  padding: 8px 12px; /* Padding ridotto */
   color: #cfd3da;
   cursor: pointer;
+  font-size: 13px; /* Font più piccolo */
   transition: background 0.15s ease, color 0.15s ease;
 }
 
@@ -1072,7 +1074,6 @@ img, svg { max-width: 100%; height: auto; display: block; }
   background-color: #2a2e39;
   color: #ffffff;
 }
-
 
 
 
@@ -1200,6 +1201,7 @@ img, svg { max-width: 100%; height: auto; display: block; }
         font-size: 14px; /* Font leggermente più piccolo */
     }
 }
+
 
 
 
