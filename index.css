@@ -984,18 +984,19 @@ img, svg { max-width: 100%; height: auto; display: block; }
 
 /* === LEADERBOARD HEADER === */
 .upperpart-leader {
+  position: sticky;
+  top: calc(var(--safe-top, 44px) + 10px);
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-left: 11px;
   width: calc(100% - 22px);
-  margin-top: 20px; /* togli 90px */
+  z-index: 1000;
 }
 
 .tg-webapp .upperpart-leader {
-    margin-top: calc(var(--safe-top, 44px) + 10px) !important;
+    margin-top: calc(var(--safe-top) + 20px) !important;
 }
-
 .upperpart-leader h1 {
   color: #ffffff;
   font-size: 32px;
@@ -1019,7 +1020,7 @@ img, svg { max-width: 100%; height: auto; display: block; }
   text-align: center;
   transition: background 0.2s ease, border 0.2s ease;
 
-  margin-right: 20px;
+  margin-right: 20px; /* ⬅ sposta il bottone verso sinistra dal bordo */
 }
 
 
@@ -1064,8 +1065,8 @@ img, svg { max-width: 100%; height: auto; display: block; }
 .line {
   height: 2px;                 
   background-color: #2f3f4f;   
-  width: calc(100% - 22px);  
-  margin: 0px auto;          
+  width: calc(100% - 22px);    /* 11px da entrambi i lati */
+  margin: 0px auto;           /* spazio sopra e sotto, ridotto per alzare la linea */
   border-radius: 2px;          
 }
 
@@ -1194,6 +1195,3 @@ img, svg { max-width: 100%; height: auto; display: block; }
         font-size: 14px; /* Font leggermente più piccolo */
     }
 }
-
-
-
