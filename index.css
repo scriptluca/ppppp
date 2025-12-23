@@ -992,9 +992,18 @@ img, svg { max-width: 100%; height: auto; display: block; }
     padding: 0 12px;
     width: 100%;
     box-sizing: border-box;
-    top: calc(var(--safe-top) + 40px) !important;/
+    top: calc(var(--safe-top) + 47px) !important;
     z-index: 10; /* abbastanza alto da non finire dietro elementi interni */
 }
+
+.line {
+  height: 2px;                 
+  background-color: #2f3f4f;   
+  width: calc(100% - 22px);    /* 11px da entrambi i lati */
+  top: calc(var(--safe-top) + 70px) !important;
+  border-radius: 2px;          
+}
+
 
 .upperpart-leader h1 {
   color: #ffffff;
@@ -1061,13 +1070,7 @@ img, svg { max-width: 100%; height: auto; display: block; }
   color: #ffffff;
 }
 
-.line {
-  height: 2px;                 
-  background-color: #2f3f4f;   
-  width: calc(100% - 22px);    /* 11px da entrambi i lati */
-  margin: 0px auto;           /* spazio sopra e sotto, ridotto per alzare la linea */
-  border-radius: 2px;          
-}
+
 
 
 
@@ -1194,6 +1197,7 @@ img, svg { max-width: 100%; height: auto; display: block; }
         font-size: 14px; /* Font leggermente più piccolo */
     }
 }
+
 
 
 
