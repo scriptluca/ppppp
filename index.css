@@ -989,7 +989,7 @@ img, svg { max-width: 100%; height: auto; display: block; }
   justify-content: space-between;
   margin-left: 11px;
   width: calc(100% - 22px);
-  margin-top: 0; /* togli 90px */
+  margin-top: 20px; /* togli 90px */
 }
 
 .tg-webapp .upperpart-leader {
@@ -1019,7 +1019,7 @@ img, svg { max-width: 100%; height: auto; display: block; }
   text-align: center;
   transition: background 0.2s ease, border 0.2s ease;
 
-  margin-right: 20px; /* ⬅ sposta il bottone verso sinistra dal bordo */
+  margin-right: 20px;
 }
 
 
@@ -1064,8 +1064,8 @@ img, svg { max-width: 100%; height: auto; display: block; }
 .line {
   height: 2px;                 
   background-color: #2f3f4f;   
-  width: calc(100% - 22px);    /* 11px da entrambi i lati */
-  margin: 0px auto;           /* spazio sopra e sotto, ridotto per alzare la linea */
+  width: calc(100% - 22px);  
+  margin: 0px auto;          
   border-radius: 2px;          
 }
 
@@ -1194,5 +1194,6 @@ img, svg { max-width: 100%; height: auto; display: block; }
         font-size: 14px; /* Font leggermente più piccolo */
     }
 }
+
 
 
