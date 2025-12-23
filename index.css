@@ -11,7 +11,6 @@ img {
     pointer-events: none;      /* evita click/long press sull’immagine */
 }
 
-
 * {
     -webkit-user-select: none; /* Safari / Telegram iOS */
     -ms-user-select: none;     /* Edge */
@@ -96,6 +95,22 @@ body {
     border-radius:15px;
     z-index: 9999;
 }
+#profile {         
+    border: none;
+    cursor: pointer;
+
+    width: 31px;              
+    height: 31px;              
+    border-radius: 50%;      
+    overflow: hidden;       
+    
+    display: flex;
+    align-items: center;
+    justify-content: center;  
+
+    margin-left: auto;                     
+}
+
 
 .tg-webapp #top-menu {
     top: calc(var(--safe-top) + 6px) !important;
@@ -936,6 +951,7 @@ img, svg { max-width: 100%; height: auto; display: block; }
 
 
 .utente-bar {
+    position: absolute;
     bottom: 120px;
     color:white;
     left: 50%;
@@ -977,7 +993,9 @@ img, svg { max-width: 100%; height: auto; display: block; }
   width: 100%;
 
 }
-
+.tg-webapp .upperpart-leader {
+    margin-top: calc(var(--safe-top) + 20px) !important;
+}
 .upperpart-leader h1 {
   color: #ffffff;
   font-size: 32px;
@@ -1176,5 +1194,3 @@ img, svg { max-width: 100%; height: auto; display: block; }
         font-size: 14px; /* Font leggermente più piccolo */
     }
 }
-
-
