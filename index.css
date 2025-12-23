@@ -993,7 +993,7 @@ img, svg { max-width: 100%; height: auto; display: block; }
     padding: 0 12px;
     width: 100%;
     box-sizing: border-box;
-    top: calc(var(--safe-top) + 47px) !important;
+    top: calc(var(--safe-top) + 57px) !important;
     z-index: 10; /* abbastanza alto da non finire dietro elementi interni */
     margin-bottom: 15px; /* Spazio per la linea */
 }
@@ -1005,7 +1005,7 @@ img, svg { max-width: 100%; height: auto; display: block; }
   margin: 0 auto;           /* centrata orizzontalmente */
   border-radius: 2px;
   position: absolute;
-  top: calc(var(--safe-top) + 80px); /* Ancorata sotto upperpart-leader */
+  top: calc(var(--safe-top) + 92px); /* Ancorata sotto upperpart-leader */
   left: 50%;
   transform: translateX(-50%);
   z-index: 10;
@@ -1027,12 +1027,12 @@ img, svg { max-width: 100%; height: auto; display: block; }
 .dropdown-btn {
   background-color: #1e2b3b;
   color: #fff;
-  padding: 4px 6px; /* Ridotto il padding per dimensioni minori */
+  padding: 5px 7x; /* Ridotto il padding per dimensioni minori */
   border: 1px solid #2f3f4f;
   border-radius: 8px; /* Leggermente più piccolo */
   cursor: pointer;
   font-size: 14px; /* Font più piccolo */
-  min-width: 80px; /* Larghezza ridotta */
+  min-width: 100px; /* Larghezza ridotta */
   text-align: center;
   transition: background 0.2s ease, border 0.2s ease;
 }
@@ -1201,6 +1201,7 @@ img, svg { max-width: 100%; height: auto; display: block; }
         font-size: 14px; /* Font leggermente più piccolo */
     }
 }
+
 
 
 
