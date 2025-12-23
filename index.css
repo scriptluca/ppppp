@@ -936,7 +936,6 @@ img, svg { max-width: 100%; height: auto; display: block; }
 
 
 .utente-bar {
-    position: relative;
     bottom: 120px;
     color:white;
     left: 50%;
@@ -1177,4 +1176,5 @@ img, svg { max-width: 100%; height: auto; display: block; }
         font-size: 14px; /* Font leggermente più piccolo */
     }
 }
+
 
