@@ -1007,7 +1007,6 @@ img, svg { max-width: 100%; height: auto; display: block; }
   top: calc(var(--safe-top) + 58px); /* Ancorata sotto upperpart-leader */
   left: 50%;
   transform: translateX(-50%);
-  z-index:10;
 }
 
 .upperpart-leader h1 {
@@ -1201,6 +1200,7 @@ img, svg { max-width: 100%; height: auto; display: block; }
         font-size: 14px; /* Font leggermente più piccolo */
     }
 }
+
 
 
 
