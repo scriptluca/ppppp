@@ -995,11 +995,11 @@ img, svg { max-width: 100%; height: auto; display: block; }
 }
 
 .tg-webapp .upperpart-leader {
-    margin-top: calc(var(--safe-top) + 20px) !important;
+    margin-top: calc(var(--safe-top) + 40px) !important;
 }
 .upperpart-leader h1 {
   color: #ffffff;
-  font-size: 32px;
+  font-size: 28px;
   font-weight: 600;
 }
 
@@ -1020,7 +1020,7 @@ img, svg { max-width: 100%; height: auto; display: block; }
   text-align: center;
   transition: background 0.2s ease, border 0.2s ease;
 
-  margin-right: 20px; /* ⬅ sposta il bottone verso sinistra dal bordo */
+  margin-right: 17px; /* ⬅ sposta il bottone verso sinistra dal bordo */
 }
 
 
@@ -1195,3 +1195,4 @@ img, svg { max-width: 100%; height: auto; display: block; }
         font-size: 14px; /* Font leggermente più piccolo */
     }
 }
+
