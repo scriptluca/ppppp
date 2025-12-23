@@ -992,7 +992,7 @@ img, svg { max-width: 100%; height: auto; display: block; }
     padding: 0 12px;
     width: 100%;
     box-sizing: border-box;
-    top: calc(var(--safe-top) + 19px) !important;/
+    top: calc(var(--safe-top) + 40px) !important;/
     z-index: 10; /* abbastanza alto da non finire dietro elementi interni */
 }
 
@@ -1194,6 +1194,7 @@ img, svg { max-width: 100%; height: auto; display: block; }
         font-size: 14px; /* Font leggermente più piccolo */
     }
 }
+
 
 
 
