@@ -1091,13 +1091,11 @@ img, svg { max-width: 100%; height: auto; display: block; }
   flex-direction: column;
   /* RIMUOVI display: none dall'HTML e aggiungi qui: */
   display: none; /* Inizialmente nascosto */
+  overflow: hidden; /* Importante: nasconde il contenuto che esce */
 }
 
 #crypto-menu[aria-hidden="false"] {
   display: flex;
-  transform: translateY(0);
-}
-#crypto-menu.open {
   transform: translateY(0);
 }
 
@@ -1105,47 +1103,100 @@ img, svg { max-width: 100%; height: auto; display: block; }
   display: flex;
   align-items: center;
   gap: 12px;
-
   padding: 16px;
   border-bottom: 1px solid rgba(255,255,255,0.08);
+  flex-shrink: 0; /* Impedisce che l'header si restringa */
+  min-height: 60px; /* Altezza fissa per l'header */
 }
 
 .crypto-header h3 {
   color: white;
   font-size: 17px;
   font-weight: 600;
+  margin: 0;
+  flex: 1;
+  text-align: center;
 }
+
 #crypto-close {
   background: transparent;
   border: none;
   color: #9fb4c7;
   font-size: 20px;
   cursor: pointer;
+  padding: 8px;
+  margin-left: -8px; /* Compensa il padding per allineamento */
+  border-radius: 8px;
+  transition: background-color 0.2s ease;
 }
+
+#crypto-close:hover {
+  background-color: rgba(255,255,255,0.05);
+}
+
+#crypto-close:active {
+  background-color: rgba(255,255,255,0.1);
+}
+
 .crypto-buttons {
   display: flex;
   flex-direction: column;
+  flex: 1; /* Occupa tutto lo spazio rimanente */
+  overflow-y: auto; /* Abilita lo scrolling verticale */
+  -webkit-overflow-scrolling: touch; /* Scrolling fluido su iOS */
+  max-height: calc(100% - 60px); /* Spazio per l'header */
 }
+
 .crypto-btn {
   background: none;
   border: none;
   display: inline-flex;
   align-items: center;
-  gap:7px;
-  padding: 16px 18px;
+  gap: 7px;
+  padding: 18px 20px; /* Padding più grande per touch */
   text-align: left;
   color: #ffffff;
   font-size: 18px;
   cursor: pointer;
-
   border-bottom: 1px solid rgba(255,255,255,0.07);
+  transition: background-color 0.2s ease;
+  min-height: 60px; /* Altezza minima per tocchi più facili */
+  width: 100%; /* Assicura che occupi tutta la larghezza */
+  box-sizing: border-box; /* Include padding nella larghezza */
 }
+
 .crypto-btn:hover {
   background-color: rgba(255,255,255,0.04);
 }
 
 .crypto-btn:active {
   background-color: rgba(255,255,255,0.08);
+}
+
+/* Personalizza la scrollbar per desktop */
+.crypto-buttons::-webkit-scrollbar {
+  width: 6px;
+}
+
+.crypto-buttons::-webkit-scrollbar-track {
+  background: rgba(255,255,255,0.05);
+  border-radius: 3px;
+  margin: 8px 0;
+}
+
+.crypto-buttons::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.2);
+  border-radius: 3px;
+}
+
+.crypto-buttons::-webkit-scrollbar-thumb:hover {
+  background: rgba(255,255,255,0.3);
+}
+
+/* Per Firefox */
+.crypto-buttons {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,0.2) rgba(255,255,255,0.05);
 }
 
 
