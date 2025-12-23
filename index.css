@@ -987,15 +987,15 @@ img, svg { max-width: 100%; height: auto; display: block; }
   display: flex;
   align-items: center;
   justify-content: space-between;
-
-  margin-top: 90px;
   margin-left: 11px;
-  width: 100%;
+  width: calc(100% - 22px);
+  margin-top: 0; /* togli 90px */
+}
 
-}
 .tg-webapp .upperpart-leader {
-    margin-top: calc(var(--safe-top) + 10px) !important;
+    margin-top: calc(var(--safe-top, 44px) + 10px) !important;
 }
+
 .upperpart-leader h1 {
   color: #ffffff;
   font-size: 32px;
@@ -1194,4 +1194,5 @@ img, svg { max-width: 100%; height: auto; display: block; }
         font-size: 14px; /* Font leggermente più piccolo */
     }
 }
+
 
