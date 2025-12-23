@@ -1002,10 +1002,9 @@ img, svg { max-width: 100%; height: auto; display: block; }
   height: 2px;
   background-color: #2f3f4f;
   width: calc(100% - 22px); /* 11px da entrambi i lati */
-  margin: 0 auto;           /* centrata orizzontalmente */
   border-radius: 2px;
   position: relative;
-  top: calc(var(--safe-top) + 118px); /* Ancorata sotto upperpart-leader */
+  top: calc(var(--safe-top) + 58px); /* Ancorata sotto upperpart-leader */
   left: 50%;
   transform: translateX(-50%);
   z-index:10;
@@ -1013,7 +1012,7 @@ img, svg { max-width: 100%; height: auto; display: block; }
 
 .upperpart-leader h1 {
   color: #ffffff;
-  font-size: 28px;
+  font-size: 30px;
   font-weight: 600;
   margin: 0; /* Rimuovi margini extra */
 }
@@ -1027,12 +1026,13 @@ img, svg { max-width: 100%; height: auto; display: block; }
 .dropdown-btn {
   background-color: #1e2b3b;
   color: #fff;
-  padding: 6px 7x; /* Ridotto il padding per dimensioni minori */
+  padding: 0; 
   border: 1px solid #2f3f4f;
-  border-radius: 8px; /* Leggermente più piccolo */
+  border-radius: 13px;
   cursor: pointer;
+  height:35px;
   font-size: 14px; /* Font più piccolo */
-  min-width: 95px; /* Larghezza ridotta */
+  min-width: 90px; /* Larghezza ridotta */
   text-align: center;
   transition: background 0.2s ease, border 0.2s ease;
 }
@@ -1201,6 +1201,7 @@ img, svg { max-width: 100%; height: auto; display: block; }
         font-size: 14px; /* Font leggermente più piccolo */
     }
 }
+
 
 
 
