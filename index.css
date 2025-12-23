@@ -985,7 +985,7 @@ img, svg { max-width: 100%; height: auto; display: block; }
 /* === LEADERBOARD HEADER === */
 .upperpart-leader {
   position: sticky;
-  top: calc(var(--safe-top, 44px) + 10px);
+  top: calc(var(--safe-top, 44px) + 10px); /* distanza dalla status bar */
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -994,9 +994,11 @@ img, svg { max-width: 100%; height: auto; display: block; }
   z-index: 1000;
 }
 
+/* Solo se vuoi override per Telegram WebApp */
 .tg-webapp .upperpart-leader {
-    margin-top: calc(var(--safe-top) + 40px) !important;
+    top: calc(var(--safe-top, 44px) + 10px) !important; /* NON usare margin-top */
 }
+
 .upperpart-leader h1 {
   color: #ffffff;
   font-size: 28px;
@@ -1195,4 +1197,5 @@ img, svg { max-width: 100%; height: auto; display: block; }
         font-size: 14px; /* Font leggermente più piccolo */
     }
 }
+
 
