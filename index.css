@@ -296,12 +296,12 @@ img, svg { max-width: 100%; height: auto; display: block; }
 
 /* === CERCHIO SALDO === */
 .circle-value {
-    width: 260px;
-    height: 260px;
+    width: 240px;
+    height: 240px;
     border-radius: 50%;
-    border: 2.2px solid #2f3f4f;
+    border: 2.8px solid #2f3f4f;
     background-color: transparent;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.55);
+    box-shadow: 0 8px 28px rgba(0,0,0,0.55);
     display: flex;
     flex-direction: column;
     gap:14px;
@@ -340,9 +340,9 @@ img, svg { max-width: 100%; height: auto; display: block; }
 
 .currency {
     font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-    font-weight: 580;
-    font-size: clamp(40px, 12vw, 56px);
-    color: #f5f7fa;
+    font-weight: 550;
+    font-size: clamp(44px, 12vw, 56px);
+    color: #ffffff;
     line-height: 1;
     opacity: 0.85;
 }
@@ -553,7 +553,7 @@ img, svg { max-width: 100%; height: auto; display: block; }
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 280px;
+    width: 260px;
     background: #2f3f4f;
     padding: 20px;
     border-radius: 18px;
@@ -585,7 +585,28 @@ img, svg { max-width: 100%; height: auto; display: block; }
     border-color: #aaaaaadc;
     cursor: pointer;
 }
+.menuadd-predict-header {
+    display: flex;
+    align-items: center;          
+    justify-content: space-between;
+    gap:8px;
+    margin-left: -14px;
+    border:none;
+}
+#addpredict-close {
+    background: transparent;
+    color: #ddd;
+    font-size: 24px;
+    position: absolute;
+    top: 10px;   
+    border:none;
+    border-bottom: 1px;;
+    border-radius: 30px;
+    cursor: pointer;
+    padding: 0;
+    line-height: 0.5;
 
+}
 #predict-description {
     color:#aaaaaadc;
     background-color: #2f3f4f;
