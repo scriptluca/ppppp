@@ -642,10 +642,10 @@ img, svg { max-width: 100%; height: auto; display: block; }
     max-width: 1200px;
     display: grid;
     grid-template-columns: 1fr;
-    gap: 28px;
+    gap: 22px;
 
-    align-items:start;
-    justify-items: center;   /* 👈 centro orizzontale */
+    align-items:center;
+
 }
 
 
@@ -655,15 +655,14 @@ img, svg { max-width: 100%; height: auto; display: block; }
     max-width: 400px;
     background: linear-gradient(180deg, #2b3a46, #24323a);
     border-radius: 18px;
-    padding: 13px 30px;
+    padding: 9px 20px;
     color: #e6eef3;
     box-shadow: 0 14px 56px rgba(0,0,0,0.56);
     overflow: visible;
     transition: transform .18s ease, box-shadow .18s ease;
     display: flex;
     flex-direction: column;
-    gap: 20px;
-    margin: 0 auto;
+    gap: 22px;
 }
 
 .predict-card:hover {
@@ -1279,7 +1278,6 @@ img, svg { max-width: 100%; height: auto; display: block; }
     .predict-card { 
         width: 96%; 
         padding: 12px 18px; 
-        min-height: 260px; 
     }
     
     .predict-card .btn-yes, 
