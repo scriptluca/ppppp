@@ -709,20 +709,29 @@ img, svg { max-width: 100%; height: auto; display: block; }
 
 /* === LISTA PREDICTS === */
 #predicts-list {
-    margin: 160px auto 40px;
-    padding: 0 11px;
-    width: 100%;
-    max-width: 1200px;
     display: grid;
     grid-template-columns: 1fr;
     gap: 22px;
     justify-items: center;
     align-items: start;
+    margin: 160px auto 40px;
+    padding: 0 11px;
+    width: 100%;
+    max-width: 1200px;
     box-sizing: border-box;
 }
 
+/* Per Telegram WebApp */
+.tg-webapp .predict-card {
+    transform: translateZ(0); /* Forza rendering hardware */
+    -webkit-transform: translateZ(0);
+    will-change: transform;
+}
 
-
+.tg-webapp #predicts-list {
+    padding-left: max(12px, env(safe-area-inset-left));
+    padding-right: max(12px, env(safe-area-inset-right));
+}
 
 .predict-card {
     position: relative;
