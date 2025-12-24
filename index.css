@@ -637,7 +637,7 @@ img, svg { max-width: 100%; height: auto; display: block; }
 /* === LISTA PREDICTS === */
 #predicts-list {
     margin: 160px auto 40px;
-    padding: 0 30px;
+    padding: 0 11px;
     width: 100%;
     max-width: 1200px;
     display: grid;
@@ -653,7 +653,7 @@ img, svg { max-width: 100%; height: auto; display: block; }
 
 .predict-card {
     position: relative;
-    width: 92%;
+    width: 100%;
     max-width: 400px;
     background: linear-gradient(180deg, #2b3a46, #24323a);
     border-radius: 18px;
