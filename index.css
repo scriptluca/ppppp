@@ -775,7 +775,7 @@ img, svg { max-width: 100%; height: auto; display: block; }
 }
 
 .predict-card .predict-title {
-    font-size: clamp(30px, 5vw, 38px); /* Aumentato da 27px-34px */
+    font-size: clamp(38px, 6vw, 45px); 
     font-weight: 800;
     margin: 4px 0 0 0;
     color: #fff;
@@ -808,20 +808,22 @@ img, svg { max-width: 100%; height: auto; display: block; }
 
 .predict-card .btn-yes,
 .predict-card .btn-no {
-    padding: 14px 0; /* Aumentato da 9px - PIÙ ALTI */
+    padding: 10px 30px; /* PIÙ ALTI E PIÙ LARGHI */
     border-radius: 18px;
-    margin-top: 0; /* Rimosso margin per evitare spostamenti */
+    margin: 0;
     font-weight: 900;
-    font-size: 19px; /* Leggermente aumentato */
+    font-size: 17px; /* Font più grande */
     cursor: pointer;
-    width: 90%; /* Larghezza controllata */
-    max-width: 280px;
+    width: calc(100% - 16px); /* Quasi tutta la larghezza */
+    min-width: 217px;
+    max-width: 340px;
     text-align: center; 
     display: flex;
     align-items: center;
     justify-content: center; 
     transition: all 0.2s ease;
     box-sizing: border-box;
+    border: none;
 }
 
 .predict-card .btn-yes {
