@@ -636,17 +636,19 @@ img, svg { max-width: 100%; height: auto; display: block; }
 
 /* === LISTA PREDICTS === */
 #predicts-list {
-    margin: 120px auto 40px auto;
-    padding: 0 12px;
+    margin: 160px auto 40px;
+    padding: 0 30px;
     width: 100%;
     max-width: 1200px;
     display: grid;
     grid-template-columns: 1fr;
     gap: 22px;
-
-    align-items:center;
-
+    justify-items: center;
+    align-items: start;
+    box-sizing: border-box;
 }
+
+
 
 
 .predict-card {
