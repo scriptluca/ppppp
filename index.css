@@ -808,15 +808,14 @@ img, svg { max-width: 100%; height: auto; display: block; }
 
 .predict-card .btn-yes,
 .predict-card .btn-no {
-    padding: 10px 30px; /* PIÙ ALTI E PIÙ LARGHI */
+    padding: 12px 20px;
     border-radius: 18px;
-    margin: 0;
+    margin: 0 auto; /* Centra i bottoni */
     font-weight: 900;
-    font-size: 17px; /* Font più grande */
+    font-size: 17px;
     cursor: pointer;
-    width: calc(100% - 16px); /* Quasi tutta la larghezza */
-    min-width: 217px;
-    max-width: 340px;
+    width: 90%; /* Ridotto per stare dentro la card */
+    max-width: 320px;
     text-align: center; 
     display: flex;
     align-items: center;
