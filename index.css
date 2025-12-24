@@ -721,16 +721,12 @@ img, svg { max-width: 100%; height: auto; display: block; }
     box-sizing: border-box;
 }
 
-/* Per Telegram WebApp */
-.tg-webapp .predict-card {
-    transform: translateZ(0); /* Forza rendering hardware */
-    -webkit-transform: translateZ(0);
-    will-change: transform;
-}
-
+/* FIX PRINCIPALE per Telegram WebApp */
 .tg-webapp #predicts-list {
-    padding-left: max(12px, env(safe-area-inset-left));
-    padding-right: max(12px, env(safe-area-inset-right));
+    padding: 0 8px; /* Padding ridotto su Telegram */
+    width: 100vw; /* Usa viewport width invece di % */
+    max-width: 100vw;
+    box-sizing: border-box;
 }
 
 .predict-card {
@@ -739,17 +735,24 @@ img, svg { max-width: 100%; height: auto; display: block; }
     max-width: 400px;
     background: linear-gradient(180deg, #2b3a46, #24323a);
     border-radius: 19px;
-    padding: 18px; /* Aumentato padding */
+    padding: 18px;
     color: #e6eef3;
     box-shadow: 0 14px 56px rgba(0,0,0,0.56);
     overflow: visible;
     transition: transform .18s ease, box-shadow .18s ease;
     display: flex;
     flex-direction: column;
-    gap: 20px; /* Spazio aumentato tra elementi */
-    min-height: 280px; /* Altezza minima garantita */
+    gap: 20px;
+    min-height: 280px;
+    box-sizing: border-box; /* IMPORTANTE */
 }
 
+/* FIX CARD per Telegram WebApp */
+.tg-webapp .predict-card {
+    width: calc(100% - 4px); /* Sottrai un piccolo margine di sicurezza */
+    max-width: calc(100vw - 20px); /* Limita alla larghezza viewport */
+    margin: 0 auto; /* Centra la card */
+}
 .predict-card:hover {
     transform: translateY(-8px) scale(1.01);
     box-shadow: 0 28px 72px rgba(0,0,0,0.68);
@@ -1386,11 +1389,19 @@ img, svg { max-width: 100%; height: auto; display: block; }
         min-width: 0; 
     }
 
-    .predict-card { 
-        width: 96%; 
-        padding: 12px 18px; 
+    #predicts-list { 
+        width: 100%; /* Era 96% */
+        padding: 0 8px; /* Ridotto da 11px */
+        margin-top: 110px;
+        box-sizing: border-box;
     }
     
+    .predict-card { 
+        width: 100%; /* Era 96% */
+        max-width: calc(100vw - 16px); /* Limita alla viewport */
+        padding: 12px 18px;
+        margin: 0 auto; /* Centra la card */
+    }
     .predict-card .btn-yes, 
     .predict-card .btn-no { 
         padding: 8px 18px; 
@@ -1406,11 +1417,7 @@ img, svg { max-width: 100%; height: auto; display: block; }
         height: 44px; 
         font-size: 11px; 
     }
-    
-    #predicts-list { 
-        width: 96%; 
-        margin-top: 110px; 
-    }
+
 }
 
 @media (max-width: 380px) {
@@ -1439,9 +1446,24 @@ img, svg { max-width: 100%; height: auto; display: block; }
     #menu-addpredict button {
         width: 100%; 
     }
+
+    #predicts-list {
+        padding: 0 6px; /* Ancora più stretto su schermi piccoli */
+    }
+    
+    .predict-card {
+        max-width: calc(100vw - 12px);
+        padding: 12px 16px; /* Padding interno ridotto */
+    }
 }
 
+.tg-webapp.platform-mobile #predicts-list {
+    padding: 0 6px !important;
+}
 
+.tg-webapp.platform-mobile .predict-card {
+    max-width: calc(100vw - 16px) !important;
+}
 
 
 
