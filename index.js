@@ -563,6 +563,47 @@ document.addEventListener('keydown', (e) => {
 
 
 
+function fitSaldoSoft() {
+    const saldo = document.getElementById('textsaldo');
+    const currency = document.querySelector('.currency');
+    if (!saldo) return;
+
+    const digits = saldo.textContent.replace(/[^\d]/g, '').length;
+    const currencyWeight = currency ? 0.6 : 0;
+    const visualLength = digits + currencyWeight;
+
+    let baseSize = 65;
+
+    if (visualLength <= 4) {
+        baseSize = 65;
+    } else if (visualLength <= 5) {
+        baseSize = 56;
+    } else if (visualLength <= 6) {
+        baseSize = 48;
+    } else if (visualLength <= 7) {
+        baseSize = 42;
+    } else {
+        baseSize = 36;
+    }
+
+    // numero
+    saldo.style.fontSize = baseSize + 'px';
+
+    // simbolo valuta: stessa scala, +2px
+    if (currency) {
+        currency.style.fontSize = (baseSize + 2) + 'px';
+    }
+}
+
+fitSaldoSoft();
+
+
+
+
+
+
+
+
 const btn = document.getElementById("dropdownBtn");
 const dropdownMenuleader2= document.getElementById("dropdownMenuleader");
 const items = menu.querySelectorAll(".item");
