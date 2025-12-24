@@ -355,6 +355,12 @@ if (cryptoClose) cryptoClose.onclick = () => {
     }
     // NON nascondere l'overlay - lo lascia attivo per il menu buy
 };
+const addPredictClose = document.getElementById("addpredict-close");
+
+if (addPredictClose) addPredictClose.onclick = () => {
+    if (menu) menu.style.display = "none";
+    if (overlay) overlay.style.display = "none";
+};
 
 // SOSTITUISCI la funzione overlay.onclick con questa:
 overlay.onclick = () => {
