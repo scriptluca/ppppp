@@ -548,13 +548,50 @@ img, svg { max-width: 100%; height: auto; display: block; }
 }
 
 /* === MODAL AGGIUNTA PREDICT === */
+
+/* === CORREZIONE HEADER MENU ADD PREDICT === */
+#menu-addpredict input {
+    background-color: #2f3f4f;
+    color: #aaaaaadc;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid #aaaaaadc;
+    width: 100%;
+    box-sizing: border-box;
+    font-size: 15px;
+}
+
+.tg-webapp #menu-addpredict {
+    width: calc(100% - 40px);
+    max-width: 280px;
+}
+
+#menu-addpredict button#sent-predict-button {
+    background-color: #37b24d;
+    color: white;
+    padding: 12px;
+    border-radius: 10px;
+    width: 100%;
+    box-sizing: border-box;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 16px;
+    margin-top: 5px;
+    transition: background-color 0.2s;
+}
+
+#menu-addpredict button#sent-predict-button:hover {
+    background-color: #2fa03e;
+}
+
 #menu-addpredict {
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 300px; /* Dimensione fissa */
-    max-width: 85vw; /* Non più largo della viewport */
+    width: 300px;
+    max-width: 85vw;
     padding: 20px;
     border-radius: 18px;
     background: #2f3f4f;
@@ -564,72 +601,52 @@ img, svg { max-width: 100%; height: auto; display: block; }
     color: white;
     z-index: 9999;
     box-sizing: border-box;
-    border: 1px solid rgba(255,255,255,0.1); /* Bordo sottile */
+    border: 1px solid rgba(255,255,255,0.1);
 }
-
-
-
 
 #menu-addpredict h2 {
     text-align: center;
-    margin: 10px 0 5px 0; /* Margini ridotti */
     font-size: 20px;
-    flex: 1; /* Permette al titolo di occupare lo spazio centrale */
+    margin: 0;
+    padding: 0 30px; /* Padding laterale per spazio alla X */
+    width: 100%;
+    box-sizing: border-box; /* Importante per includere il padding nella larghezza */
 }
 
-#menu-addpredict input {
-    background-color: #2f3f4f;
-    color: #aaaaaadc;
-    padding: 8px;
-    border-radius: 8px;
-    border-color: #aaaaaadc;
-    width: 100%;
-    box-sizing: border-box;
-}
-.tg-webapp #menu-addpredict {
-    width: calc(100% - 40px);  /* più margine */
-    max-width: 280px;
-}
-
-#menu-addpredict button {
-    background-color: #2f3f4f;
-    color: #aaaaaadc;
-    padding: 10px;
-    border-radius: 10px;
-    width: 100%;
-    box-sizing: border-box;
-    border-color: #aaaaaadc;
-    cursor: pointer;
-}
+/* Header con posizione relativa per contenere il bottone close assoluto */
 .menuadd-predict-header {
+    position: relative;
+    width: 100%;
+    min-height: 40px; /* Altezza minima */
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    position: relative; /* Aggiunto */
-    width: 100%; /* Aggiunto */
-    margin: 0; /* Modificato */
-    padding: 0; /* Aggiunto */
+    justify-content: center;
+    margin-bottom: 10px;
 }
 
+/* Bottone close posizionato assolutamente a sinistra */
 #addpredict-close {
+    position: absolute;
+    transform: translateY(-50%);
     background: transparent;
     color: #ddd;
     font-size: 24px;
-    position: relative; /* Modificato */
-    top: 0; /* Modificato */
     border: none;
-    border-radius: 30px;
     cursor: pointer;
-    padding: 4px 8px; /* Modificato */
+    padding: 4px 6px;
     line-height: 1;
-    z-index: 1; /* Aggiunto */
-    width: auto; /* Aggiunto */
-    height: auto; /* Aggiunto */
-    display: flex; /* Aggiunto */
-    align-items: center; /* Aggiunto */
-    justify-content: center; /* Aggiunto */
-    margin: 0; /* Aggiunto */
+    z-index: 2; /* Aumentato z-index per stare sopra */
+    width: auto;
+    height: auto;
+    display: flex;
+    right:0.5px;
+
 }
+
+
+
+
+
 #predict-description {
     color:#aaaaaadc;
     background-color: #2f3f4f;
@@ -646,8 +663,8 @@ img, svg { max-width: 100%; height: auto; display: block; }
     text-align: left;
     padding: 8px 0;
     cursor: pointer;
-    align-self: flex-start; /* Allineato a sinistra */
-    margin: -8px 0 0 0; /* Margine negativo per avvicinarsi al titolo */
+    align-self: center; 
+    margin: -8px 0 0 0; 
 }
 
 #hiw-display {
@@ -709,8 +726,8 @@ img, svg { max-width: 100%; height: auto; display: block; }
     width: 100%;
     max-width: 400px;
     background: linear-gradient(180deg, #2b3a46, #24323a);
-    border-radius: 18px;
-    padding: 20px; /* Aumentato padding */
+    border-radius: 19px;
+    padding: 18px; /* Aumentato padding */
     color: #e6eef3;
     box-shadow: 0 14px 56px rgba(0,0,0,0.56);
     overflow: visible;
@@ -734,8 +751,8 @@ img, svg { max-width: 100%; height: auto; display: block; }
 }
 
 .predict-card .predict-title {
-    font-size: clamp(22px, 4.2vw, 32px);
-    font-weight: 900;
+    font-size: clamp(27px, 4.5vw, 34px);
+    font-weight: 800;
     margin: 4px 0 0 0;
     color: #fff;
     text-align: left;
@@ -749,55 +766,39 @@ img, svg { max-width: 100%; height: auto; display: block; }
     display: flex; 
     flex-direction: column; 
     justify-content: space-between; /* Cambiato per distribuzione uniforme */
-    align-items: center; /* Centrato orizzontalmente */
+    align-items: center; 
     gap: 20px; /* Aumentato spazio */
     margin-top: 20px; /* Aumentato */
     width: 100%; /* Aggiunto */
 }
 
-predict-card .actions { 
+.predict-card .actions { 
     display: flex; 
-    justify-content: center; 
-    align-items: center; /* Aggiunto centratura verticale */
+    align-items: center;
     gap: 16px;
     flex-wrap: wrap;
-    width: 100%; /* Aggiunto */
+    width: 100%;
 }
 
 .predict-card .btn-yes,
 .predict-card .btn-no {
-    padding: 14px 0; /* Modificato: più alte, larghezza automatica */
+    padding: 9px 0; /* Modificato: più alte, larghezza automatica */
     border-radius: 18px;
+    margin-top: 12px;
     font-weight: 900;
     font-size: 18px; /* Aumentato */
     cursor: pointer;
-    width: 48%; /* Aggiunto: percentuale per adattarsi */
-    min-width: 120px; /* Dimensione minima */
-    max-width: 160px; /* Dimensione massima */
-    text-align: center; /* Aggiunto */
-    display: flex; /* Aggiunto */
-    align-items: center; /* Aggiunto */
-    justify-content: center; /* Aggiunto */
-    transition: all 0.2s ease; /* Aggiunto per animazione */
+    min-width: 194.5px; 
+    max-width:240px;
+    text-align: center; 
+    display: flex;
+    align-items: center;
+    justify-content: center; 
+    transition: all 0.2s ease; 
 }
 
-/* Effetto hover per i bottoni */
-.predict-card .btn-yes:hover,
-.predict-card .btn-no:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 12px rgba(0,0,0,0.3);
-}
 
-/* Per mobile ancora più grandi */
-@media (max-width: 420px) {
-    .predict-card .btn-yes, 
-    .predict-card .btn-no { 
-        padding: 16px 0; /* Ancora più alto su mobile */
-        font-size: 16px; 
-        width: 46%; /* Leggermente più stretto su mobile */
-        min-width: 110px; /* Minimo su mobile */
-    }
-}
+
 
 
 .predict-card .btn-yes {
@@ -839,10 +840,10 @@ predict-card .actions {
 .prob-badge {
     position: absolute;
     right: 22px;
-    top: 50%;
+    top: 40%;
     transform: translateY(-50%) scale(.92);
-    width: 56px;
-    height: 56px;
+    width: 53px;
+    height: 53px;
     display: flex;
     align-items: center;
     justify-content: center;
