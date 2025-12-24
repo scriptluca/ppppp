@@ -371,7 +371,7 @@ img, svg { max-width: 100%; height: auto; display: block; }
     gap: 12px;
     justify-content: center;
     margin: 9px auto 18px auto;
-    width: 100%;
+    width: 90%;
     max-width: 640px;
     padding: 0 12px;
     box-sizing: border-box;
@@ -643,10 +643,11 @@ img, svg { max-width: 100%; height: auto; display: block; }
     display: grid;
     grid-template-columns: 1fr;
     gap: 28px;
-    align-items: start;
-    justify-items: center;
-    box-sizing: border-box;
+
+    align-items:start;
+    justify-items: center;   /* 👈 centro orizzontale */
 }
+
 
 .predict-card {
     position: relative;
@@ -659,7 +660,6 @@ img, svg { max-width: 100%; height: auto; display: block; }
     box-shadow: 0 14px 56px rgba(0,0,0,0.56);
     overflow: visible;
     transition: transform .18s ease, box-shadow .18s ease;
-    min-height: 320px;
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -1089,9 +1089,8 @@ img, svg { max-width: 100%; height: auto; display: block; }
   z-index: 10002;
   display: flex;
   flex-direction: column;
-  /* RIMUOVI display: none dall'HTML e aggiungi qui: */
-  display: none; /* Inizialmente nascosto */
-  overflow: hidden; /* Importante: nasconde il contenuto che esce */
+  display: none; 
+  overflow: hidden; 
 }
 
 #crypto-menu[aria-hidden="false"] {
@@ -1106,7 +1105,7 @@ img, svg { max-width: 100%; height: auto; display: block; }
   padding: 16px;
   border-bottom: 1px solid rgba(255,255,255,0.08);
   flex-shrink: 0; /* Impedisce che l'header si restringa */
-  min-height: 60px; /* Altezza fissa per l'header */
+  min-height: 60px; 
 }
 
 .crypto-header h3 {
@@ -1125,7 +1124,7 @@ img, svg { max-width: 100%; height: auto; display: block; }
   font-size: 20px;
   cursor: pointer;
   padding: 8px;
-  margin-left: -8px; /* Compensa il padding per allineamento */
+  margin-left: -8px; 
   border-radius: 8px;
   transition: background-color 0.2s ease;
 }
