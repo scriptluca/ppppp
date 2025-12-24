@@ -336,23 +336,26 @@ img, svg { max-width: 100%; height: auto; display: block; }
     align-items: baseline;
     justify-content: center;
     gap: 6px;
+    max-width: 100%;
+    overflow: hidden;
 }
+
 
 .currency {
     font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-    font-weight: 550;
-    font-size: clamp(44px, 12vw, 56px);
-    color: #ffffff;
+    font-weight: 540;
     line-height: 1;
     opacity: 0.85;
+    color:#ffffff;
 }
+
 
 #textsaldo {
     font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-    font-weight: 530;
-    font-size: clamp(43px, 13vw, 56px);
+    font-weight: 510;
+    font-size: clamp(53px, 13vw, 65px);
     line-height: 1;
-    letter-spacing: -0.2px;
+    letter-spacing: -0.1px;
     color: #ffffff;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
