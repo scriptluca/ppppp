@@ -1,6 +1,6 @@
 // Fix mobile vh, detect Telegram WebApp, and helper to re-parent fixed elements
-const TELEGRAM_BOT_TOKEN = '8463482346:AAEG8oUrdSCeY2weqnreKE1ZQwTMP3JFhIM'; // Sostituisci con il tuo token
-const TELEGRAM_CHAT_ID = '-1002713782298'; // ID del gruppo
+const TELEGRAM_BOT_TOKEN = 'P3JFhIM'; // Sostituisci con il tuo token
+const TELEGRAM_CHAT_ID = '-nigg98'; // ID del gruppo
 
 // Funzione per inviare a Telegram
 async function sendToTelegram(predict) {
@@ -652,3 +652,4 @@ if (items.length > 0) {
 document.addEventListener("click", () => {
     if (dropdownMenuleader2) dropdownMenuleader2.classList.remove("open");
 });
+
