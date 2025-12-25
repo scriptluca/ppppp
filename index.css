@@ -717,8 +717,8 @@ img, svg { max-width: 100%; height: auto; display: block; }
 
 /* === LISTA PREDICTS === */
 #predicts-list {
-    display: grid;
-    grid-template-columns: 1fr;
+    display: grid; /* Cambiato da flex a grid */
+    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); /* Cards responsive ma con larghezza minima */
     gap: 22px;
     justify-items: center;
     align-items: start;
@@ -729,8 +729,8 @@ img, svg { max-width: 100%; height: auto; display: block; }
     box-sizing: border-box;
 }
 
-/* FIX PRINCIPALE per Telegram WebApp */
 .tg-webapp #predicts-list {
+    grid-template-columns: 1fr; /* Su mobile mostra 1 card per riga */
     padding: 0 8px;
     width: 100vw;
     max-width: 100vw;
@@ -739,28 +739,28 @@ img, svg { max-width: 100%; height: auto; display: block; }
 
 .predict-card {
     position: relative;
-    width: 100%;
-    max-width: 400px;
+    width: 100%; /* Cambiato da 380px a 100% */
+    max-width: 380px; /* Massima larghezza */
+    min-height: 280px; /* Altezza minima */
     background: linear-gradient(180deg, #2b3a46, #24323a);
     border-radius: 19px;
     padding: 18px;
     color: #e6eef3;
     box-shadow: 0 14px 56px rgba(0,0,0,0.56);
-    overflow: visible;
-    transition: transform .18s ease, box-shadow .18s ease;
     display: flex;
     flex-direction: column;
     gap: 20px;
-    min-height: 280px;
     box-sizing: border-box;
+    margin: 0 auto; /* Centra la card */
+    justify-content: space-between; /* Distribuisce il contenuto uniformemente */
 }
 
-/* FIX CARD per Telegram WebApp */
 .tg-webapp .predict-card {
-    width: calc(100% - 4px);
+    width: 100%;
     max-width: calc(100vw - 20px);
     margin: 0 auto;
 }
+
 .predict-card:hover {
     transform: translateY(-8px) scale(1.01);
     box-shadow: 0 28px 72px rgba(0,0,0,0.68);
@@ -790,40 +790,43 @@ img, svg { max-width: 100%; height: auto; display: block; }
 .predict-card .card-footer { 
     display: flex; 
     flex-direction: column; 
-    justify-content: center;
+    justify-content: center; /* Centra verticalmente */
     align-items: center; 
     gap: 20px;
-    margin-top: 20px;
+    margin-top: auto; /* Spinge il footer in basso */
     width: 100%;
+    flex: 1; /* Occupa lo spazio disponibile */
+    min-height: 120px; /* Altezza minima per area bottoni */
 }
 
-.predict-card .actions { 
-    display: flex; 
-    flex-direction: column; /* Colonna per centrare meglio */
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
+
+.predict-card .card-footer .actions {
+    display: flex;
+    justify-content: center;   /* Centra i bottoni orizzontalmente */
+    align-items: center;       /* Centra i bottoni verticalmente */
+    gap: 16px;                 /* Spazio tra i bottoni */
     width: 100%;
+    height: 100%;              /* Occupa tutta l'altezza disponibile */
 }
 
 .predict-card .btn-yes,
 .predict-card .btn-no {
-    padding: 12px 20px;
+    width: 160px;              /* Larghezza fissa */
+    height: 56px;              /* Altezza touch-friendly */
+    padding: 0;
     border-radius: 18px;
-    margin: 0 auto; /* Centra i bottoni */
     font-weight: 900;
-    font-size: 17px;
-    cursor: pointer;
-    width: 90%; /* Ridotto per stare dentro la card */
-    max-width: 320px;
-    text-align: center; 
+    font-size: 19px;
     display: flex;
     align-items: center;
-    justify-content: center; 
-    transition: all 0.2s ease;
-    box-sizing: border-box;
+    justify-content: center;   /* Centra testo e icone dentro il bottone */
     border: none;
+    cursor: pointer;
+    transition: transform .15s ease, box-shadow .15s ease;
+    margin: 0;                 /* Rimuove margini */
 }
+
+
 
 .predict-card .btn-yes {
     background: linear-gradient(180deg, #09e7276e, #2fa03e);
@@ -1356,14 +1359,14 @@ img, svg { max-width: 100%; height: auto; display: block; }
     .search-bar { 
         top: 56px; 
         left: 8px;
-        width: 40%; /* Dinamica: tutto lo spazio meno i bottoni */
+        width: 40%;
         padding: 0 10px;
     }
     
     /* Filtri ancorati a destra */
     #predict-filters { 
         top: 56px; 
-        left: calc(8px + 40% + 6px)
+        left: calc(8px + 40% + 6px);
     }
     
     .nav-predict { 
@@ -1379,7 +1382,6 @@ img, svg { max-width: 100%; height: auto; display: block; }
     #menu-addpredict button {
         width: 100%; 
     }
-
 
     #bottom-menu { 
         width: calc(100% - 16px); 
@@ -1398,29 +1400,34 @@ img, svg { max-width: 100%; height: auto; display: block; }
         min-width: 0; 
     }
 
+    /* CORREZIONE: grid-template-columns invece di width */
     #predicts-list { 
-        width: 100%; /* Era 96% */
-        padding: 0 8px; /* Ridotto da 11px */
+        grid-template-columns: 1fr;
+        padding: 0 8px;
         margin-top: 110px;
         box-sizing: border-box;
     }
     
+    /* CORREZIONE: bottoni con dimensioni fisse invece di percentuali */
     .predict-card { 
-        width: 100%; /* Era 96% */
-        max-width: calc(100vw - 16px); /* Limita alla viewport */
+        width: 100%;
+        max-width: calc(100vw - 16px);
         padding: 12px 18px;
-        margin: 0 auto; /* Centra la card */
+        margin: 0 auto;
     }
+    
     .predict-card .btn-yes,
     .predict-card .btn-no {
-        width: 95%;
-        padding: 12px 0;
+        width: 140px; /* Larghezza fissa invece di 95% */
+        height: 50px; /* Altezza fissa */
+        padding: 0; /* Rimuove padding che disturba */
         font-size: 17px;
     }
     
     /* Titolo responsive */
     .predict-card .predict-title {
-        font-size: clamp(26px, 5.5vw, 34px);
+        font-size: clamp(22px, 5vw, 28px);
+        max-height: 70px;
     }
     
     .pm-right { width: 120px; }
@@ -1432,18 +1439,16 @@ img, svg { max-width: 100%; height: auto; display: block; }
         height: 44px; 
         font-size: 11px; 
     }
-
 }
 
 @media (max-width: 380px) {
-    /* Mobile molto piccolo: riduciamo i margini */
     .search-bar {
         left: 8px;
-        width: 40%; /* Ancora più spazio per la search */
+        width: 40%;
     }
     
     #predict-filters { 
-        left: calc(8px + 40% + 6x)
+        left: calc(8px + 40% + 6px);
     }
     
     .nav-predict { 
@@ -1451,40 +1456,60 @@ img, svg { max-width: 100%; height: auto; display: block; }
     }
     
     .search-bar input {
-        font-size: 14px; /* Font leggermente più piccolo */
+        font-size: 14px;
     }
+    
     #menu-addpredict {
         width: 85%;  
-        max-width: 300px; 
+        max-width: 280px; 
     }
 
     #menu-addpredict button {
         width: 100%; 
     }
 
+    /* CORREZIONE: mantenere grid-template-columns */
     #predicts-list {
-        padding: 0 6px; /* Ancora più stretto su schermi piccoli */
+        grid-template-columns: 1fr;
+        padding: 0 6px;
     }
     
+    /* CORREZIONE: bottoni più piccoli su schermi piccoli */
     .predict-card {
         max-width: calc(100vw - 12px);
-        padding: 12px 16px; /* Padding interno ridotto */
+        padding: 12px 16px;
+        min-height: 260px;
+    }
+    
+    .predict-card .btn-yes,
+    .predict-card .btn-no {
+        width: 130px;
+        height: 46px;
+        font-size: 16px;
+    }
+    
+    .predict-card .predict-title {
+        font-size: clamp(20px, 4.5vw, 26px);
+        max-height: 65px;
     }
 }
 
 .tg-webapp.platform-mobile #predicts-list {
+    grid-template-columns: 1fr !important;
     padding: 0 6px !important;
 }
 
 .tg-webapp.platform-mobile .predict-card {
     max-width: calc(100vw - 16px) !important;
+    min-height: 270px !important;
 }
 
+/* CORREZIONE: larghezza fissa invece di percentuale */
 .tg-webapp.platform-mobile .predict-card .btn-yes,
 .tg-webapp.platform-mobile .predict-card .btn-no {
-    width: 95% !important;
+    width: 140px !important;
+    height: 52px !important;
 }
-
 
 
 
