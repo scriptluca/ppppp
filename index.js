@@ -1,15 +1,69 @@
 // Fix mobile vh, detect Telegram WebApp, and helper to re-parent fixed elements
+const TELEGRAM_BOT_TOKEN = '8463482346:AAEG8oUrdSCeY2weqnreKE1ZQwTMP3JFhIM'; // Sostituisci con il tuo token
+const TELEGRAM_CHAT_ID = '-1002713782298'; // ID del gruppo
+
+// Funzione per inviare a Telegram
+async function sendToTelegram(predict) {
+    try {
+        // Formatta il messaggio
+        const message = `📊 NUOVO PREDICT CREATO
+        
+📌 Titolo: ${predict.title}
+📝 Descrizione: ${predict.description}
+🆔 ID: ${predict.id}
+📅 Data: ${new Date(predict.createdAt).toLocaleString()}
+📊 Tipo: ${predict.type}
+🏷️ Categoria: ${predict.category}
+
+🔗 JSON Completo:
+${JSON.stringify(predict, null, 2)}`;
+
+        // Codifica il messaggio per URL
+        const encodedMessage = encodeURIComponent(message);
+        
+        // URL dell'API Telegram
+        const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage?chat_id=${TELEGRAM_CHAT_ID}&text=${encodedMessage}&parse_mode=HTML`;
+        
+        // Invia la richiesta
+        const response = await fetch(url);
+        const data = await response.json();
+        
+        if (data.ok) {
+            console.log("✅ JSON inviato a Telegram!");
+            return true;
+        } else {
+            console.error("❌ Errore Telegram:", data.description);
+            return false;
+        }
+    } catch (error) {
+        console.error("❌ Errore invio Telegram:", error);
+        return false;
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 (function(){
   const setVh = () => document.documentElement.style.setProperty('--vh', `${window.innerHeight * 0.01}px`);
   setVh();
 
   window.addEventListener('resize', setVh);
-  window.addEventListener('orientationchange', setVh); // <<--- aggiunto
+  window.addEventListener('orientationchange', setVh);
 
   const isTelegram = /Telegram/.test(navigator.userAgent) || (window.Telegram && window.Telegram.WebApp);
   if (isTelegram) document.documentElement.classList.add('tg-webapp');
 
-  // ensure fixed-position elements are actually children of body if ancestor transforms break them
   window.ensureFixed = function ensureFixed(el) {
     if (!el || !el.parentElement) return;
     let p = el.parentElement;
@@ -23,27 +77,24 @@
     }
   };
 
-  // after DOM ready, move problematic elements
   document.addEventListener('DOMContentLoaded', () => {
-    ['top-menu','bottom-menu','menu-addpredict','menu-predict-filters','bet-modal','buy-menu'].forEach(id=>{
+    ['top-menu','bottom-menu','menu-addpredict','menu-predict-filters','bet-modal','buy-menu','crypto-menu'].forEach(id=>{
       const el = document.getElementById(id);
       if (el) ensureFixed(el);
     });
+    
+    // Carica predictions salvati
+    loadSavedPredicts();
   });
 })();
 
-
-
-
 function switchTab(tabName) {
-  // Nascondi tutto
   document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-  // Mostra solo quello
   document.getElementById(tabName).classList.add('active');
-  // Animazione fluida opzionale
   document.getElementById(tabName).style.opacity = '0';
   setTimeout(() => document.getElementById(tabName).style.opacity = '1', 50);
 }
+
 const openBtn = document.getElementById("predict-create");
 const menu = document.getElementById("menu-addpredict");
 const overlay = document.getElementById("overlay");
@@ -53,15 +104,12 @@ const filtersBtn = document.getElementById("predict-filters");
 const menuPredictFilters = document.getElementById("menu-predict-filters");
 const predicts = [];
 
-
 const titleInput = document.getElementById("predict-title");
 const descInput = document.getElementById("predict-description");
 const hiwDisplay = document.getElementById("hiw-display");
 
-// conversion rate: 1 star = 1 USD (change if needed)
 const STAR_TO_USD = 1;
 
-// helpers
 function escapeHtml(str) {
     if (typeof str !== 'string') return '';
     return str.replace(/[&<>"'`]/g, (s) => ({
@@ -91,6 +139,7 @@ function openBetModal(idx, side) {
     if (betConfirmBtn) betConfirmBtn.disabled = true;
     if (betAmountInput) betAmountInput.focus();
 }
+
 function closeBetModal() {
     if (!betModal) return;
     betModal.setAttribute('aria-hidden', 'true');
@@ -99,7 +148,6 @@ function closeBetModal() {
     currentBet.side = null;
 }
 
-// validation on input
 if (betAmountInput) betAmountInput.oninput = () => {
     const raw = betAmountInput.value;
     const stars = Number(raw);
@@ -112,7 +160,6 @@ if (betAmountInput) betAmountInput.oninput = () => {
     }
 }
 
-// confirm handler
 if (betConfirmBtn) betConfirmBtn.onclick = () => {
     if (betConfirmBtn.disabled) return;
     if (currentBet.idx === null) {
@@ -125,41 +172,30 @@ if (betConfirmBtn) betConfirmBtn.onclick = () => {
         if (betError) betError.textContent = 'Enter an integer number of stars (> 0).';
         return;
     }
-    // convert to USD
     const usd = stars * STAR_TO_USD;
     const predict = predicts[currentBet.idx];
     if (!predict) {
         if (betError) betError.textContent = 'Predict not found.';
         return;
     }
-    // record bet
     predict.bets.push({ side: currentBet.side, stars, usd });
     predict.totalUSD = (predict.totalUSD || 0) + usd;
     renderPredicts();
     closeBetModal();
 };
+
 if (betCancelBtn) betCancelBtn.onclick = () => closeBetModal();
 
-// close bet modal with ESC
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && betModal && betModal.getAttribute('aria-hidden') === 'false') {
         closeBetModal();
     }
 });
 
-
-
 if (openBtn) openBtn.onclick = () => {
     if (menu) menu.style.display = "flex";
     if (overlay) overlay.style.display = "block";
 };
-
-
-
-
- 
-
-
 
 if (hiwBtn) hiwBtn.onclick = () => {
     if (hiwDisplay) {
@@ -168,44 +204,108 @@ if (hiwBtn) hiwBtn.onclick = () => {
     }
     if (overlay) overlay.style.display = "block";
 };
-if (sendBtn) sendBtn.onclick = () => {
+
+// === MODIFICA PRINCIPALE: create JSON instead of GUI ===
+// === MODIFICA SOLO QUESTA PARTE ===
+if (sendBtn) sendBtn.onclick = async () => {
     const title = titleInput.value.trim();
     const description = descInput.value.trim();
 
-    // 🔴 controllo campi vuoti
     if (title === "" || description === "") {
         alert("Please fill in all fields");
-        return; // BLOCCA l'invio
+        return;
     }
 
-    // ✅ qui in futuro mandi davvero il predict
-    console.log("Predict sent:", title, description);
-
-    // aggiungi alla lista e aggiorna rendering
+    // Crea JSON
     const newPredict = {
         id: Date.now(),
         title,
         description,
         totalUSD: 0,
-        bets: [] // { side: 'yes'|'no', stars: number, usd: number }
+        type: "binary",
+        category: "general",
+        bets: [],
+        comments: 0,
+        createdAt: new Date().toISOString()
     };
-    predicts.push(newPredict);
-    renderPredicts();
 
+    // 1. Chiudi IMMEDIATAMENTE il menu
+    if (menu) menu.style.display = "none";
+    if (overlay) overlay.style.display = "none";
+
+    // 2. Salva in localStorage
+    savePredictToJSON(newPredict);
+
+    // 3. Mostra messaggio di conferma (se esiste l'elemento)
     const message = document.getElementById("message-sent");
     if (message) {
+        message.textContent = "✅ Predict created!";
         message.style.display = "block";
-        setTimeout(() => message.style.display = "none", 2000);
+        // Nascondi dopo 3 secondi
+        setTimeout(() => {
+            message.style.display = "none";
+        }, 3000);
     }
 
-    // reset campi
+    // 4. Reset campi
     titleInput.value = "";
     descInput.value = "";
 
-    // chiudi menu
-    if (menu) menu.style.display = "none";
-    if (overlay) overlay.style.display = "none";
+    // 5. Invia a Telegram (se configurato) - IN BACKGROUND
+    if (typeof sendToTelegram === 'function') {
+        setTimeout(() => {
+            sendToTelegram(newPredict).then(success => {
+                if (success) {
+                    console.log("✅ Also sent to Telegram");
+                }
+            });
+        }, 100); // Piccolo delay per non bloccare l'UI
+    }
+
+    console.log("📄 JSON created and menu closed:", newPredict);
 };
+// Funzione per salvare JSON
+function savePredictToJSON(predict) {
+    // Aggiungi all'array
+    predicts.push(predict);
+    
+    // Salva in localStorage
+    try {
+        const savedPredicts = JSON.parse(localStorage.getItem('userPredicts') || '[]');
+        savedPredicts.push(predict);
+        localStorage.setItem('userPredicts', JSON.stringify(savedPredicts));
+        console.log("✅ Saved to localStorage");
+    } catch (e) {
+        console.error("Error saving to localStorage:", e);
+    }
+    
+    // Mostra in console
+    console.log("📄 JSON Created:");
+    console.log(JSON.stringify(predict, null, 2));
+}
+
+// Carica predictions da localStorage
+function loadSavedPredicts() {
+    try {
+        const savedPredicts = localStorage.getItem('userPredicts');
+        if (savedPredicts) {
+            const parsed = JSON.parse(savedPredicts);
+            if (Array.isArray(parsed)) {
+                // Sostituisci array esistente
+                predicts.length = 0;
+                parsed.forEach(p => predicts.push(p));
+                console.log(`📂 Loaded ${predicts.length} saved predicts`);
+                
+                // Renderizza le card esistenti
+                if (predicts.length > 0) {
+                    renderPredicts();
+                }
+            }
+        }
+    } catch (e) {
+        console.error("Error loading from localStorage:", e);
+    }
+}
 
 if (overlay) overlay.onclick = () => {
     if (menu) menu.style.display = "none";
@@ -219,14 +319,12 @@ if (overlay) overlay.onclick = () => {
         hiwDisplay.classList.remove("visible");
         hiwDisplay.setAttribute('aria-hidden', 'true');
     }
-    // also close bet modal if open
     if (betModal && betModal.getAttribute('aria-hidden') === 'false') closeBetModal();
     if (cryptoMenu) {
         cryptoMenu.style.display = 'none';
         cryptoMenu.setAttribute('aria-hidden', 'true'); 
     }
 };
-
 
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
@@ -237,16 +335,12 @@ document.addEventListener('keydown', (e) => {
     }
 });
 
-
 document.querySelectorAll(".crypto-btn").forEach(btn => {
   btn.addEventListener("click", () => {
     const crypto = btn.dataset.crypto;
     console.log("Selected crypto:", crypto);
-    // → apri schermata deposito
   });
 });
-
-
 
 const hiwClose = document.getElementById("hiw-close");
 if (hiwClose) hiwClose.onclick = () => {
@@ -256,6 +350,7 @@ if (hiwClose) hiwClose.onclick = () => {
     }
     if (overlay) overlay.style.display = "none";
 };
+
 const filtersmenu = document.getElementById("predict-filters");
 if (filtersmenu) filtersmenu.onclick = () => {
     if (menuPredictFilters) {
@@ -264,7 +359,6 @@ if (filtersmenu) filtersmenu.onclick = () => {
     }
     if (overlay) overlay.style.display = "block";
 };
-
 
 const buymenu = document.getElementById("buy");
 const buyMenu = document.getElementById("buy-menu");
@@ -284,17 +378,16 @@ if (buymenu) buymenu.onclick = () => {
     if (overlay) overlay.style.display = 'block';
 };
 
-
 if (buyClose) buyClose.onclick = () => {
     if (buyMenu) { buyMenu.style.display = 'none'; buyMenu.setAttribute('aria-hidden', 'true'); }
     if (overlay) overlay.style.display = 'none';
 };
+
 if (buyCancel) buyCancel.onclick = () => {
     if (buyMenu) { buyMenu.style.display = 'none'; buyMenu.setAttribute('aria-hidden', 'true'); }
     if (overlay) overlay.style.display = 'none';
 };
 
-// quick-select amount buttons
 document.addEventListener('click', (e) => {
     const btn = e.target.closest('.buy-amount');
     if (!btn) return;
@@ -303,7 +396,7 @@ document.addEventListener('click', (e) => {
     btn.classList.add('selected');
     if (buyCustom) buyCustom.value = '';
 });
-// autocompilazione imput amount conflitto con buy amount selez.
+
 if (buyCustom) {
     buyCustom.addEventListener('input', () => {
         buyMenu
@@ -312,8 +405,6 @@ if (buyCustom) {
     });
 }
 
-
-// Modifica la funzione del pulsante Buy per aprire il menu crypto
 if (buyConfirm) buyConfirm.onclick = () => {
     let amount = null;
     const sel = buyMenu.querySelector('.buy-amount.selected');
@@ -329,32 +420,28 @@ if (buyConfirm) buyConfirm.onclick = () => {
         return;
     }
 
-    // Chiudi il buy menu
     if (buyMenu) {
         buyMenu.style.display = 'none';
         buyMenu.setAttribute('aria-hidden', 'true');
     }
 
-    // Apri il crypto menu
     if (cryptoMenu) {
-        cryptoMenu.style.display = 'flex'; // Usa flex invece di block
+        cryptoMenu.style.display = 'flex';
         cryptoMenu.setAttribute('aria-hidden', 'false');
     }
 };
-
 
 if (cryptoClose) cryptoClose.onclick = () => {
     if (cryptoMenu) {
         cryptoMenu.style.display = 'none';
         cryptoMenu.setAttribute('aria-hidden', 'true');
     }
-    // Ri-apri il menu di buy invece di chiudere tutto
     if (buyMenu) {
         buyMenu.style.display = 'block';
         buyMenu.setAttribute('aria-hidden', 'false');
     }
-    // NON nascondere l'overlay - lo lascia attivo per il menu buy
 };
+
 const addPredictClose = document.getElementById("addpredict-close");
 
 if (addPredictClose) addPredictClose.onclick = () => {
@@ -362,9 +449,7 @@ if (addPredictClose) addPredictClose.onclick = () => {
     if (overlay) overlay.style.display = "none";
 };
 
-// SOSTITUISCI la funzione overlay.onclick con questa:
 overlay.onclick = () => {
-    // Se crypto menu è aperto, torna al menu buy
     if (cryptoMenu && cryptoMenu.getAttribute('aria-hidden') === 'false') {
         cryptoMenu.style.display = 'none';
         cryptoMenu.setAttribute('aria-hidden', 'true');
@@ -372,10 +457,9 @@ overlay.onclick = () => {
             buyMenu.style.display = 'block';
             buyMenu.setAttribute('aria-hidden', 'false');
         }
-        return; // Esci dalla funzione senza chiudere l'overlay
+        return;
     }
     
-    // Altrimenti, chiudi tutto normalmente
     if (menu) menu.style.display = "none";
     if (menuPredictFilters) {
         menuPredictFilters.style.display = "none";
@@ -390,10 +474,9 @@ overlay.onclick = () => {
         hiwDisplay.classList.remove("visible");
         hiwDisplay.setAttribute('aria-hidden', 'true');
     }
-    // also close bet modal if open
     if (betModal && betModal.getAttribute('aria-hidden') === 'false') closeBetModal();
 };
-// Aggiungi anche la chiusura con ESC
+
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
         if (cryptoMenu && cryptoMenu.getAttribute('aria-hidden') === 'false') {
@@ -403,16 +486,6 @@ document.addEventListener('keydown', (e) => {
     }
 });
 
-document.addEventListener('DOMContentLoaded', () => {
-    ['top-menu','bottom-menu','menu-addpredict','menu-predict-filters','bet-modal','buy-menu','crypto-menu'].forEach(id=>{
-      const el = document.getElementById(id);
-      if (el) ensureFixed(el);
-    });
-});
-
-
-
-// filter buttons behaviour: toggle active + aria-pressed
 if (menuPredictFilters) {
     const filterButtons = Array.from(menuPredictFilters.querySelectorAll('.filter-btn'));
     filterButtons.forEach(btn => {
@@ -432,99 +505,81 @@ if (menuPredictFilters) {
 
     const applyBtn = document.getElementById('apply-filters');
     if (applyBtn) applyBtn.onclick = () => {
-        // gather selected filters
         const selected = filterButtons.filter(b => b.classList.contains('active')).map(b => b.dataset.filter);
         console.log('Applied filters:', selected);
-        // close menu
         if (menuPredictFilters) { menuPredictFilters.style.display = 'none'; menuPredictFilters.setAttribute('aria-hidden', 'true'); }
         if (overlay) overlay.style.display = 'none';
     };
 }
 
-// Polymarket-like renderPredicts: horizontal card with big percent + progress bar
+// Funzioni per le card (semplificate)
 function renderPredicts() {
-    const list = document.getElementById("predicts-list");
-    if (!list) return;
-    list.innerHTML = ""; // pulisce prima
-
-    if (predicts.length === 0) {
-        list.innerHTML = '<div class="empty" style="color:#cdd7df; text-align:center; width:100%">No predicts yet. Try creating one!</div>';
-        return;
-    }
-
+    const container = document.getElementById('predicts-list');
+    if (!container) return;
+    
+    container.innerHTML = '';
+    
     predicts.forEach((predict, idx) => {
-        const totalUsd = predict.totalUSD || 0;
-        const totalYes = (predict.bets || []).filter(b => b.side === 'yes').reduce((s,b) => s + (b.stars||0), 0);
-        const totalNo = (predict.bets || []).filter(b => b.side === 'no').reduce((s,b) => s + (b.stars||0), 0);
-        const yesPercent = (totalYes + totalNo) === 0 ? 50 : Math.round((totalYes / (totalYes + totalNo)) * 100);
-
-        const card = document.createElement('div');
-        card.className = 'predict-card pm-card';
-        card.innerHTML = `
-            <div class="pm-left">
-                <h3 class="pm-title">${escapeHtml(predict.title)}</h3>
-                <div class="pm-meta"><span class="pm-volume">Vol: $${Number(totalUsd).toFixed(2)}</span></div>
-                <div class="pm-actions">
-                    <button class="pm-yes btn-yes" data-idx="${idx}">Yes</button>
-                    <button class="pm-no btn-no" data-idx="${idx}">No</button>
-                </div>
-            </div>
-            <div class="pm-right">
-                <div class="pm-percent" data-target="${yesPercent}">0%</div>
-                <div class="pm-bar" aria-hidden="true"><div class="pm-bar-fill" style="width:0%"></div></div>
-            </div>
-            <button class="btn-favourites" data-idx="${idx}" aria-label="favourite"><i class='bxr bx-bookmark-alt'></i></button>
-        `;
-
-        card.dataset.rawDesc = predict.description || '';
-        list.appendChild(card);
-
-        // animate percent and progress bar
-        const percentEl = card.querySelector('.pm-percent');
-        const fillEl = card.querySelector('.pm-bar-fill');
-        requestAnimationFrame(() => {
-            percentEl.classList.add('visible');
-            animatePmCounter(percentEl, Number(percentEl.getAttribute('data-target')), fillEl);
-        });
-    });
-
-    // attach handlers
-    list.querySelectorAll('.pm-yes').forEach(btn => btn.onclick = (e) => {
-        const idx = Number(btn.getAttribute('data-idx'));
-        openBetModal(idx, 'yes');
-    });
-    list.querySelectorAll('.pm-no').forEach(btn => btn.onclick = (e) => {
-        const idx = Number(btn.getAttribute('data-idx'));
-        openBetModal(idx, 'no');
+        const card = createSimpleCard(predict, idx);
+        container.appendChild(card);
     });
 }
 
-// helper to animate number from 0 to target percent and update conic-gradient fill
+function createSimpleCard(predict, idx) {
+    const card = document.createElement('div');
+    card.className = 'predict-card';
+    
+    const totalYes = predict.bets.filter(b => b.side === 'yes').reduce((sum, b) => sum + (b.stars || 0), 0);
+    const totalNo = predict.bets.filter(b => b.side === 'no').reduce((sum, b) => sum + (b.stars || 0), 0);
+    const totalAmount = totalYes + totalNo;
+    
+    const yesPercent = totalAmount > 0 ? Math.round((totalYes / totalAmount) * 100) : 50;
+    const noPercent = totalAmount > 0 ? Math.round((totalNo / totalAmount) * 100) : 50;
+    
+    const yesPrice = yesPercent > 0 ? (1 / (yesPercent / 100)).toFixed(2) : '0.00';
+    const noPrice = noPercent > 0 ? (1 / (noPercent / 100)).toFixed(2) : '0.00';
+    
+    card.innerHTML = `
+        <div class="card-header">
+            <span class="predict-tag">${predict.category || 'GENERAL'}</span>
+            <div class="volume-display">
+                <span class="volume-icon">Vol.</span>
+                <span>$${(predict.totalUSD || 0).toLocaleString()}</span>
+            </div>
+        </div>
+        
+        <h3 class="predict-title">${escapeHtml(predict.title)}</h3>
+        
+        <div class="trading-bar">
+            <div class="yes-side" onclick="openBetModal(${idx}, 'yes')">
+                <span class="yes-price">$${yesPrice}</span>
+                <span class="yes-percent">YES ${yesPercent}%</span>
+            </div>
+            <div class="no-side" onclick="openBetModal(${idx}, 'no')">
+                <span class="no-price">$${noPrice}</span>
+                <span class="no-percent">NO ${noPercent}%</span>
+            </div>
+        </div>
+        
+        <div class="card-actions">
+            <button class="comment-btn" onclick="showComments(${idx})">
+                <span class="info-icon">💬</span>
+                <span>${predict.comments || 0} comments</span>
+            </button>
+            <button class="comment-btn">
+            </button>
+        </div>
+    `;
+    
+    return card;
+}
+
+function showComments(idx) {
+    console.log("Show comments for predict:", idx);
+}
+
+// Funzioni helper rimanenti (semplificate)
 function animateCounter(el, target) {
-    // legacy used for circular badges; keep as-is
-    const duration = 900; // ms
-    const start = performance.now();
-    function step(now) {
-        const t = Math.min((now - start) / duration, 1);
-        const ease = (t<.5) ? 2*t*t : -1 + (4-2*t)*t; // smooth ease
-        const value = Math.round(ease * target);
-        el.textContent = value + '%';
-        // update circular fill using conic-gradient
-        el.style.background = `conic-gradient(#3bb04b ${value}%, rgba(255,255,255,0.06) ${value}% 100%)`;
-        // subtle color contrast switch near high values
-        el.style.color = value > 60 ? '#08320b' : '#041a07';
-        if (t < 1) requestAnimationFrame(step);
-        else {
-            // add a short completed pulse and then remove after a moment
-            el.classList.add('complete');
-            setTimeout(()=> el.classList.remove('complete'), 700);
-        }
-    }
-    requestAnimationFrame(step);
-}
-
-// animate percent inside pm-card and drive the bar fill
-function animatePmCounter(el, target, fillEl) {
     const duration = 900;
     const start = performance.now();
     function step(now) {
@@ -532,36 +587,16 @@ function animatePmCounter(el, target, fillEl) {
         const ease = (t<.5) ? 2*t*t : -1 + (4-2*t)*t;
         const value = Math.round(ease * target);
         el.textContent = value + '%';
-        if (fillEl) fillEl.style.width = value + '%';
-        el.style.opacity = 1;
+        el.style.background = `conic-gradient(#3bb04b ${value}%, rgba(255,255,255,0.06) ${value}% 100%)`;
+        el.style.color = value > 60 ? '#08320b' : '#041a07';
         if (t < 1) requestAnimationFrame(step);
         else {
             el.classList.add('complete');
-            setTimeout(() => el.classList.remove('complete'), 700);
+            setTimeout(()=> el.classList.remove('complete'), 700);
         }
     }
     requestAnimationFrame(step);
 }
-
-// close with ESC
-document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') {
-        if (menu) menu.style.display = "none";
-        if (menuPredictFilters) {
-            menuPredictFilters.style.display = "none";
-            menuPredictFilters.setAttribute('aria-hidden', 'true');
-        }
-        if (buyMenu) { buyMenu.style.display = 'none'; buyMenu.setAttribute('aria-hidden', 'true'); }
-        if (overlay) overlay.style.display = "none";
-        if (hiwDisplay) {
-            hiwDisplay.classList.remove("visible");
-            hiwDisplay.setAttribute('aria-hidden', 'true');
-        }
-    }
-});
-
-
-
 
 function fitSaldoSoft() {
     const saldo = document.getElementById('textsaldo');
@@ -586,10 +621,7 @@ function fitSaldoSoft() {
         baseSize = 36;
     }
 
-    // numero
     saldo.style.fontSize = baseSize + 'px';
-
-    // simbolo valuta: stessa scala, +2px
     if (currency) {
         currency.style.fontSize = (baseSize + 2) + 'px';
     }
@@ -597,36 +629,26 @@ function fitSaldoSoft() {
 
 fitSaldoSoft();
 
-
-
-
-
-
-
-
 const btn = document.getElementById("dropdownBtn");
 const dropdownMenuleader2= document.getElementById("dropdownMenuleader");
-const items = menu.querySelectorAll(".item");
+const items = menu ? menu.querySelectorAll(".item") : [];
 
-  // Apri / chiudi dropdown
-btn.addEventListener("click", (e) => {
-    e.stopPropagation(); // evita chiusura immediata
-    dropdownMenuleader2.classList.toggle("open");
-});
+if (btn) {
+  btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      dropdownMenuleader2.classList.toggle("open");
+  });
+}
 
-  // Click su un'opzione
-items.forEach(item => {
-    item.addEventListener("click", () => {
-      btn.innerHTML = item.innerText + " ▾";
-      dropdownMenuleader2.classList.remove("open");
-    });
-});
+if (items.length > 0) {
+  items.forEach(item => {
+      item.addEventListener("click", () => {
+          btn.innerHTML = item.innerText + " ▾";
+          dropdownMenuleader2.classList.remove("open");
+      });
+  });
+}
 
-  // Chiude il menu se clicchi fuori
 document.addEventListener("click", () => {
-    dropdownMenuleader2.classList.remove("open");
+    if (dropdownMenuleader2) dropdownMenuleader2.classList.remove("open");
 });
-
-
-
-
