@@ -39,8 +39,8 @@ html.platform-desktop {
     --safe-bottom: 20px !important;
     max-width: 600px;
     margin: 0 auto;
-    border-left: 1px solid #2f3f4f;
-    border-right: 1px solid #2f3f4f;
+    border-left: 1px solid #25313d;
+    border-right: 1px solid #25313d;
 }
 
 html.platform-desktop .search-bar,
@@ -90,7 +90,7 @@ body {
     display: flex;
     align-items: center;
     gap: 5px;
-    background-color: #2f3f4f;
+    background-color: #25313d;
     padding: 10px 16px;
     border-radius:15px;
     z-index: 9999;
@@ -150,7 +150,7 @@ img, svg { max-width: 100%; height: auto; display: block; }
     width: 40%; 
     height: 42px;
     
-    background-color: #2f3f4f;
+    background-color: #25313d;
     border-radius: 28px;
     
     display: flex;
@@ -208,7 +208,7 @@ img, svg { max-width: 100%; height: auto; display: block; }
     width: 44px;
     height: 42px;
     
-    background-color: #2f3f4f;
+    background-color: #25313d;
     border-radius: 45%;
     border: none;
     color: #aaaaaadc;
@@ -231,7 +231,7 @@ img, svg { max-width: 100%; height: auto; display: block; }
 
     width: 45px;
     height: 43.5px;
-    background-color: #2f3f4f;
+    background-color: #25313d;
     border-radius: 47%;
     
     display: flex;
@@ -262,7 +262,7 @@ img, svg { max-width: 100%; height: auto; display: block; }
     width: calc(100% - 20px);
     max-width: 900px;
     height: 56px;
-    background-color: #2f3f4f;
+    background-color: #25313d;
     display: flex;
     justify-content: space-around;
     align-items: center;
@@ -299,7 +299,7 @@ img, svg { max-width: 100%; height: auto; display: block; }
     width: 240px;
     height: 240px;
     border-radius: 50%;
-    border: 2.8px solid #2f3f4f;
+    border: 2.8px solid #25313d;
     background-color: transparent;
     box-shadow: 0 8px 28px rgba(0,0,0,0.55);
     display: flex;
@@ -393,7 +393,7 @@ img, svg { max-width: 100%; height: auto; display: block; }
     align-items: center;
     justify-content: center;
     gap: 10px;
-    background-color: #2f3f4f;
+    background-color: #25313d;
     padding: 12px 13px;
     border-radius:12px;
     cursor: pointer;
@@ -555,7 +555,7 @@ img, svg { max-width: 100%; height: auto; display: block; }
 
 /* === CORREZIONE HEADER MENU ADD PREDICT === */
 #menu-addpredict input {
-    background-color: #2f3f4f;
+    background-color: #25313d;
     color: #aaaaaadc;
     padding: 10px 12px;
     border-radius: 8px;
@@ -598,7 +598,7 @@ img, svg { max-width: 100%; height: auto; display: block; }
     max-width: 85vw;
     padding: 20px;
     border-radius: 18px;
-    background: #2f3f4f;
+    background: #25313d;
     display: none;
     flex-direction: column;
     gap: 16px;
@@ -652,7 +652,7 @@ img, svg { max-width: 100%; height: auto; display: block; }
 
 #predict-description {
     color:#aaaaaadc;
-    background-color: #2f3f4f;
+    background-color: #25313d;
     border-radius: 5px;
     border-color: #aaaaaadc;
 }
@@ -686,7 +686,7 @@ img, svg { max-width: 100%; height: auto; display: block; }
     left: 50%;
     width: 280px; /* Ridotto da 320px */
     max-width: 85vw; /* Aggiunto limite massimo */
-    background: #2f3f4f;
+    background: #25313d;
     padding: 20px; /* Ridotto padding */
     border-radius: 15px;
     color: white;
@@ -1006,7 +1006,7 @@ img, svg { max-width: 100%; height: auto; display: block; }
     left: 50%;
     transform: translate(-50%, -50%);
     width: 355px;
-    background: #2f3f4f;
+    background: #25313d;
     padding: 26px;
     border-radius: 14px;
     color: white;
@@ -1117,7 +1117,7 @@ img, svg { max-width: 100%; height: auto; display: block; }
 
 .line {
   height: 2px;
-  background-color: #2f3f4f;
+  background-color: #25313d;
   width: calc(100% - 22px); /* 11px da entrambi i lati */
   border-radius: 2px;
   position: relative;
@@ -1144,7 +1144,7 @@ img, svg { max-width: 100%; height: auto; display: block; }
   background-color: #1e2b3b;
   color: #fff;
   padding: 0; 
-  border: 1px solid #2f3f4f;
+  border: 1px solid #25313d;
   border-radius: 13px;
   cursor: pointer;
   height:35px;
