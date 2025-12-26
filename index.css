@@ -730,19 +730,20 @@ img, svg { max-width: 100%; height: auto; display: block; }
 .predict-card {
     width: 100%;
     max-width: 340px;
-    min-height: 150px; /* RIDOTTO da 200px */
-    height: auto; /* Altezza automatica */
+    min-height: 140px !important; /* PIÙ BASSA */
+    height: auto;
     background: #1a1d23;
-    border-radius: 10px; /* Ridotto da 12px */
-    padding: 14px; /* Ridotto da 16px */
+    border-radius: 10px;
+    padding: 12px; /* RIDOTTO da 14px */
     color: #ffffff;
     border: 1px solid #2d343c;
     display: flex;
     flex-direction: column;
-    gap: 10px; /* Ridotto da 12px */
+    gap: 8px; /* RIDOTTO da 10px */
     box-sizing: border-box;
     cursor: pointer;
     transition: all 0.2s ease;
+    position: relative;
 }
 
 .predict-card:hover {
