@@ -74,7 +74,7 @@ html.tg-webapp body {
 .bottom-nav { position: fixed; bottom: 0; width: 100%; }
 
 body {
-    background-color: #1e2b3b;
+    background-color: #121a24f3;
 }
 
 /* TOP MENU */
@@ -414,7 +414,8 @@ img, svg { max-width: 100%; height: auto; display: block; }
     left: 50%;
     transform: translate(-50%, -50%);
     width: 320px;
-    background: #2f3f4f;
+    background: #1a1d23;
+    border: 1px solid #2d343c;
     padding: 20px;
     border-radius: 18px;
     color:white;
@@ -1198,7 +1199,8 @@ img, svg { max-width: 100%; height: auto; display: block; }
   bottom: 0;
   height: 55vh;
   max-height: 520px;
-  background-color: #1e2b3b;
+  background: #1a1d23;
+  border: 1px solid #2d343c;
   border-radius: 22px 22px 0 0;
   transform: translateY(100%);
   transition: transform 0.35s ease;
@@ -1413,7 +1415,7 @@ img, svg { max-width: 100%; height: auto; display: block; }
     .predict-card { 
         width: 100%;
         max-width: calc(100vw - 16px);
-        padding: 12px 18px;
+        padding: 11px 18px;
         margin: 0 auto;
     }
     
@@ -1479,7 +1481,7 @@ img, svg { max-width: 100%; height: auto; display: block; }
     .predict-card {
         max-width: calc(100vw - 12px);
         padding: 12px 16px;
-        min-height: 260px;
+        min-height: 240px;
     }
     
     .predict-card .btn-yes,
