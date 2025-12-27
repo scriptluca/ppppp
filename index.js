@@ -1,21 +1,15 @@
 // Fix mobile vh, detect Telegram WebApp, and helper to re-parent fixed elements
-const TELEGRAM_BOT_TOKEN = 'P3JFhIM'; // Sostituisci con il tuo token
-const TELEGRAM_CHAT_ID = '-nigg98'; // ID del gruppo
+const TELEGRAM_BOT_TOKEN = '84ZQwTMP3JFhIM'; // Sostituisci con il tuo token
+const TELEGRAM_CHAT_ID = '-1002298'; // ID del gruppo
+let selectedType = null;
+let selectedCategory = null;
 
 // Funzione per inviare a Telegram
 async function sendToTelegram(predict) {
     try {
         // Formatta il messaggio
         const message = `📊 NUOVO PREDICT CREATO
-        
-📌 Titolo: ${predict.title}
-📝 Descrizione: ${predict.description}
-🆔 ID: ${predict.id}
-📅 Data: ${new Date(predict.createdAt).toLocaleString()}
-📊 Tipo: ${predict.type}
-🏷️ Categoria: ${predict.category}
 
-🔗 JSON Completo:
 ${JSON.stringify(predict, null, 2)}`;
 
         // Codifica il messaggio per URL
@@ -205,8 +199,77 @@ if (hiwBtn) hiwBtn.onclick = () => {
     if (overlay) overlay.style.display = "block";
 };
 
-// === MODIFICA PRINCIPALE: create JSON instead of GUI ===
-// === MODIFICA SOLO QUESTA PARTE ===
+
+
+document.addEventListener("DOMContentLoaded", () => {
+    const typeBtn = document.getElementById("type-input");
+    const categoryBtn = document.getElementById("category-input");
+
+    const typeDropdown = document.getElementById("dropdowninput-type");
+    const categoryDropdown = document.getElementById("dropdowninput-category");
+
+    // funzione per chiudere tutti i dropdown
+    function closeAllDropdowns() {
+        typeDropdown.style.display = "none";
+        categoryDropdown.style.display = "none";
+    }
+
+    // TOGGLE TYPE
+    typeBtn.addEventListener("click", (e) => {
+        e.stopPropagation(); // evita chiusura immediata
+        const isOpen = typeDropdown.style.display === "block";
+        closeAllDropdowns();
+        typeDropdown.style.display = isOpen ? "none" : "block";
+    });
+
+    // TOGGLE CATEGORY
+    categoryBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const isOpen = categoryDropdown.style.display === "block";
+        closeAllDropdowns();
+        categoryDropdown.style.display = isOpen ? "none" : "block";
+    });
+
+    // CLICK SU ITEM TYPE
+    typeDropdown.querySelectorAll(".item").forEach(item => {
+        item.addEventListener("click", () => {
+            selectedType = item.textContent.toLowerCase(); // valore reale
+            typeBtn.textContent = item.textContent + " ▾";
+            typeDropdown.style.display = "none";
+        });
+    });
+
+
+    // CLICK SU ITEM CATEGORY
+    categoryDropdown.querySelectorAll(".item").forEach(item => {
+        item.addEventListener("click", () => {
+            selectedCategory = item.textContent.toLowerCase();
+            categoryBtn.textContent = item.textContent + " ▾";
+            categoryDropdown.style.display = "none";
+        });
+    });
+
+
+    // CLICK FUORI → CHIUDE TUTTO
+    document.addEventListener("click", closeAllDropdowns);
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//  JSON card sugggested ===
+
 if (sendBtn) sendBtn.onclick = async () => {
     const title = titleInput.value.trim();
     const description = descInput.value.trim();
@@ -217,17 +280,23 @@ if (sendBtn) sendBtn.onclick = async () => {
     }
 
     // Crea JSON
+    if (!selectedType || !selectedCategory) {
+        alert("Please select type and category");
+        return;
+    }
+
     const newPredict = {
         id: Date.now(),
         title,
         description,
         totalUSD: 0,
-        type: "binary",
-        category: "general",
+        type: selectedType,
+        category: selectedCategory,
         bets: [],
         comments: 0,
         createdAt: new Date().toISOString()
     };
+
 
     // 1. Chiudi IMMEDIATAMENTE il menu
     if (menu) menu.style.display = "none";
@@ -250,6 +319,10 @@ if (sendBtn) sendBtn.onclick = async () => {
     // 4. Reset campi
     titleInput.value = "";
     descInput.value = "";
+    selectedType = null;
+    selectedCategory = null;
+    document.getElementById("type-input").textContent = "Type ▾";
+    document.getElementById("category-input").textContent = "Category ▾";
 
     // 5. Invia a Telegram (se configurato) - IN BACKGROUND
     if (typeof sendToTelegram === 'function') {
@@ -263,13 +336,14 @@ if (sendBtn) sendBtn.onclick = async () => {
     }
 
     console.log("📄 JSON created and menu closed:", newPredict);
+
 };
 // Funzione per salvare JSON
 function savePredictToJSON(predict) {
     // Aggiungi all'array
     predicts.push(predict);
     
-    // Salva in localStorage
+    // Salva in localStorage ,, METTERE DB E SALVARE DA DB
     try {
         const savedPredicts = JSON.parse(localStorage.getItem('userPredicts') || '[]');
         savedPredicts.push(predict);
@@ -284,7 +358,7 @@ function savePredictToJSON(predict) {
     console.log(JSON.stringify(predict, null, 2));
 }
 
-// Carica predictions da localStorage
+// Carica predictions da localStorage ,, CARICARE DA DB
 function loadSavedPredicts() {
     try {
         const savedPredicts = localStorage.getItem('userPredicts');
@@ -652,4 +726,3 @@ if (items.length > 0) {
 document.addEventListener("click", () => {
     if (dropdownMenuleader2) dropdownMenuleader2.classList.remove("open");
 });
-
