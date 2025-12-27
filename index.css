@@ -553,98 +553,121 @@ img, svg { max-width: 100%; height: auto; display: block; }
 /* === MODAL AGGIUNTA PREDICT === */
 
 /* === CORREZIONE HEADER MENU ADD PREDICT === */
-#menu-addpredict input {
-    background-color: #25313d;
-    color: #aaaaaadc;
-    padding: 10px 12px;
-    border-radius: 8px;
-    border: 1px solid #aaaaaadc;
-    width: 100%;
+#menu-addpredict {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    width: 92vw;
+    max-width: 360px;
+
+    padding: 20px 18px;
+    border-radius: 20px;
+
+    background: linear-gradient(
+        180deg,
+        #2b3947 0%,
+        #25313d 100%
+    );
+
+    display: none;
+    flex-direction: column;
+    gap: 16px;
+
+    color: white;
+    z-index: 9999;
     box-sizing: border-box;
-    font-size: 15px;
+
+    border: 1px solid rgba(255,255,255,0.08);
+    box-shadow: 0 18px 45px rgba(0,0,0,0.55);
 }
+
 
 .tg-webapp #menu-addpredict {
     width: calc(100% - 40px);
     max-width: 280px;
 }
 
-#menu-addpredict button#sent-predict-button {
-    background-color: #37b24d;
-    color: white;
-    padding: 12px;
-    border-radius: 10px;
-    width: 100%;
-    box-sizing: border-box;
-    border: none;
-    cursor: pointer;
-    font-weight: 600;
+#menu-addpredict #sent-predict-button {
+    margin-top: 6px;
+    height: 46px;
+
+    background: linear-gradient(180deg, #3bb04b, #2fa03e);
+    border-radius: 14px;
+
     font-size: 16px;
-    margin-top: 5px;
-    transition: background-color 0.2s;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+
+    border: none;
+    color: white;
+    cursor: pointer;
+
+    box-shadow: 0 8px 20px rgba(47,160,62,0.25);
 }
+
 
 #menu-addpredict button#sent-predict-button:hover {
     background-color: #2fa03e;
 }
 
-#menu-addpredict {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 300px;
-    max-width: 85vw;
-    padding: 20px;
-    border-radius: 18px;
-    background: #25313d;
-    display: none;
-    flex-direction: column;
-    gap: 16px;
-    color: white;
-    z-index: 9999;
-    box-sizing: border-box;
-    border: 1px solid rgba(255,255,255,0.1);
-}
+
 
 .menuadd-predict-header {
     position: relative;
-    width: 100%;
-    min-height: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 10px;
+    margin-bottom: 6px;
 }
 
 #menu-addpredict h2 {
-    text-align: center;
-    font-size: 20px;
+    font-size: 19px;
+    font-weight: 700;
+    letter-spacing: 0.2px;
     margin: 0;
-    padding: 0 30px;
-    width: 100%;
-    box-sizing: border-box;
 }
 
 #addpredict-close {
     position: absolute;
-    top: 50%;
-    right: 0;
+    right: -12px;;
+    top: 47%;
     transform: translateY(-50%);
-    background: transparent;
-    color: #ddd;
-    font-size: 24px;
+
+    background: rgba(255, 255, 255, 0.055);
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: #cfd6dd;
+    font-size: 18px;
     border: none;
     cursor: pointer;
-    padding: 4px 6px;
-    line-height: 1;
-    z-index: 2;
-    width: auto;
-    height: auto;
-    display: flex;
 }
 
 
+#menu-addpredict input,
+#menu-addpredict textarea {
+    background: #1e2a35;
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 12px;
+
+    padding: 12px 14px;
+    font-size: 15px;
+    color: #e6eef3;
+
+    outline: none;
+}
+
+#menu-addpredict textarea {
+    resize: none;
+    min-height: 90px;
+}
 
 
 
@@ -655,6 +678,118 @@ img, svg { max-width: 100%; height: auto; display: block; }
     border-radius: 5px;
     border-color: #aaaaaadc;
 }
+
+.inputs-btn-addpredict {
+    display: flex;
+    gap: 12px;
+}
+
+.inputs-btn-addpredict button {
+    flex: 1;
+    height: 44px;
+    width:100%;
+
+    background: #1e2a35;
+    border: 1px solid rgba(255,255,255,0.14);
+    border-radius: 14px;
+
+    color: #cfd6dd;
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+
+.dropdown-wrapper {
+    position: relative;
+    flex: 1;
+}
+
+.dropdown-menuinputs-add {
+    position: absolute;
+    bottom: calc(100% + 10px);
+    left: 0;
+    width: 100%;
+
+    display: none;
+    gap: 10px;
+    padding: 10px;
+
+    background: #1b2530;
+    border-radius: 16px;
+    border: 1px solid rgba(255,255,255,0.12);
+
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+
+.dropdown-menuinputs-add::-webkit-scrollbar {
+    display: none;
+}
+
+.dropdown-menuinputs-add .item {
+    padding: 8px 16px;
+    background: #25313d;
+    border-radius: 999px;
+
+    font-size: 13px;
+    font-weight: 600;
+    color: #e6eef3;
+
+    border: 1px solid rgba(255,255,255,0.12);
+    cursor: pointer;
+    white-space: nowrap;
+
+    transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.dropdown-menuinputs-add .item:hover {
+    background: #2f3e4e;
+    transform: scale(1.06);
+}
+
+
+.dropdown-menuleader {
+  position: absolute;
+  top: 120%; 
+  right: 0;
+  width: 140px; 
+  background-color: #161a22;
+  border: 1px solid #2a2e39;
+  border-radius: 8px;
+  display: none;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  z-index: 20; 
+}
+
+.dropdown-menuleader.open {
+  display: block;
+}
+
+.item {
+  padding: 10px 14px; /* Padding ridotto */
+  color: #cfd3da;
+  cursor: pointer;
+  font-size: 15px; /* Font più piccolo */
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.item:hover {
+  background-color: #2a2e39;
+  color: #ffffff;
+}
+
+
+
+
+
+
+
+
+
+
 
 /* === HOW IT WORKS MODAL === */
 #hiw {
@@ -1179,16 +1314,16 @@ img, svg { max-width: 100%; height: auto; display: block; }
 
 .dropdown-menuleader {
   position: absolute;
-  top: 120%; /* Posizionato sotto il bottone */
-  right: 0; /* Allineato a destra */
-  width: 140px; /* Larghezza ridotta */
+  top: 120%; 
+  right: 0;
+  width: 140px; 
   background-color: #161a22;
   border: 1px solid #2a2e39;
   border-radius: 8px;
   display: none;
   overflow: hidden;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-  z-index: 20; /* Sopra la linea */
+  z-index: 20; 
 }
 
 .dropdown-menuleader.open {
