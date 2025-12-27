@@ -83,20 +83,66 @@
 
 
     <div id="menu-addpredict" class="add-predict-menu">
-    <div class="menuadd-predict-header">
-        <button class="close-btn" id="addpredict-close" aria-label="Close">×</button>
-        <h2 style="margin-left:16px; margin-top:16px; margin: 0; flex: 1;text-align: center;">Suggest your predict!</h2>
-    </div>
+        <div class="menuadd-predict-header">
+            <button class="close-btn" id="addpredict-close" aria-label="Close">×</button>
+            <h2 style="margin:0; flex:1; text-align:center;">
+                Suggest your predict!
+            </h2>
+        </div>
+
         <button id="hiw"><u>How it works?</u></button>
-        <input type="text" id="predict-title" placeholder="Title (ex. will BTC reach 50k$ in 2024?)">
-        <textarea id="predict-description" placeholder="Description"></textarea>
+
+        <input
+            type="text"
+            id="predict-title"
+            placeholder="Title (ex. will BTC reach 50k$ in 2024?)"
+        >
+
+        <textarea
+            id="predict-description"
+            placeholder="Description"
+        ></textarea>
+
+        <!-- WRAPPER BOTTONI + DROPDOWN -->
+        <div class="inputs-btn-addpredict">
+
+            <!-- TYPE -->
+            <div class="dropdown-wrapper">
+                <button id="type-input">Type ▾</button>
+                <div class="dropdown-menuinputs-add" id="dropdowninput-type">
+                    <div class="item">Binary</div>
+                    <div class="item">Multiple</div>
+                </div>
+            </div>
+
+            <!-- CATEGORY -->
+            <div class="dropdown-wrapper">
+                <button id="category-input">Category ▾</button>
+                <div class="dropdown-menuinputs-add" id="dropdowninput-category">
+                    <div class="item">Sports</div>
+                    <div class="item">Culture</div>
+                    <div class="item">Tech</div>
+                    <div class="item">Politics</div>
+                    <div class="item">World</div>
+                    <div class="item">Finance</div>
+                </div>
+            </div>
+
+        </div>
+
         <button id="sent-predict-button">send</button>
     </div>
-    <div id="message-sent">your idea has been sent! </div>
+
+    <div id="message-sent">your idea has been sent!</div>
+
     <div id="hiw-display" role="dialog" aria-hidden="true" aria-labelledby="hiw-title">
         <button id="hiw-close" class="close-btn" aria-label="Close">×</button>
         <h3 id="hiw-title">How it works?</h3>
-        <p>To create a new Predict, it must first be approved and listed by our team. Please fill out all required fields, including the Predict title and description. Once submitted, our team will review your request and approve it if it meets the guidelines.</p>
+        <p>
+            To create a new Predict, it must first be approved and listed by our team.
+            Please fill out all required fields, including the Predict title and description.
+            Once submitted, our team will review your request and approve it if it meets the guidelines.
+        </p>
     </div>
 
 
@@ -235,6 +281,12 @@
     </div>
     </div>
     <div class="line"></div>
+        <nav class="search-bar" id ="search-barcomm"> 
+        <input type="text" placeholder="Search in community..  " id="searchcommInput">
+        <button id="sent-searchcomm"> 
+            <i class='bxr  bx-send-alt-2'></i> 
+        </button>
+    </nav>
 
 
 
