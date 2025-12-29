@@ -1156,7 +1156,11 @@ function openMarketDetail(predictId) {
 }
 
 function showPredictDetails(predict, idx) {
-    // Overlay
+
+    /* ========== BLOCCA SCROLL BACKGROUND ========== */
+    document.body.style.overflow = 'hidden';
+
+    /* ================= OVERLAY ================= */
     const overlay = document.createElement('div');
     overlay.style.cssText = `
         position: fixed;
@@ -1165,201 +1169,285 @@ function showPredictDetails(predict, idx) {
         z-index: 10000;
         display: flex;
         justify-content: center;
-        align-items: stretch;
     `;
 
-    // Container principale (full sheet)
+    /* ================= SHEET ================= */
     const sheet = document.createElement('div');
     sheet.style.cssText = `
         width: 100%;
         max-width: 720px;
+        height: 100%;
         background: #0b0f1a;
         color: #e5e7eb;
         display: flex;
         flex-direction: column;
-        height: 100%;
     `;
 
-    /* ---------- HEADER ---------- */
+    /* ================= HEADER ================= */
     const header = document.createElement('div');
     header.style.cssText = `
-        padding: 16px 20px;
+        position: sticky;
+        top: 0;
+        z-index: 5;
+        background: #0b0f1a;
+        padding: 14px 16px;
         border-bottom: 1px solid rgba(255,255,255,0.08);
         display: flex;
         justify-content: space-between;
         align-items: center;
-        background: #0b0f1a;
-        position: sticky;
-        top: 0;
-        z-index: 2;
     `;
 
     header.innerHTML = `
-        <div style="font-size:20px; opacity:0.7;">${predict.category || 'Market'}</div>
+        <div style="font-size:16px;opacity:.8;">
+            ${predict.category || 'Market'}
+        </div>
         <button id="close-market" style="
             background:none;
             border:none;
             color:#9ca3af;
-            font-size:18px;
+            font-size:22px;
             cursor:pointer;
         ">×</button>
     `;
 
-    /* ---------- CONTENT ---------- */
+    /* ================= CONTENT ================= */
     const content = document.createElement('div');
     content.style.cssText = `
-        padding: 20px;
-        overflow-y: auto;
         flex: 1;
+        overflow-y: auto;
+        padding: 16px 16px 160px;
+        overscroll-behavior: contain;
     `;
 
-    /* ---------- TITLE ---------- */
-    const title = document.createElement('h1');
-    title.style.cssText = `
-        font-size: 28px;
-        line-height: 1.4;
-        margin-bottom: 12px;
+    /* ================= TITLE ================= */
+    content.innerHTML += `
+        <div style="display:flex;gap:12px;margin-bottom:8px;">
+            <img src="${predict.image || 'https://via.placeholder.com/48'}"
+                 style="width:48px;height:48px;border-radius:10px;object-fit:cover;">
+            <h1 style="font-size:20px;line-height:1.3;margin:0;">
+                ${predict.title}
+            </h1>
+        </div>
     `;
-    title.textContent = predict.title;
 
-    /* ---------- DESCRIPTION ---------- */
-    const description = document.createElement('p');
-    description.style.cssText = `
-        color: #9ca3af;
-        font-size: 14px;
-        line-height: 1.6;
+    /* ================= CHANCE ================= */
+    const chance = Math.round(predict.yesChance ?? 46);
+    content.innerHTML += `
+        <div style="
+            font-size:22px;
+            font-weight:600;
+            color:#60a5fa;
+            margin-bottom:10px;
+        ">
+            ${chance}% chance
+        </div>
+    `;
+
+    /* ================= TIMEFRAME ================= */
+    content.innerHTML += `
+        <div style="display:flex;gap:8px;margin-bottom:10px;">
+            ${['6H','1D','1W','ALL'].map(t => `
+                <button style="
+                    background:${t === 'ALL' ? '#1e293b' : 'transparent'};
+                    border:1px solid rgba(255,255,255,0.15);
+                    border-radius:10px;
+                    padding:6px 10px;
+                    color:#e5e7eb;
+                    font-size:13px;
+                ">${t}</button>
+            `).join('')}
+        </div>
+    `;
+
+    /* ================= CHART (VERTICAL SCROLL) ================= */
+    const chartViewport = document.createElement('div');
+    chartViewport.style.cssText = `
+        height: 160px;
+        overflow-y: auto;
+        background: #0f172a;
+        border-radius: 14px;
         margin-bottom: 24px;
-    `;
-    description.textContent = predict.description;
-
-    /* ---------- CHART ---------- */
-    const chartWrapper = document.createElement('div');
-    chartWrapper.style.cssText = `
-        margin-bottom: 28px;
+        position: relative;
+        padding: 10px;
     `;
 
-    chartWrapper.innerHTML = `
-        <div style="font-size:13px; margin-bottom:8px; color:#9ca3af;">
-            Price history
-        </div>
-        <canvas id="market-chart" height="120"></canvas>
+    const canvas = document.createElement('canvas');
+    canvas.id = `market-chart-${idx}`;
+    canvas.style.cssText = `
+        display: block;
+        width: 100%;
+        height: 400px;
     `;
+    chartViewport.appendChild(canvas);
+    content.appendChild(chartViewport);
 
-    /* ---------- MARKET PANEL ---------- */
-    const { yesPrice, noPrice } = createSimpleCard(predict, idx);
-
-    const marketPanel = document.createElement('div');
-    marketPanel.style.cssText = `
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 12px;
-        margin-bottom: 32px;
-    `;
-
-    marketPanel.innerHTML = `
-        <button onclick="openBetModal(${idx}, 'yes')" style="
-            background-color: #3bb04b54;
-            border: 1px solid #3bb04b9a;
-            border-radius:15px;
-            padding:16px;
-            text-align:left;
-            color:#3bb04b;
-            cursor:pointer;
-        ">
-            <div style="font-size:13px; opacity:0.7;">YES</div>
-            <div style="font-size:20px; font-weight:600;">${yesPrice}%</div>
-        </button>
-
-        <button onclick="openBetModal(${idx}, 'no')" style="
-            
-            background-color: #f03e3e71;
-            border: 1px solid #f03e3eb4;
-            border-radius:15px;
-            padding:16px;
-            text-align:left;
-            color:#f03e3e;
-            cursor:pointer;
-        ">
-            <div style="font-size:13px; opacity:0.7;">NO</div>
-            <div style="font-size:20px; font-weight:600;">${noPrice}%</div>
-        </button>
-    `;
-
-    /* ---------- COMMENTS ---------- */
-    const commentsSection = document.createElement('div');
-    commentsSection.innerHTML = `
-        <div style="font-size:14px; margin-bottom:12px; color:#9ca3af;">
-            Comments
-        </div>
-    `;
-
-    const comments = predict.commentsList || [];
-
-    if (comments.length === 0) {
-        commentsSection.innerHTML += `
-            <div style="font-size:13px; opacity:0.5;">
-                No comments yet.
-            </div>
-        `;
-    } else {
-        comments.forEach(c => {
-            const el = document.createElement('div');
-            el.style.cssText = `
-                padding:12px 0;
-                border-bottom:1px solid rgba(255,255,255,0.05);
-            `;
-            el.innerHTML = `
-                <div style="font-size:13px; opacity:0.7;">${c.author}</div>
-                <div style="font-size:14px; margin-top:4px;">${c.text}</div>
-            `;
-            commentsSection.appendChild(el);
-        });
-    }
-
-    /* ---------- ASSEMBLY ---------- */
-    content.appendChild(title);
-    content.appendChild(description);
-    content.appendChild(chartWrapper);
-    content.appendChild(marketPanel);
-    content.appendChild(commentsSection);
-
-    sheet.appendChild(header);
-    sheet.appendChild(content);
-    overlay.appendChild(sheet);
-    document.body.appendChild(overlay);
-
-    /* ---------- CLOSE ---------- */
-    header.querySelector('#close-market').onclick = () => overlay.remove();
-    overlay.addEventListener('click', e => {
-        if (e.target === overlay) overlay.remove();
-    });
-
-    /* ---------- DRAW SIMPLE CHART ---------- */
-    setTimeout(() => {
-        const canvas = document.getElementById('market-chart');
+    // Funzione separata per disegnare il grafico
+    function drawChart() {
+        const canvas = document.getElementById(`market-chart-${idx}`);
         if (!canvas) return;
-
+        
         const ctx = canvas.getContext('2d');
-        const w = canvas.width = canvas.offsetWidth;
+        
+        // Imposta dimensioni REALI del canvas
+        const displayWidth = canvas.clientWidth;
+        const displayHeight = canvas.clientHeight;
+        
+        // Controlla se il canvas è visibile e ha dimensioni
+        if (displayWidth === 0 || displayHeight === 0) {
+            console.warn('Canvas ha dimensioni zero, ritento...');
+            setTimeout(drawChart, 50);
+            return;
+        }
+        
+        canvas.width = displayWidth;
+        canvas.height = displayHeight;
+        
+        console.log('Drawing chart with dimensions:', canvas.width, 'x', canvas.height);
+        
+        const w = canvas.width;
         const h = canvas.height;
-
-        const prices = Array.from({ length: 20 }, (_, i) =>
-            40 + Math.sin(i / 3) * 10 + Math.random() * 5
+        
+        // Pulisci
+        ctx.clearRect(0, 0, w, h);
+        
+        // Dati
+        const data = Array.from({ length: 80 }, (_, i) =>
+            Math.max(0, Math.min(100,
+                50 + Math.sin(i / 6) * 30 + Math.random() * 10
+            ))
         );
-
+        
+        // Background
+        ctx.fillStyle = '#0f172a';
+        ctx.fillRect(0, 0, w, h);
+        
+        // Griglia
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+        ctx.lineWidth = 1;
+        ctx.font = '10px sans-serif';
+        ctx.fillStyle = '#9ca3af';
+        
+        for (let p = 0; p <= 100; p += 25) {
+            const y = h - (p / 100) * h;
+            
+            ctx.beginPath();
+            ctx.moveTo(0, y);
+            ctx.lineTo(w, y);
+            ctx.stroke();
+            
+            ctx.fillText(`${p}%`, 5, y - 5);
+        }
+        
+        // Linea del grafico
         ctx.strokeStyle = '#60a5fa';
         ctx.lineWidth = 2;
         ctx.beginPath();
-
-        prices.forEach((p, i) => {
-            const x = (i / (prices.length - 1)) * w;
-            const y = h - (p / 100) * h;
-            i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+        
+        data.forEach((value, index) => {
+            const x = (index / (data.length - 1)) * w;
+            const y = h - (value / 100) * h;
+            
+            if (index === 0) {
+                ctx.moveTo(x, y);
+            } else {
+                ctx.lineTo(x, y);
+            }
         });
-
+        
         ctx.stroke();
-    }, 0);
+        
+        // Punto finale
+        const lastValue = data[data.length - 1];
+        const lastX = w;
+        const lastY = h - (lastValue / 100) * h;
+        
+        ctx.fillStyle = '#60a5fa';
+        ctx.beginPath();
+        ctx.arc(lastX, lastY, 4, 0, Math.PI * 2);
+        ctx.fill();
+    }
+
+    // Disegna il grafico con un ritardo
+    setTimeout(drawChart, 200);    /* ================= ORDER BOOK ================= */
+    content.innerHTML += `
+        <div style="
+            background:#0f172a;
+            border-radius:14px;
+            padding:14px;
+            margin-bottom:24px;
+        ">
+            <div onclick="this.nextElementSibling.style.display =
+                this.nextElementSibling.style.display === 'none' ? 'block' : 'none'"
+                style="display:flex;justify-content:space-between;cursor:pointer;">
+                <span>Order Book</span><span>⌄</span>
+            </div>
+            <div style="display:none;margin-top:12px;color:#9ca3af;font-size:14px;">
+                Liquidity data placeholder
+            </div>
+        </div>
+    `;
+
+    /* ================= ABOUT ================= */
+    content.innerHTML += `
+        <div style="font-size:15px;margin-bottom:6px;">About</div>
+        <div style="font-size:14px;color:#9ca3af;line-height:1.6;">
+            ${predict.description || 'No description available.'}
+        </div>
+    `;
+
+    /* ================= BOTTOM BAR ================= */
+    const { yesPrice, noPrice } = createSimpleCard(predict, idx);
+
+    const bottomBar = document.createElement('div');
+    bottomBar.style.cssText = `
+        position: sticky;
+        bottom: 0;
+        background:#0b0f1a;
+        border-top:1px solid rgba(255,255,255,0.08);
+        padding:14px 16px env(safe-area-inset-bottom);
+        display:grid;
+        grid-template-columns:1fr 1fr;
+        gap:12px;
+    `;
+
+    bottomBar.innerHTML = `
+        <button onclick="openBetModal(${idx},'yes')" style="
+            background:#3bb04b54;
+            border:1px solid #3bb04b9a;
+            border-radius:14px;
+            padding:14px;
+            font-size:16px;
+            font-weight:600;
+            color:#3bb04b;
+        ">Buy Yes ${yesPrice}¢</button>
+
+        <button onclick="openBetModal(${idx},'no')" style="
+            background:#f03e3e71;
+            border:1px solid #f03e3eb4;
+            border-radius:14px;
+            padding:14px;
+            font-size:16px;
+            font-weight:600;
+            color:#f03e3e;
+        ">Buy No ${noPrice}¢</button>
+    `;
+
+    /* ================= ASSEMBLY ================= */
+    sheet.append(header, content, bottomBar);
+    overlay.appendChild(sheet);
+    document.body.appendChild(overlay);
+
+    /* ================= CLOSE ================= */
+    header.querySelector('#close-market').onclick = close;
+    overlay.onclick = e => { if (e.target === overlay) close(); };
+
+    function close() {
+        document.body.style.overflow = '';
+        overlay.remove();
+    }
+
 }
+
 
 
 //intercetto link page 
