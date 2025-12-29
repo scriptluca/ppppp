@@ -928,8 +928,14 @@ function createSimpleCard(predict, idx) {
                 <span>$${(predict.totalUSD || 0).toLocaleString()}</span>
             </div>
         </div>
-        
-        <h3 class="predict-title">${escapeHtml(predict.title)}</h3>
+        <div class="title-row">
+        <img 
+            class="predict-img"
+            src="${predict.image || 'jeromepowellglasses1.webp'}"
+            alt="market image"
+        />
+            <h3 class="predict-title">${escapeHtml(predict.title)}</h3>
+        </div>
         
         <!-- Aggiungi data-action ai bottoni YES/NO -->
                 <!-- ... (codice esistente) ... -->
@@ -947,11 +953,9 @@ function createSimpleCard(predict, idx) {
         <div class="card-actions">
             <!-- Aggiungi data-action anche qui -->
             <button class="comment-btn" data-action="comments" data-idx="${idx}">
-                <span class="info-icon">💬</span>
                 <span>${predict.comments || 0} comments</span>
             </button>
             <button class="share-btn" data-action="share" data-idx="${idx}">
-                <span class="info-icon">↗️</span>
                 <span>Share</span>
             </button>
         </div>
