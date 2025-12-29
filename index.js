@@ -112,6 +112,7 @@ function escapeHtml(str) {
 }
 
 // bet modal elements
+// bet modal elements
 const betModal = document.getElementById('bet-modal');
 const betAmountInput = document.getElementById('bet-amount');
 const betSideText = document.getElementById('bet-side');
@@ -119,40 +120,342 @@ const betError = document.getElementById('bet-error');
 const betConfirmBtn = document.getElementById('bet-confirm');
 const betCancelBtn = document.getElementById('bet-cancel');
 let currentBet = { idx: null, side: null };
+let quickAmounts = [10, 25, 50, 100]; // Aggiungi questa linea
 
 function openBetModal(idx, side) {
+    // Rimuovi questa dichiarazione: const betModal = document.getElementById('bet-modal');
     if (!betModal) return;
+    
+    const predict = predicts[idx];
+    if (!predict) return;
+    
     currentBet.idx = idx;
     currentBet.side = side;
-    if (betSideText) betSideText.textContent = 'Side: ' + (side === 'yes' ? 'YES' : 'NO');
-    if (betAmountInput) betAmountInput.value = '';
-    if (betError) betError.textContent = '';
+    currentBet.predict = predict;
+    
+    // Calcola le percentuali e prezzi
+    const totalYes = predict.bets.filter(b => b.side === 'yes').reduce((sum, b) => sum + (b.stars || 0), 0);
+    const totalNo = predict.bets.filter(b => b.side === 'no').reduce((sum, b) => sum + (b.stars || 0), 0);
+    const totalAmount = totalYes + totalNo;
+    
+    const yesPercent = totalAmount > 0 ? Math.round((totalYes / totalAmount) * 100) : 50;
+    const noPercent = totalAmount > 0 ? Math.round((totalNo / totalAmount) * 100) : 50;
+    
+    const yesPrice = yesPercent > 0 ? (1 / (yesPercent / 100)).toFixed(2) : '0.00';
+    const noPrice = noPercent > 0 ? (1 / (noPercent / 100)).toFixed(2) : '0.00';
+    
+    // Aggiorna il contenuto del modal - usa l'elemento betModal già definito
+    betModal.innerHTML = `
+        <div class="bet-header">
+            <h2>Place Bet</h2>
+            <button class="close-btn" id="bet-close">×</button>
+        </div>
+        
+        <div class="bet-info">
+            <div class="bet-question">
+                ${escapeHtml(predict.title)}
+            </div>
+            
+            <div class="bet-side ${side}">
+                <span>Buying: <strong>${side.toUpperCase()}</strong></span>
+            </div>
+        </div>
+        
+        <div class="bet-amount-section">
+            <div class="bet-amount-label">
+                <span>Bet Amount</span>
+                <span class="bet-balance">Balance: $1,000</span>
+            </div>
+            
+            <div class="bet-amount-wrapper">
+                <input 
+                    type="number" 
+                    id="bet-amount-input" 
+                    class="bet-amount-input" 
+                    placeholder="0"
+                    min="1"
+                    step="1"
+                    inputmode="numeric"
+                >
+                <span class="bet-amount-currency">$</span>
+            </div>
+            
+        </div>
+        
+        <div class="bet-payout">
+            <div class="bet-payout-header">
+                <span class="bet-payout-title">Potential Payout</span>
+                <span class="bet-payout-odds">
+                    ${side === 'yes' ? `YES $${yesPrice}` : `NO $${noPrice}`}
+                </span>
+            </div>
+            <div class="bet-payout-amount" id="bet-payout-amount">$0.00</div>
+            <div class="bet-payout-subtitle">If ${side === 'yes' ? 'YES' : 'NO'} wins</div>
+        </div>
+        
+        <div id="bet-error"></div>
+        
+        <div class="bet-actions">
+            <button class="bet-cancel" id="bet-cancel-btn">Cancel</button>
+            <button class="bet-confirm" id="bet-confirm-btn" disabled>Confirm Bet</button>
+        </div>
+    `;
+    
+    // Mostra il modal
     betModal.setAttribute('aria-hidden', 'false');
-    if (menu) menu.style.display = 'none';
-    if (overlay) overlay.style.display = 'block';
-    if (betConfirmBtn) betConfirmBtn.disabled = true;
-    if (betAmountInput) betAmountInput.focus();
+    betModal.style.display = 'flex';
+    
+    if (overlay) overlay.style.display = "block";
+    
+    // Focus sull'input
+    const amountInput = document.getElementById('bet-amount-input');
+    if (amountInput) {
+        amountInput.focus();
+        
+        // Event listener per calcolare il payout in tempo reale
+        amountInput.addEventListener('input', updatePayout);
+    }
+    
+    // Aggiungi event listeners ai pulsanti
+    const closeBtn = document.getElementById('bet-close');
+    if (closeBtn) closeBtn.onclick = closeBetModal;
+    
+    const cancelBtn = document.getElementById('bet-cancel-btn');
+    if (cancelBtn) cancelBtn.onclick = closeBetModal;
+    
+    const confirmBtn = document.getElementById('bet-confirm-btn');
+    if (confirmBtn) confirmBtn.onclick = placeBet;
+    
+    
+    // Calcola il payout iniziale
+    updatePayout();
 }
+function updatePayout() {
+    const amountInput = document.getElementById('bet-amount-input');
+    const confirmBtn = document.getElementById('bet-confirm-btn');
+    const errorEl = document.getElementById('bet-error');
+    const payoutEl = document.getElementById('bet-payout-amount');
+    
+    if (!amountInput || !confirmBtn || !errorEl || !payoutEl) return;
+    
+    const rawAmount = amountInput.value.trim();
+    const amount = parseFloat(rawAmount);
+    
+    // Reset errori
+    errorEl.textContent = '';
+    errorEl.style.display = 'none';
+    
+    // Validazione
+    if (!rawAmount || isNaN(amount) || amount <= 0) {
+        confirmBtn.disabled = true;
+        payoutEl.textContent = '$0.00';
+        return;
+    }
+    
+    if (!Number.isInteger(amount)) {
+        errorEl.textContent = 'Please enter a whole number';
+        errorEl.style.display = 'block';
+        confirmBtn.disabled = true;
+        return;
+    }
+    
+    if (amount > 1000) { // Simulazione saldo
+        errorEl.textContent = 'Insufficient balance';
+        errorEl.style.display = 'block';
+        confirmBtn.disabled = true;
+        return;
+    }
+    
+    // Calcola il payout
+    const predict = currentBet.predict;
+    const totalYes = predict.bets.filter(b => b.side === 'yes').reduce((sum, b) => sum + (b.stars || 0), 0);
+    const totalNo = predict.bets.filter(b => b.side === 'no').reduce((sum, b) => sum + (b.stars || 0), 0);
+    const totalAmount = totalYes + totalNo;
+    
+    let payout = 0;
+    if (currentBet.side === 'yes') {
+        const yesPercent = totalAmount > 0 ? (totalYes / totalAmount) : 0.5;
+        payout = amount / yesPercent;
+    } else {
+        const noPercent = totalAmount > 0 ? (totalNo / totalAmount) : 0.5;
+        payout = amount / noPercent;
+    }
+    
+    // Aggiorna il display
+    payoutEl.textContent = `$${payout.toFixed(2)}`;
+    confirmBtn.disabled = false;
+}
+
+
+function placeBet() {
+    const amountInput = document.getElementById('bet-amount-input');
+    const errorEl = document.getElementById('bet-error');
+    
+    if (!amountInput || !errorEl) return;
+    
+    const rawAmount = amountInput.value.trim();
+    const amount = parseInt(rawAmount);
+    
+    if (!rawAmount || isNaN(amount) || amount <= 0 || !Number.isInteger(amount)) {
+        errorEl.textContent = 'Please enter a valid amount';
+        errorEl.style.display = 'block';
+        return;
+    }
+    
+    if (amount > 1000) { // Simulazione controllo saldo
+        errorEl.textContent = 'Insufficient balance';
+        errorEl.style.display = 'block';
+        return;
+    }
+    
+    const stars = amount; // 1 star = $1
+    const usd = stars * STAR_TO_USD;
+    const predict = predicts[currentBet.idx];
+    
+    if (!predict) {
+        errorEl.textContent = 'Predict not found';
+        errorEl.style.display = 'block';
+        return;
+    }
+    
+    // Aggiungi la scommessa
+    predict.bets.push({ 
+        side: currentBet.side, 
+        stars, 
+        usd,
+        timestamp: new Date().toISOString(),
+        user: 'You' // Sostituisci con l'utente reale
+    });
+    
+    predict.totalUSD = (predict.totalUSD || 0) + usd;
+    
+    // Aggiorna l'interfaccia
+    renderPredicts();
+    closeBetModal();
+    
+    // Mostra conferma
+    showBetConfirmation(currentBet.side, amount);
+}
+
+
+
 
 function closeBetModal() {
+    const betModal = document.getElementById('bet-modal');
     if (!betModal) return;
+    
     betModal.setAttribute('aria-hidden', 'true');
-    if (overlay) overlay.style.display = 'none';
+    betModal.style.display = 'none';
+    
+    if (overlay) overlay.style.display = "none";
+    
+    // Reset dello stato
     currentBet.idx = null;
     currentBet.side = null;
+    currentBet.predict = null;
 }
 
-if (betAmountInput) betAmountInput.oninput = () => {
-    const raw = betAmountInput.value;
-    const stars = Number(raw);
-    if (!raw || !Number.isFinite(stars) || stars <= 0 || !Number.isInteger(stars)) {
-        if (betError) betError.textContent = 'Enter an integer number of stars (> 0).';
-        if (betConfirmBtn) betConfirmBtn.disabled = true;
-    } else {
-        if (betError) betError.textContent = '';
-        if (betConfirmBtn) betConfirmBtn.disabled = false;
+// Aggiungi la gestione dell'Escape key
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        const betModal = document.getElementById('bet-modal');
+        if (betModal && betModal.getAttribute('aria-hidden') === 'false') {
+            closeBetModal();
+        }
+    }
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Funzione per mostrare conferma della scommessa
+function showBetConfirmation(side, amount) {
+    const confirmation = document.createElement('div');
+    confirmation.style.cssText = `
+        position: fixed;
+        bottom: 100px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: ${side === 'yes' ? 'rgba(59, 176, 75, 0.95)' : 'rgba(240, 62, 62, 0.95)'};
+        color: white;
+        padding: 12px 24px;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 16px;
+        z-index: 10002;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+        animation: slideUp 0.3s ease;
+    `;
+    
+    confirmation.textContent = `✅ Bet placed: $${amount} on ${side.toUpperCase()}`;
+    
+    document.body.appendChild(confirmation);
+    
+    // Rimuovi dopo 3 secondi
+    setTimeout(() => {
+        confirmation.style.opacity = '0';
+        confirmation.style.transform = 'translateX(-50%) translateY(20px)';
+        setTimeout(() => {
+            if (confirmation.parentNode) {
+                confirmation.parentNode.removeChild(confirmation);
+            }
+        }, 300);
+    }, 3000);
+}
+
+
+const style = document.createElement('style');
+style.textContent = `
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
     }
 }
+`;
+document.head.appendChild(style)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 if (betConfirmBtn) betConfirmBtn.onclick = () => {
     if (betConfirmBtn.disabled) return;
@@ -163,7 +466,7 @@ if (betConfirmBtn) betConfirmBtn.onclick = () => {
     const raw = betAmountInput ? betAmountInput.value : '';
     const stars = Number(raw);
     if (!raw || !Number.isFinite(stars) || stars <= 0 || !Number.isInteger(stars)) {
-        if (betError) betError.textContent = 'Enter an integer number of stars (> 0).';
+        if (betError) betError.textContent = 'Enter an integer  (> 0).';
         return;
     }
     const usd = stars * STAR_TO_USD;
@@ -294,7 +597,8 @@ if (sendBtn) sendBtn.onclick = async () => {
         category: selectedCategory,
         bets: [],
         comments: 0,
-        createdAt: new Date().toISOString()
+        createdAt: new Date().toISOString(),
+        link: `${window.location.origin}/market/${Date.now()}`
     };
 
 
@@ -599,10 +903,12 @@ function renderPredicts() {
     });
 }
 
+
 function createSimpleCard(predict, idx) {
+    
     const card = document.createElement('div');
     card.className = 'predict-card';
-    
+
     const totalYes = predict.bets.filter(b => b.side === 'yes').reduce((sum, b) => sum + (b.stars || 0), 0);
     const totalNo = predict.bets.filter(b => b.side === 'no').reduce((sum, b) => sum + (b.stars || 0), 0);
     const totalAmount = totalYes + totalNo;
@@ -613,6 +919,7 @@ function createSimpleCard(predict, idx) {
     const yesPrice = yesPercent > 0 ? (1 / (yesPercent / 100)).toFixed(2) : '0.00';
     const noPrice = noPercent > 0 ? (1 / (noPercent / 100)).toFixed(2) : '0.00';
     
+    // USIAMO dataset invece di onclick per avere più controllo
     card.innerHTML = `
         <div class="card-header">
             <span class="predict-tag">${predict.category || 'GENERAL'}</span>
@@ -624,33 +931,124 @@ function createSimpleCard(predict, idx) {
         
         <h3 class="predict-title">${escapeHtml(predict.title)}</h3>
         
+        <!-- Aggiungi data-action ai bottoni YES/NO -->
+                <!-- ... (codice esistente) ... -->
         <div class="trading-bar">
-            <div class="yes-side" onclick="openBetModal(${idx}, 'yes')">
+            <div class="yes-side" data-action="bet" data-side="yes" data-idx="${idx}">
                 <span class="yes-price">$${yesPrice}</span>
                 <span class="yes-percent">YES ${yesPercent}%</span>
             </div>
-            <div class="no-side" onclick="openBetModal(${idx}, 'no')">
+            <div class="no-side" data-action="bet" data-side="no" data-idx="${idx}">
                 <span class="no-price">$${noPrice}</span>
                 <span class="no-percent">NO ${noPercent}%</span>
             </div>
         </div>
         
         <div class="card-actions">
-            <button class="comment-btn" onclick="showComments(${idx})">
+            <!-- Aggiungi data-action anche qui -->
+            <button class="comment-btn" data-action="comments" data-idx="${idx}">
                 <span class="info-icon">💬</span>
                 <span>${predict.comments || 0} comments</span>
             </button>
-            <button class="comment-btn">
+            <button class="share-btn" data-action="share" data-idx="${idx}">
+                <span class="info-icon">↗️</span>
+                <span>Share</span>
             </button>
         </div>
     `;
     
+    // 1. RENDI TUTTA LA CARD CLICCABILE
+    card.style.cursor = 'pointer';
+    card.dataset.predictId = predict.id;
+    
+    // 2. AGGIUNGI L'EVENT LISTENER ALLA CARD
+    card.addEventListener('click', function(e) {
+        console.log("🎯 Card clicked!");
+        
+        // Controlla se l'overlay è visibile (che blocca i click)
+        const overlay = document.getElementById('overlay');
+        if (overlay && overlay.style.display === 'block') {
+            console.log("⚠️ Overlay is blocking, click ignored");
+            return;
+        }
+        
+        // CONTROLLO CRITICO: verifica se ha cliccato su elementi specifici
+        const clickedElement = e.target;
+        
+        // Controlla se ha cliccato su YES/NO
+        const yesNoElement = clickedElement.closest('.yes-side, .no-side');
+        if (yesNoElement) {
+            console.log("💰 Bet button clicked");
+            e.stopPropagation(); // FERMA la propagazione del click alla card!
+            
+            const side = yesNoElement.classList.contains('yes-side') ? 'yes' : 'no';
+            const idx = parseInt(yesNoElement.dataset.idx);
+            openBetModal(idx, side);
+            return;
+        }
+        
+        // Controlla se ha cliccato sui bottoni commenti/share
+        const buttonElement = clickedElement.closest('.comment-btn, .share-btn');
+        if (buttonElement) {
+            console.log("🔘 Action button clicked");
+            e.stopPropagation(); // FERMA la propagazione del click alla card!
+            
+            const action = buttonElement.dataset.action;
+            const idx = parseInt(buttonElement.dataset.idx);
+            
+            if (action === 'comments') {
+                showComments(idx);
+            } else if (action === 'share') {
+                console.log("Share predict:", idx);
+                // Aggiungi qui la logica per condividere
+            }
+            return;
+        }
+        
+        // SE ARRIVIAMO QUI: l'utente ha cliccato sulla CARD GENERICA
+        // (non sui bottoni specifici)
+        console.log("📊 Opening predict details for ID:", predict.id);
+        
+        // APRI I DETTAGLI - versione immediata con alert
+        showPredictDetails(predict, idx);
+    });
+    const shareBtn = card.querySelector('.share-btn');
+    if (shareBtn) {
+        shareBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); // non aprire il modal
+            sharePredict(predict);
+        });
+    }
+
+
+
     return card;
 }
 
 function showComments(idx) {
     console.log("Show comments for predict:", idx);
 }
+
+function sharePredict(predict) {
+    if (!predict.link) {
+        alert("Predict has no link to share.");
+        return;
+    }
+
+    // Copia il link negli appunti
+    navigator.clipboard.writeText(predict.link)
+        .then(() => {
+            alert("Link copied to clipboard! 📋");
+        })
+        .catch(err => {
+            console.error("Failed to copy link:", err);
+            alert("Failed to copy link.");
+        });
+}
+
+
+
+
 
 // Funzioni helper rimanenti (semplificate)
 function animateCounter(el, target) {
@@ -725,4 +1123,251 @@ if (items.length > 0) {
 
 document.addEventListener("click", () => {
     if (dropdownMenuleader2) dropdownMenuleader2.classList.remove("open");
+});
+
+
+
+
+
+
+// Funzione per aprire i dettagli del market
+function openMarketDetail(predictId) {
+    console.log("Opening market details for ID:", predictId);
+    
+    // 1. Trova il predict nell'array
+    const predict = predicts.find(p => p.id === predictId);
+    if (!predict) {
+        console.error("Predict not found:", predictId);
+        return;
+    }
+    
+    // 2. Vai alla vista dettaglio (se hai implementato la logica vista/lista)
+    if (typeof switchToDetailView === 'function') {
+        switchToDetailView(predict);
+    } else {
+        // Se non hai ancora implementato il sistema di viste,
+        // mostra almeno i dati in console o in un alert
+        showPredictDetailsModal(predict);
+    }
+}
+
+function showPredictDetails(predict, idx) {
+    // Overlay
+    const overlay = document.createElement('div');
+    overlay.style.cssText = `
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.8);
+        z-index: 10000;
+        display: flex;
+        justify-content: center;
+        align-items: stretch;
+    `;
+
+    // Container principale (full sheet)
+    const sheet = document.createElement('div');
+    sheet.style.cssText = `
+        width: 100%;
+        max-width: 720px;
+        background: #0b0f1a;
+        color: #e5e7eb;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    `;
+
+    /* ---------- HEADER ---------- */
+    const header = document.createElement('div');
+    header.style.cssText = `
+        padding: 16px 20px;
+        border-bottom: 1px solid rgba(255,255,255,0.08);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: #0b0f1a;
+        position: sticky;
+        top: 0;
+        z-index: 2;
+    `;
+
+    header.innerHTML = `
+        <div style="font-size:20px; opacity:0.7;">${predict.category || 'Market'}</div>
+        <button id="close-market" style="
+            background:none;
+            border:none;
+            color:#9ca3af;
+            font-size:18px;
+            cursor:pointer;
+        ">×</button>
+    `;
+
+    /* ---------- CONTENT ---------- */
+    const content = document.createElement('div');
+    content.style.cssText = `
+        padding: 20px;
+        overflow-y: auto;
+        flex: 1;
+    `;
+
+    /* ---------- TITLE ---------- */
+    const title = document.createElement('h1');
+    title.style.cssText = `
+        font-size: 28px;
+        line-height: 1.4;
+        margin-bottom: 12px;
+    `;
+    title.textContent = predict.title;
+
+    /* ---------- DESCRIPTION ---------- */
+    const description = document.createElement('p');
+    description.style.cssText = `
+        color: #9ca3af;
+        font-size: 14px;
+        line-height: 1.6;
+        margin-bottom: 24px;
+    `;
+    description.textContent = predict.description;
+
+    /* ---------- CHART ---------- */
+    const chartWrapper = document.createElement('div');
+    chartWrapper.style.cssText = `
+        margin-bottom: 28px;
+    `;
+
+    chartWrapper.innerHTML = `
+        <div style="font-size:13px; margin-bottom:8px; color:#9ca3af;">
+            Price history
+        </div>
+        <canvas id="market-chart" height="120"></canvas>
+    `;
+
+    /* ---------- MARKET PANEL ---------- */
+    const { yesPrice, noPrice } = createSimpleCard(predict, idx);
+
+    const marketPanel = document.createElement('div');
+    marketPanel.style.cssText = `
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-bottom: 32px;
+    `;
+
+    marketPanel.innerHTML = `
+        <button onclick="openBetModal(${idx}, 'yes')" style="
+            background-color: #3bb04b54;
+            border: 1px solid #3bb04b9a;
+            border-radius:15px;
+            padding:16px;
+            text-align:left;
+            color:#3bb04b;
+            cursor:pointer;
+        ">
+            <div style="font-size:13px; opacity:0.7;">YES</div>
+            <div style="font-size:20px; font-weight:600;">${yesPrice}%</div>
+        </button>
+
+        <button onclick="openBetModal(${idx}, 'no')" style="
+            
+            background-color: #f03e3e71;
+            border: 1px solid #f03e3eb4;
+            border-radius:15px;
+            padding:16px;
+            text-align:left;
+            color:#f03e3e;
+            cursor:pointer;
+        ">
+            <div style="font-size:13px; opacity:0.7;">NO</div>
+            <div style="font-size:20px; font-weight:600;">${noPrice}%</div>
+        </button>
+    `;
+
+    /* ---------- COMMENTS ---------- */
+    const commentsSection = document.createElement('div');
+    commentsSection.innerHTML = `
+        <div style="font-size:14px; margin-bottom:12px; color:#9ca3af;">
+            Comments
+        </div>
+    `;
+
+    const comments = predict.commentsList || [];
+
+    if (comments.length === 0) {
+        commentsSection.innerHTML += `
+            <div style="font-size:13px; opacity:0.5;">
+                No comments yet.
+            </div>
+        `;
+    } else {
+        comments.forEach(c => {
+            const el = document.createElement('div');
+            el.style.cssText = `
+                padding:12px 0;
+                border-bottom:1px solid rgba(255,255,255,0.05);
+            `;
+            el.innerHTML = `
+                <div style="font-size:13px; opacity:0.7;">${c.author}</div>
+                <div style="font-size:14px; margin-top:4px;">${c.text}</div>
+            `;
+            commentsSection.appendChild(el);
+        });
+    }
+
+    /* ---------- ASSEMBLY ---------- */
+    content.appendChild(title);
+    content.appendChild(description);
+    content.appendChild(chartWrapper);
+    content.appendChild(marketPanel);
+    content.appendChild(commentsSection);
+
+    sheet.appendChild(header);
+    sheet.appendChild(content);
+    overlay.appendChild(sheet);
+    document.body.appendChild(overlay);
+
+    /* ---------- CLOSE ---------- */
+    header.querySelector('#close-market').onclick = () => overlay.remove();
+    overlay.addEventListener('click', e => {
+        if (e.target === overlay) overlay.remove();
+    });
+
+    /* ---------- DRAW SIMPLE CHART ---------- */
+    setTimeout(() => {
+        const canvas = document.getElementById('market-chart');
+        if (!canvas) return;
+
+        const ctx = canvas.getContext('2d');
+        const w = canvas.width = canvas.offsetWidth;
+        const h = canvas.height;
+
+        const prices = Array.from({ length: 20 }, (_, i) =>
+            40 + Math.sin(i / 3) * 10 + Math.random() * 5
+        );
+
+        ctx.strokeStyle = '#60a5fa';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+
+        prices.forEach((p, i) => {
+            const x = (i / (prices.length - 1)) * w;
+            const y = h - (p / 100) * h;
+            i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+        });
+
+        ctx.stroke();
+    }, 0);
+}
+
+
+//intercetto link page 
+
+document.addEventListener('DOMContentLoaded', () => {
+    const path = window.location.pathname; 
+    const match = path.match(/^\/market\/(\d+)$/);
+    if (match) {
+        const predictId = Number(match[1]);
+        const predict = predicts.find(p => p.id === predictId);
+        if (predict) {
+            showPredictDetails(predict, predicts.indexOf(predict));
+        }
+    }
 });
