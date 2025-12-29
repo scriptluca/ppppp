@@ -881,6 +881,41 @@ img, svg { max-width: 100%; height: auto; display: block; }
     position: relative;
 }
 
+.share-btn{
+    background: none;
+    border: none;
+    color: #9fb0bb;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.share-btn:hover {
+    background: #2a2f38;
+    color: #ffffff;
+}
+
+
+
+.predict-title-container {
+    display: flex;  
+    align-items: center;           
+    gap: 11px;              
+}
+
+.predict-image {
+    width: 35px;
+    height: 35px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+
 .predict-card:hover {
     border-color: #3d424a;
     transform: translateY(-2px);
@@ -888,7 +923,7 @@ img, svg { max-width: 100%; height: auto; display: block; }
 }
 
 .predict-card .predict-title {
-    font-size: 16px;
+    font-size: 18px;
     font-weight: 600;
     color: #e6eef3;
     line-height: 1.4;
@@ -933,7 +968,7 @@ img, svg { max-width: 100%; height: auto; display: block; }
 .trading-bar {
     display: flex;
     height: 32px; /* Ridotto da 36px */
-    border-radius: 6px; /* Ridotto da 8px */
+    border-radius: 6px; 
     overflow: hidden;
     margin: 6px 0; /* Ridotto da 8px */
     border: 1px solid #2d343c;
@@ -1004,7 +1039,7 @@ img, svg { max-width: 100%; height: auto; display: block; }
     color: #f03e3e;
     font-weight: 700;
     font-size: 14px;
-}
+} 
 
 .no-percent {
     color: #9fb0bb;
@@ -1017,8 +1052,8 @@ img, svg { max-width: 100%; height: auto; display: block; }
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-top: 6px; /* Ridotto da 8px */
-    padding-top: 10px; /* Ridotto da 12px */
+    margin-top: 6px; 
+    padding-top: 10px; 
     border-top: 1px solid #2d343c;
 }
 
@@ -1142,64 +1177,319 @@ img, svg { max-width: 100%; height: auto; display: block; }
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 355px;
-    background: #25313d;
-    padding: 24px;
-    border-radius: 14px;
+    width: 85%;
+    max-width: 360px;
+    background: linear-gradient(180deg, #1b232f 0%, #151c27 100%);
+    border-radius: 12px;
+    padding: 14px;
     color: white;
     display: none;
-    z-index: 11000;
+    flex-direction: column;
+    gap: 12px;
+    z-index: 10001;
+    box-shadow: 0 16px 32px rgba(0,0,0,0.5);
+    border: 1px solid rgba(255,255,255,0.08);
+    box-sizing: border-box;
 }
 
-#bet-modal[aria-hidden="false"] { 
-    display: block; 
+#bet-modal[aria-hidden="false"] {
+    display: flex;
 }
 
-#bet-modal .bet-content label { 
-    display:block; 
-    margin-top:6px; 
-    font-size:14px; 
-    color:#ddd; 
+/* Header compatto */
+.bet-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 4px;
+    position: relative;
+    min-height: 36px;
+    line-height: 1.3;
 }
 
-#bet-modal input#bet-amount { 
-    width: 100%; 
-    padding:8px; 
-    margin-top:6px; 
-    border-radius:6px; 
-    border:1px solid #555; 
-    background: #1f2a33; 
-    color:white; 
+.bet-header h2 {
+    font-size: 16px;
+    font-weight: 700;
+    margin: 0;
+    color: #e6eef3;
+    line-height: 1.2;
+    flex: 1;
+    text-align: left;
+    padding-left: 6px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-#bet-error { 
-    color: #ffb3b3; 
-    min-height: 18px; 
-    margin-top:8px; 
+.bet-header .close-btn {
+    background: transparent;
+    border: none;
+    color: #9fb0bb;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 3px 6px;
+    width: 26px;
+    height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    transition: background-color 0.2s ease;
+    flex-shrink: 0;
+    margin-left: auto;
 }
 
-#bet-modal .bet-actions { 
-    display:flex; 
-    justify-content:flex-end; 
-    gap:8px; 
-    margin-top:12px; 
+.bet-header .close-btn:hover {
+    background-color: rgba(255,255,255,0.05);
 }
 
-#bet-modal button { 
-    padding: 8px 12px; 
-    border-radius:6px; 
-    border:none; 
-    cursor:pointer; 
+/* Info e domanda */
+.bet-info {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 }
 
-#bet-modal .confirm { 
-    background:#37b24d; 
-    color:white; 
+.bet-question {
+    font-size: 18px;
+    font-weight: 600;
+    color: #ffffff;
+    line-height: 1.4;
+    background: rgba(255,255,255,0.03);
+    padding: 8px 12px;
+    border-radius: 10px;
+    max-height: 75px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
-#bet-modal #bet-cancel { 
-    background:#444; 
-    color:white; 
+.bet-question::-webkit-scrollbar {
+    width: 4px;
+}
+.bet-question::-webkit-scrollbar-track {
+    background: rgba(255,255,255,0.05);
+}
+.bet-question::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.2);
+    border-radius: 2px;
+}
+
+/* Bet side compatto */
+.bet-side {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 15px;
+    font-weight: 700;
+    padding: 6px 10px;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.02);
+}
+
+.bet-side.yes {
+    color: #3bb04b;
+    border: 1px solid rgba(59,176,75,0.2);
+}
+
+.bet-side.no {
+    color: #f03e3e;
+    border: 1px solid rgba(240,62,62,0.2);
+}
+
+.bet-side-icon {
+    font-size: 16px;
+}
+
+/* Amount section */
+.bet-amount-section {
+    margin: 10px 0;
+}
+
+.bet-amount-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
+    font-size: 13px;
+    color: #9fb0bb;
+}
+
+.bet-balance {
+    font-size: 12px;
+    color: #3bb04b;
+    font-weight: 600;
+}
+
+.bet-amount-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: rgba(255,255,255,0.03);
+    border: 2px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    padding: 8px 12px;
+    transition: border-color 0.2s ease;
+}
+
+.bet-amount-wrapper:focus-within {
+    border-color: #3bb04b;
+}
+
+.bet-amount-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: white;
+    font-size: 24px;
+    font-weight: 700;
+    width: 100%;
+    padding: 0;
+}
+
+.bet-amount-input::placeholder {
+    color: rgba(255,255,255,0.2);
+}
+
+.bet-amount-currency {
+    font-size: 20px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.5);
+    margin-left: 6px;
+}
+
+
+/* Payout section */
+.bet-payout {
+    background: rgba(255,255,255,0.03);
+    border-radius: 10px;
+    padding: 12px;
+    margin: 10px 0;
+}
+
+.bet-payout-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.bet-payout-title {
+    font-size: 12px;
+    color: #9fb0bb;
+    font-weight: 600;
+}
+
+.bet-payout-odds {
+    font-size: 14px;
+    font-weight: 700;
+    color: #3bb04b;
+}
+
+.bet-payout-amount {
+    font-size: 20px;
+    font-weight: 700;
+    color: white;
+    text-align: center;
+    margin: 4px 0;
+}
+
+.bet-payout-subtitle {
+    font-size: 11px;
+    color: rgba(255,255,255,0.5);
+    text-align: center;
+}
+
+/* Error message */
+#bet-error {
+    color: #ff6b6b;
+    font-size: 12px;
+    text-align: center;
+    min-height: 16px;
+    margin: 4px 0;
+    padding: 4px 6px;
+    background: rgba(255,107,107,0.1);
+    border-radius: 6px;
+    display: none;
+}
+
+#bet-error:not(:empty) {
+    display: block;
+}
+
+/* Actions buttons */
+.bet-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 4px;
+}
+
+.bet-confirm {
+    flex: 1;
+    background: linear-gradient(180deg, #3bb04b, #2fa03e);
+    border: none;
+    border-radius: 12px;
+    padding: 12px;
+    color: white;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 5px 14px rgba(59,176,75,0.3);
+    transition: all 0.2s ease;
+}
+
+.bet-confirm:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(59,176,75,0.4);
+}
+
+.bet-confirm:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+.bet-cancel {
+    flex: 1;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    padding: 12px;
+    color: #9fb0bb;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.bet-cancel:hover {
+    background: rgba(255,255,255,0.1);
+    color: white;
+}
+
+/* Responsive mobile */
+@media (max-width: 480px) {
+    #bet-modal {
+        width: 92%;
+        max-width: 340px;
+        padding: 12px;
+        gap: 10px;
+    }
+
+    .bet-header h2 { font-size: 15px; padding-left: 4px; }
+    .bet-header .close-btn { font-size: 18px; width: 24px; height: 24px; padding: 2px 4px; }
+    .bet-question { font-size: 13px; padding: 6px 10px; max-height: 65px; }
+    .bet-side { font-size: 14px; padding: 5px 8px; }
+    .bet-amount-input { font-size: 22px; }
+    .bet-amount-currency { font-size: 18px; }
+    .bet-payout-amount { font-size: 18px; }
+    .bet-confirm, .bet-cancel { font-size: 13px; padding: 10px; }
+}
+
+@media (max-width: 360px) {
+    #bet-modal { width: 95%; max-width: 300px; padding: 10px; }
+    .bet-header h2 { font-size: 14px; }
+    .bet-question { font-size: 12px; max-height: 55px; }
+    .bet-payout-amount { font-size: 16px; }
 }
 
 
@@ -1669,9 +1959,24 @@ img, svg { max-width: 100%; height: auto; display: block; }
 
 
 
+/* Elementi che hanno azioni specifiche */
+[data-action] {
+    cursor: pointer;
+}
 
+/* Trading bar - i bottoni YES/NO */
+.trading-bar > div {
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
 
+.trading-bar > div:hover {
+    transform: scale(1.02);
+    opacity: 0.9;
+}
 
-
-
-
+/* Bottoni commenti/share */
+.card-actions button {
+    cursor: pointer;
+    pointer-events: auto; /* Assicurati che i bottoni siano cliccabili */
+}
