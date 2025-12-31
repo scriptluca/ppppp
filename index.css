@@ -427,10 +427,10 @@ img, svg { max-width: 100%; height: auto; display: block; }
 
 #buy-menu .buy-title { text-align: left; margin: 0; font-size: 18px; font-weight: 800; }
 #buy-menu .buy-desc { font-size: 13px; color: #cfdde4; margin: 6px 0 8px 0; }
-#buy-menu .buy-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+#buy-menu .buy-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; padding-bottom:5px;}
 #buy-menu .buy-amount { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); padding: 10px; border-radius: 10px; cursor: pointer; color: #fff; font-weight: 700; }
 #buy-menu .buy-amount.selected { background: #37b24d; color: #06250b; border-color: transparent; box-shadow: 0 8px 20px rgba(55,178,77,0.12); }
-#buy-menu input#buy-custom { width:100%; padding:8px; border-radius:8px; border:1px solid #444; background:#1f2a33; color:white; margin-top:8px; }
+#buy-menu input#buy-custom { width:94%; padding:8px; border-radius:8px; border:1px solid #444; background:#1f2a33; color:white; margin-top:8px; }
 #buy-menu .buy-actions { display:flex; justify-content:flex-end; gap:8px; margin-top:12px; }
 #buy-menu .close-btn { position:absolute; top:8px; right:12px; background: transparent; border:none; color:#ddd; font-size:18px; cursor:pointer; }
 
@@ -566,9 +566,9 @@ img, svg { max-width: 100%; height: auto; display: block; }
     border-radius: 20px;
 
     background: linear-gradient(
-        180deg,
-        #2b3947 0%,
-        #25313d 100%
+        165deg,
+        #2b3947 25%,
+        #1e2936f3 75%
     );
 
     display: none;
@@ -593,7 +593,7 @@ img, svg { max-width: 100%; height: auto; display: block; }
     margin-top: 6px;
     height: 46px;
 
-    background: linear-gradient(180deg, #3bb04b, #2fa03e);
+    background: linear-gradient(180deg, #3bb04b56, #2fa03e);
     border-radius: 14px;
 
     font-size: 16px;
@@ -609,7 +609,7 @@ img, svg { max-width: 100%; height: auto; display: block; }
 
 
 #menu-addpredict button#sent-predict-button:hover {
-    background-color: #2fa03e;
+    background-color: #2fa03eef;
 }
 
 
@@ -631,7 +631,7 @@ img, svg { max-width: 100%; height: auto; display: block; }
 
 #addpredict-close {
     position: absolute;
-    right: -12px;;
+    right: -12px;
     top: 47%;
     transform: translateY(-50%);
 
@@ -649,6 +649,13 @@ img, svg { max-width: 100%; height: auto; display: block; }
     border: none;
     cursor: pointer;
 }
+
+.tg-webapp #addpredict-close {
+    right: -13px;
+}
+
+
+
 
 
 #menu-addpredict input,
@@ -867,7 +874,7 @@ img, svg { max-width: 100%; height: auto; display: block; }
     max-width: 340px;
     min-height: 120px !important; 
     height: auto;
-    background: #1a1d23;
+    background: linear-gradient(135deg, #1a1d23  35%,#1e2936f3 65%);
     border-radius: 10px;
     padding: 12px;
     color: #ffffff;
@@ -1519,43 +1526,13 @@ img, svg { max-width: 100%; height: auto; display: block; }
 
 
 
-.utente-bar {
-    position: absolute;
-    bottom: 120px;
-    color:white;
-    left: 50%;
-    transform: translateX(-50%);
-    border-radius: 15px;
-    width: calc(100% - 35px);
-    max-width: 900px;
-    height: 56px;
-    background-color: rgba(255, 123, 0, 0.521);
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.6);
-    z-index: 1000;
-    border:none;
-}
 
-.utente-bar span {
-    font-size: 16px;
-    font-weight: 600;
-}
-
-.utente-profloss {
-    color:#1fb638;
-}
-
-.utente-profloss {
-    color:#dd1010;
-}
 
 
 /* === LEADERBOARD HEADER === */
 .upperpart-leader {
-    position: relative; /* normale scorrimento */
-    top: 0; /* nessuna distanza relativa al viewport */
+    position: relative; 
+    top: 0; 
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -1563,8 +1540,8 @@ img, svg { max-width: 100%; height: auto; display: block; }
     width: 100%;
     box-sizing: border-box;
     top: calc(var(--safe-top) + 60px) !important;
-    z-index: 10; /* abbastanza alto da non finire dietro elementi interni */
-    margin-bottom: 15px; /* Spazio per la linea */
+    z-index: 10;
+    margin-bottom: 15px; 
 }
 
 .line {
@@ -1573,7 +1550,7 @@ img, svg { max-width: 100%; height: auto; display: block; }
   width: calc(100% - 22px); /* 11px da entrambi i lati */
   border-radius: 2px;
   position: relative;
-  top: calc(var(--safe-top) + 60px); /* Ancorata sotto upperpart-leader */
+  top: calc(var(--safe-top) + 60px); 
   left: 50%;
   transform: translateX(-50%);
 
@@ -1583,17 +1560,15 @@ img, svg { max-width: 100%; height: auto; display: block; }
   color: #ffffff;
   font-size: 36px;
   font-weight: 600;
-  margin: 0; /* Rimuovi margini extra */
+  margin: 0;
 }
 
 .dropdown-time-leader {
   position: relative;
   margin-right: 5px; /* Sposta il dropdown più a destra */
 }
-#search-barcomm {
-    margin-top: calc(var(--safe-top) + 36px);
-    padding: 0 9px;
-}
+
+
 
 #sent-searchcomm{
     background: none;
@@ -1605,6 +1580,53 @@ img, svg { max-width: 100%; height: auto; display: block; }
     display: flex;
     align-items: center;
 }
+
+
+#middle-partlead {
+    display: flex;
+    align-items: baseline;               
+    justify-content: space-between;
+
+    margin-top: calc(var(--safe-top) + 80px);
+    padding: 0 16px;
+
+    width: 100%;
+    box-sizing: border-box;
+}
+
+
+
+#search-barcomm {
+    margin-top: 0 !important;
+    top: auto !important;
+    transform: none !important;
+    margin-left: -18px;
+    position: relative;
+    height: 42px;
+    width:47%;
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    background: #25313d;
+    border-radius: 28px;
+}
+
+
+
+/* Testo Profit/Loss */
+.profit-label {
+    color: #ffffff;
+    font-size: 18px;
+    font-weight: 600;
+    white-space: nowrap;
+    margin-left: auto;        
+}
+
+
+
+
+
+
 
 .dropdown-btn {
   background-color: #1e2b3b;
@@ -1685,10 +1707,10 @@ img, svg { max-width: 100%; height: auto; display: block; }
 .crypto-header {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 150px;
   padding: 16px;
   border-bottom: 1px solid rgba(255,255,255,0.08);
-  flex-shrink: 0; /* Impedisce che l'header si restringa */
+  flex-shrink: 0; 
   min-height: 60px; 
 }
 
@@ -1696,9 +1718,7 @@ img, svg { max-width: 100%; height: auto; display: block; }
   color: white;
   font-size: 17px;
   font-weight: 600;
-  margin: 0;
   flex: 1;
-  text-align: center;
 }
 
 #crypto-close {
@@ -1981,15 +2001,10 @@ img, svg { max-width: 100%; height: auto; display: block; }
 }
 
 
-
-
-
-/* Elementi che hanno azioni specifiche */
 [data-action] {
     cursor: pointer;
 }
 
-/* Trading bar - i bottoni YES/NO */
 .trading-bar > div {
     cursor: pointer;
     transition: all 0.15s ease;
@@ -2000,8 +2015,121 @@ img, svg { max-width: 100%; height: auto; display: block; }
     opacity: 0.9;
 }
 
-/* Bottoni commenti/share */
 .card-actions button {
     cursor: pointer;
-    pointer-events: auto; /* Assicurati che i bottoni siano cliccabili */
+    pointer-events: auto; 
+}
+
+/* Navigazione Sezioni */
+
+/* Container leaderboard */
+#leaderboard-container {
+    background: transparent;
+    border-radius: 16px;
+    border:none;
+    padding: 4px 0;
+
+    overflow: hidden;
+    width:100%;
+    margin-top: calc(var(--safe-top) -10px);  
+    padding-bottom: 110px;
+}
+
+/* Tutte le righe */
+.leader-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px; /* Altezza ridotta */
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    transition: background 0.2s ease;
+    cursor: pointer;
+    min-height: 48px; /* Altezza più compatta */
+}
+
+.leader-row:last-child {
+    border-bottom: none;
+}
+
+/* Hover */
+.leader-row:hover {
+    background: linear-gradient(90deg, rgba(59,176,75,0.1), rgba(96,165,250,0.1));
+}
+
+/* Numero e nome (sinistra) */
+.leader-row .leader-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #ffffff; /* Nome e numero bianchi */
+    font-weight: 600;
+    font-size: 15px; /* Più compatto */
+}
+.leader-row .span {
+    color:  #aaaaaadc;
+}
+/* Avatar (opzionale) */
+.leader-row img.avatar {
+    width: 32px; /* Più piccolo */
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+/* Score (destra) */
+.leader-row .leader-score {
+    font-weight: 600;
+    color: rgb(3, 189, 3);
+    font-size: 15px;
+    margin-left: auto; /* forza allineamento a destra */
+}
+.signplus{
+    margin-right: 3px;
+}
+.signdollar{
+    margin-left: 2px;
+}
+
+.pagination {
+    position: sticky;
+    bottom: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    padding: 12px;
+}
+
+.pagination button {
+    background: #1e293b;
+    border: 1px solid rgba(255,255,255,0.1);
+    color: white;
+    border-radius: 10px;
+    padding: 6px 10px;
+    cursor: pointer;
+}
+
+.pagination button:disabled {
+    opacity: 0.4;
+    cursor: default;
+}
+
+#pages {
+    display: flex;
+    gap: 6px;
+}
+
+#pages button {
+    background: transparent;
+    border: none;
+    color: #9ca3af;
+    font-size: 14px;
+    padding: 6px 10px;
+    border-radius: 8px;
+}
+
+#pages button:disabled {
+    background: #2563eb;
+    color: white;
+    font-weight: 600;
 }
