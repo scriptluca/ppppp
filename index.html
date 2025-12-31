@@ -284,31 +284,118 @@
     </div>
     </div>
     <div class="line"></div>
+    <div id="middle-partlead">
         <nav class="search-bar" id ="search-barcomm"> 
         <input type="text" placeholder="Search in community..  " id="searchcommInput">
         <button id="sent-searchcomm"> 
             <i class='bxr  bx-send-alt-2'></i> 
         </button>
-    </nav>
+        </nav>
+        <span class="profit-label">Profit/Loss</span>
+    </div>
+    <div id="leaderboard-container" >
+    
+
+    <!-- Lista utenti scrollabile -->
+    <div id="leaderboard-users"></div>
+    
+    <!-- Paginazione -->
+    <div class="pagination">
+        <button id="prev-page">◀</button>
+        <div id="pages"></div>
+        <button id="next-page">▶</button>
+    </div>
+    </div>
+
+    <script>
+    const users = [];
+    const pageSize = 20;
+    let currentPage = 1;
+
+    // Simuliamo l'arrivo di 21 utenti dal backend
+    const newUsers = [];
+    for(let i=1;i<=21;i++){
+    newUsers.push({name:'User'+i, score: Math.floor(Math.random()*1000)});
+    }
+    addUsers(newUsers);
+
+    function addUsers(newUsers){
+    users.push(...newUsers);
+    if(users.length>100) users.length=100;
+    renderLeaderboard();
+    }
+
+    function renderLeaderboard(){
+        const start = (currentPage-1)*pageSize;
+        const end = start + pageSize;
+        const pageUsers = users.slice(start,end);
+
+        const container = document.getElementById('leaderboard-users');
+        container.innerHTML='';
+        container.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+        });
+
+
+        pageUsers.forEach((user,idx)=>{
+            const div = document.createElement('div');
+            div.className='leader-row'; 
+
+            const left = document.createElement('div');
+            left.className='leader-left';
+
+            const number = document.createElement('span');
+            number.textContent = start + idx + 1;
+
+            const avatar = document.createElement('img');
+            avatar.src = 'https://via.placeholder.com/32';
+            avatar.alt = 'Avatar';
+            avatar.className = 'avatar';
+
+            const name = document.createElement('span');
+            name.textContent = user.name;
+
+            left.append(number, avatar, name);
+            
+            const score = document.createElement('div');
+            score.className = 'leader-score';
+            score.innerHTML = `<span class="signplus">+</span>${user.score}<span class="signdollar">$</span>`;
+            div.append(left, score);
+            container.appendChild(div);
+        });
+
+        renderPagination();
+    }
 
 
 
 
+    function renderPagination(){
+    const pagesContainer = document.getElementById('pages');
+    pagesContainer.innerHTML='';
+    const totalPages = Math.ceil(users.length/pageSize);
 
+    for(let i=1;i<=totalPages;i++){
+        const btn=document.createElement('button');
+        btn.textContent=i;
+        btn.disabled=i===currentPage;
+        btn.onclick=()=>{currentPage=i; renderLeaderboard();};
+        pagesContainer.appendChild(btn);
+    }
 
+    document.getElementById('prev-page').disabled=currentPage===1;
+    document.getElementById('next-page').disabled=currentPage===totalPages;
+    }
 
-
-
-
-
-    <button class="utente-bar"> 
-        <span class="utente-rank">4</span>
-        <span class="utente-name">Username</span>
-        <span class="utente-profloss">profit/loss</span>
-
-
-    </button>
-
+    document.getElementById('prev-page').onclick = ()=>{
+    if(currentPage>1){ currentPage--; renderLeaderboard(); }
+    };
+    document.getElementById('next-page').onclick = ()=>{
+    const totalPages = Math.ceil(users.length/pageSize);
+    if(currentPage<totalPages){ currentPage++; renderLeaderboard(); }
+    };
+    </script>
     
   </div>
 
