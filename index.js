@@ -1009,7 +1009,6 @@ function createSimpleCard(predict, idx) {
             return;
         }
         
-        // SE ARRIVIAMO QUI: l'utente ha cliccato sulla CARD GENERICA
         // (non sui bottoni specifici)
         console.log("📊 Opening predict details for ID:", predict.id);
         
@@ -1177,7 +1176,7 @@ function showPredictDetails(predict, idx) {
         width: 100%;
         max-width: 720px;
         height: 100%;
-        background: #0b0f1a;
+        background: #1e2936f3;
         color: #e5e7eb;
         display: flex;
         flex-direction: column;
@@ -1189,7 +1188,7 @@ function showPredictDetails(predict, idx) {
         position: sticky;
         top: 0;
         z-index: 5;
-        background: #0b0f1a;
+        background: #1e2936f3;
         padding: 14px 16px;
         border-bottom: 1px solid rgba(255,255,255,0.08);
         display: flex;
@@ -1229,6 +1228,16 @@ function showPredictDetails(predict, idx) {
             </h1>
         </div>
     `;
+    const volume = document.createElement('div');
+    volume.style.cssText = `
+        font-size:14px;
+        color:#9ca3af;
+        margin-bottom: 16px;
+    `;
+    volume.textContent = `$${(predict.totalUSD || 0).toLocaleString()} Vol.`;
+
+    content.appendChild(volume);
+
 
     /* ================= CHANCE ================= */
     const chance = Math.round(predict.yesChance ?? 46);
@@ -1236,7 +1245,7 @@ function showPredictDetails(predict, idx) {
         <div style="
             font-size:22px;
             font-weight:600;
-            color:#60a5fa;
+            color:white;
             margin-bottom:10px;
         ">
             ${chance}% chance
@@ -1264,7 +1273,7 @@ function showPredictDetails(predict, idx) {
     chartViewport.style.cssText = `
         height: 160px;
         overflow-y: auto;
-        background: #0f172a;
+        background: #1e2936f3;
         border-radius: 14px;
         margin-bottom: 24px;
         position: relative;
@@ -1318,7 +1327,7 @@ function showPredictDetails(predict, idx) {
         );
         
         // Background
-        ctx.fillStyle = '#0f172a';
+        ctx.fillStyle = '#1e2936f3';
         ctx.fillRect(0, 0, w, h);
         
         // Griglia
@@ -1371,7 +1380,7 @@ function showPredictDetails(predict, idx) {
     setTimeout(drawChart, 200);    /* ================= ORDER BOOK ================= */
     content.innerHTML += `
         <div style="
-            background:#0f172a;
+            background:#1e2936f3;
             border-radius:14px;
             padding:14px;
             margin-bottom:24px;
@@ -1389,8 +1398,8 @@ function showPredictDetails(predict, idx) {
 
     /* ================= ABOUT ================= */
     content.innerHTML += `
-        <div style="font-size:15px;margin-bottom:6px;">About</div>
-        <div style="font-size:14px;color:#9ca3af;line-height:1.6;">
+        <div style="font-size:18px;margin-bottom:6px;">About</div>
+        <div style="font-size:15px;color:#9ca3af;line-height:1.6; ">
             ${predict.description || 'No description available.'}
         </div>
     `;
@@ -1402,7 +1411,7 @@ function showPredictDetails(predict, idx) {
     bottomBar.style.cssText = `
         position: sticky;
         bottom: 0;
-        background:#0b0f1a;
+        background:#1e2936f3;
         border-top:1px solid rgba(255,255,255,0.08);
         padding:14px 16px env(safe-area-inset-bottom);
         display:grid;
@@ -1432,6 +1441,198 @@ function showPredictDetails(predict, idx) {
         ">Buy No ${noPrice}¢</button>
     `;
 
+        /* ================= COMMENTS ================= */
+    const commentsSection = document.createElement('div');
+    commentsSection.style.cssText = `
+        margin-top: 29px;
+        padding: 14px;
+        border-radius: 14px;
+        color: #e5e7eb;
+        font-size: 14px;
+        background:#1e2936f3;
+    `;
+
+    // Input per scrivere un commento
+    const commentInput = document.createElement('div');
+    commentInput.style.cssText = `
+        display:flex; 
+        gap:8px; 
+        margin-bottom:10px;
+    `;
+    commentInput.innerHTML = `
+        <input type="text" placeholder="Write a comment..." 
+            style="
+                flex:1;
+                padding:10px 12px;
+                border-radius:10px;
+                border:1px solid rgba(255,255,255,0.15);
+                background:#1e2936f3;
+                color:#e5e7eb;
+            ">
+        <button style="
+            background:#3b82f6;
+            border:none;
+            color:white;
+            padding:10px 14px;
+            border-radius:10px;
+            cursor:pointer;
+        ">Post</button>
+    `;
+// Container principale
+    const commentsContainer = document.createElement('div');
+    commentsContainer.id = 'comments-container';
+    content.appendChild(commentsContainer);
+
+    // Input per nuovo commento (separato dal render dei commenti)
+    const newCommentDiv = document.createElement('div');
+    newCommentDiv.style.cssText = 'display:flex; gap:6px; margin-bottom:12px; ';
+    newCommentDiv.innerHTML = `
+        <input id="new-comment-input" type="text" placeholder="write about it" style="flex:1; padding:6px 8px; border-radius:8px; border:1px solid rgba(255,255,255,0.15); background:#1e2936f3; color:#e5e7eb;">
+        <button style="background:linear-gradient(135deg, #1a1d23  35%,#1e2936f3 65%); border:none; color:white; padding:6px 10px; border-radius:8px; cursor:pointer;">Send</button>
+    `;
+    commentsContainer.appendChild(newCommentDiv);
+
+    // Funzione per renderizzare solo i commenti
+
+    function renderComments() {
+        const comments = predict.comments || [];
+
+        let commentsList = document.getElementById('comments-list');
+        if (!commentsList) {
+            commentsList = document.createElement('div');
+            commentsList.id = 'comments-list';
+            commentsList.style.cssText = `
+                max-height: 300px;
+                overflow-y: auto;
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+                padding-bottom: 60px; /* spazio per la barra fissa */
+            `;
+            commentsContainer.insertBefore(commentsList, newCommentDiv);
+        }
+        commentsList.innerHTML = '';
+
+        comments.forEach((c, idx) => {
+            const commentDiv = document.createElement('div');
+            commentDiv.style.cssText = `
+                display:flex;
+                gap:12px;
+                padding:8px 0;
+                border-bottom:1px solid rgba(255,255,255,0.1);
+                flex-direction: column;
+            `;
+
+            commentDiv.innerHTML = `
+                <div style="display:flex; gap:8px; align-items:flex-start;">
+                    <img src="${c.avatar || 'https://via.placeholder.com/32'}" 
+                        style="width:32px; height:32px; border-radius:50%; object-fit:cover;">
+                    <div style="flex:1; display:flex; flex-direction:column; gap:4px;">
+                        <div style="font-weight:500; color:#e5e7eb;">${c.user}</div>
+                        <div style="color:#9ca3af; line-height:1.4;">${c.text}</div>
+                        <div style="display:flex; gap:12px; font-size:13px; color:#9ca3af;">
+                            <button style="background:none; border:none; cursor:pointer; display:flex; align-items:center; gap:4px;color:#9ca3af;">
+                                <span>${c.likes || 0}</span> <i class='bxr  bx-like'></i> 
+                            </button>
+                            <button style="background:none; border:none; color:#9ca3af; cursor:pointer; font-weight:500;">
+                                Show replies (${(c.replies || []).length})
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div id="replies-${idx}" style="margin-top:6px; display:none; flex-direction:column; gap:6px; padding-left:40px;">
+                    ${(c.replies || []).map(r => `
+                        <div style="display:flex; gap:8px; align-items:flex-start;">
+                            <img src="${r.avatar || 'https://via.placeholder.com/28'}"
+                                style="width:28px; height:28px; border-radius:50%; object-fit:cover;">
+                            <div style="display:flex; flex-direction:column; gap:2px;">
+                                <div style="font-weight:500; color:#e5e7eb;">${r.user}</div>
+                                <div style="color:#9ca3af; line-height:1.3;">${r.text}</div>
+                            </div>
+                        </div>
+                    `).join('')}
+                    <div id="reply-input-${idx}" style="display:flex; gap:6px; margin-top:4px; align-items:center;">
+                        <input type="text" placeholder="Reply..." 
+                            style="flex:1; padding:6px 8px; border-radius:6px; border:1px solid rgba(255,255,255,0.15); background:none; color:#e5e7eb;">
+                        <button style="background:linear-gradient(135deg, #1a1d23  35%,#1e2936f3 65%); border:none; color:white; padding:6px 10px; border-radius:6px; cursor:pointer;">
+                            Add
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            commentsList.appendChild(commentDiv);
+
+            const showRepliesBtn = commentDiv.querySelector('button:nth-child(2)');
+            const repliesDiv = commentDiv.querySelector(`#replies-${idx}`);
+            const replyInputDiv = commentDiv.querySelector(`#reply-input-${idx}`);
+
+            showRepliesBtn.onclick = () => {
+                const isVisible = repliesDiv.style.display === 'flex';
+                repliesDiv.style.display = isVisible ? 'none' : 'flex';
+                replyInputDiv.style.display = isVisible ? 'none' : 'flex';
+            };
+
+            const addBtn = replyInputDiv.querySelector('button');
+            const input = replyInputDiv.querySelector('input');
+            addBtn.onclick = () => {
+                const replyText = input.value.trim();
+                if(!replyText) return;
+                const reply = {user: 'CurrentUser', text: replyText};
+                c.replies = c.replies || [];
+                c.replies.push(reply);
+                renderComments();
+                input.value = '';
+            };
+        });
+        newCommentDiv.style.bottom = '0';
+        newCommentDiv.style.background = '#1e2936f3'; // sfondo pieno
+        newCommentDiv.style.zIndex = '10';
+        newCommentDiv.style.padding = '8px 0';
+        newCommentDiv.style.display = 'flex';
+        newCommentDiv.style.gap = '6px';
+        newCommentDiv.style.alignItems = 'center';
+    }
+
+
+
+
+    // Gestione nuovo commento
+    newCommentDiv.querySelector('button').onclick = () => {
+        const input = document.getElementById('new-comment-input');
+        const text = input.value.trim();
+        if(!text) return;
+
+        const comment = {user: 'CurrentUser', text, likes:0, replies:[]};
+        predict.comments = predict.comments || [];
+        predict.comments.push(comment);
+
+        renderComments(); // render immediato
+        input.value = '';
+
+        fetch('/api/add-comment', {
+            method:'POST',
+            headers:{'Content-Type':'application/json'},
+            body: JSON.stringify(comment)
+        });
+    };
+
+    // Mostra/nascondi replies
+    window.toggleReplies = function(idx) {
+        const el = document.getElementById(`replies-${idx}`);
+        if(el) el.style.display = el.style.display === 'none' ? 'block' : 'none';
+    }
+
+    // Primo render
+    renderComments();
+
+
+
+
+
+
+
+
     /* ================= ASSEMBLY ================= */
     sheet.append(header, content, bottomBar);
     overlay.appendChild(sheet);
@@ -1448,10 +1649,6 @@ function showPredictDetails(predict, idx) {
 
 }
 
-
-
-//intercetto link page 
-
 document.addEventListener('DOMContentLoaded', () => {
     const path = window.location.pathname; 
     const match = path.match(/^\/market\/(\d+)$/);
@@ -1463,3 +1660,5 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 });
+
+
