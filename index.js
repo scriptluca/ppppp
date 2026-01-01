@@ -1403,6 +1403,9 @@ function showPredictDetails(predict, idx) {
             ${predict.description || 'No description available.'}
         </div>
     `;
+    content.innerHTML += `
+        <div style="font-size:15px;margin-bottom:6px;margin-top:6px">Comments</div>
+    `;
 
     /* ================= BOTTOM BAR ================= */
     const { yesPrice, noPrice } = createSimpleCard(predict, idx);
@@ -1648,6 +1651,99 @@ function showPredictDetails(predict, idx) {
     }
 
 }
+
+
+const questsList = document.getElementById('quests-list');
+const questModal = document.getElementById('quest-modal');
+const modalImg = document.getElementById('modal-img');
+const modalReward = document.getElementById('modal-reward');
+const modalSteps = document.getElementById('modal-steps');
+const closeModalBtn = document.getElementById('close-modal');
+
+// Esempio JSON dal back-end
+const questsFromBackend = [
+    { 
+        title: "Share a Secret Santa link", 
+        img: "icons8-crypto-48 (1).png", 
+        reward: "2$", 
+        progress: 0.3,
+        steps: ["Share link with 3 friends", "Get 1 friend to join", "Claim reward"]
+    },
+    { 
+        title: "Boost Giftomania RUS channel", 
+        img: "gift.png", 
+        reward: "+2 🎁 +800 💎", 
+        progress: 0.6,
+        steps: ["Join channel", "Like 2 posts", "Share channel"]
+    },
+    { 
+        title: "Open InkLand and Activate Bonus", 
+        img: "inkland.png", 
+        reward: "+0.6 🎁 +700 💎", 
+        progress: 0.1,
+        steps: ["Open InkLand app", "Activate bonus", "Finish tutorial"]
+    }
+];
+
+// Render delle quests
+function renderQuests(quests) {
+    questsList.innerHTML = '';
+
+    quests.forEach((q, idx) => {
+        const div = document.createElement('div');
+        div.className = 'quest-item';
+        div.innerHTML = `
+            <div class="quest-top">
+                <div class="quest-left">
+                    <img src="${q.img}" alt="${q.title}">
+                    <div class="quest-title">${q.title}</div>
+                </div>
+                <div class="quest-reward">${q.reward}</div>
+            </div>
+            <div class="quest-progress">
+                <div class="quest-progress-fill" style="width:${(q.progress*100).toFixed(0)}%"></div>
+            </div>
+        `;
+
+        // click per aprire modal
+        div.addEventListener('click', () => {
+            modalSteps.innerHTML = '';
+
+            // aggiorna img e reward
+            modalImg.src = q.img;
+
+            q.steps.forEach((step, i) => {
+                const stepDiv = document.createElement('div');
+                stepDiv.className = 'modal-step';
+
+                const numberDiv = document.createElement('div');
+                numberDiv.className = 'modal-step-number';
+                numberDiv.textContent = i + 1;
+
+                const textDiv = document.createElement('div');
+                textDiv.textContent = step;
+
+                stepDiv.appendChild(numberDiv);
+                stepDiv.appendChild(textDiv);
+                modalSteps.appendChild(stepDiv);
+            });
+
+            questModal.style.display = 'flex';
+        });
+
+        questsList.appendChild(div);
+    });
+}
+
+closeModalBtn.addEventListener('click', () => {
+    questModal.style.display = 'none';
+});
+
+
+renderQuests(questsFromBackend);
+
+
+
 
 document.addEventListener('DOMContentLoaded', () => {
     const path = window.location.pathname; 
