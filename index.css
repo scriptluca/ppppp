@@ -864,7 +864,7 @@ img, svg { max-width: 100%; height: auto; display: block; }
     grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
     gap: 18px;
     justify-items: center;
-    margin: 120px auto 40px;
+    margin: 125px auto 80px;
     padding: 0 15px 85px;
     width: 100%;
     max-width: 1200px;
@@ -877,12 +877,12 @@ img, svg { max-width: 100%; height: auto; display: block; }
     height: auto;
     background: linear-gradient(135deg, #1a1d23  35%,#1e2936f3 65%);
     border-radius: 10px;
-    padding: 12px;
+    padding: 7px;
     color: #ffffff;
     border: 1px solid #2d343c;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 6px;
     box-sizing: border-box;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -944,7 +944,7 @@ img, svg { max-width: 100%; height: auto; display: block; }
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    margin-bottom: 8px; /* Ridotto da 12px */
+    margin-bottom: 5px;
 }
 
 
@@ -1118,8 +1118,8 @@ img, svg { max-width: 100%; height: auto; display: block; }
 .outcome-list {
     display: flex;
     flex-direction: column;
-    gap: 6px; /* Ridotto da 8px */
-    margin: 8px 0; /* Ridotto da 12px */
+    gap: 6px; 
+    margin: 8px 0; 
 }
 
 .outcome-item {
