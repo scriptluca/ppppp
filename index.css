@@ -1904,6 +1904,7 @@ img, svg { max-width: 100%; height: auto; display: block; }
         max-width: calc(100vw - 16px);
         padding: 11px 18px;
         margin: 0 auto;
+        min-height: 190px;
     }
     
     .predict-card .btn-yes,
@@ -1968,7 +1969,7 @@ img, svg { max-width: 100%; height: auto; display: block; }
     .predict-card {
         max-width: calc(100vw - 12px);
         padding: 12px 16px;
-        min-height: 210px;
+        min-height: 190px;
     }
     
     .predict-card .btn-yes,
@@ -1991,7 +1992,7 @@ img, svg { max-width: 100%; height: auto; display: block; }
 
 .tg-webapp.platform-mobile .predict-card {
     max-width: calc(100vw - 16px) !important;
-    min-height: 230px !important;
+    min-height: 200px !important;
 }
 
 /* CORREZIONE: larghezza fissa invece di percentuale */
