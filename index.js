@@ -287,7 +287,9 @@ function updatePayout() {
 }
 
 
-function placeBet() {
+// MODIFICA la funzione placeBet():
+
+async function placeBet() {
     const amountInput = document.getElementById('bet-amount-input');
     const errorEl = document.getElementById('bet-error');
     
@@ -296,45 +298,51 @@ function placeBet() {
     const rawAmount = amountInput.value.trim();
     const amount = parseInt(rawAmount);
     
-    if (!rawAmount || isNaN(amount) || amount <= 0 || !Number.isInteger(amount)) {
-        errorEl.textContent = 'Please enter a valid amount';
-        errorEl.style.display = 'block';
-        return;
-    }
+    // Validazioni...
     
-    if (amount > 1000) { // Simulazione controllo saldo
-        errorEl.textContent = 'Insufficient balance';
-        errorEl.style.display = 'block';
-        return;
-    }
-    
-    const stars = amount; // 1 star = $1
+    const stars = amount;
     const usd = stars * STAR_TO_USD;
     const predict = predicts[currentBet.idx];
     
-    if (!predict) {
-        errorEl.textContent = 'Predict not found';
-        errorEl.style.display = 'block';
-        return;
-    }
-    
-    // Aggiungi la scommessa
-    predict.bets.push({ 
+    // Crea l'oggetto bet
+    const newBet = { 
         side: currentBet.side, 
         stars, 
         usd,
         timestamp: new Date().toISOString(),
-        user: 'You' // Sostituisci con l'utente reale
-    });
+        user: 'You'
+    };
     
-    predict.totalUSD = (predict.totalUSD || 0) + usd;
-    
-    // Aggiorna l'interfaccia
-    renderPredicts();
-    closeBetModal();
-    
-    // Mostra conferma
-    showBetConfirmation(currentBet.side, amount);
+    try {
+        // 1. Invia la bet al backend
+        const response = await fetch(`http://localhost:3000/api/predicts/${predict.id}/bets`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(newBet)
+        });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        // 2. Aggiorna localmente
+        predict.bets.push(newBet);
+        predict.totalUSD = (predict.totalUSD || 0) + usd;
+        
+        // 3. Aggiorna l'interfaccia
+        renderPredicts();
+        closeBetModal();
+        
+        // 4. Mostra conferma
+        showBetConfirmation(currentBet.side, amount);
+        
+    } catch (error) {
+        console.error("Error placing bet:", error);
+        errorEl.textContent = 'Error placing bet. Please try again.';
+        errorEl.style.display = 'block';
+    }
 }
 
 
@@ -643,45 +651,107 @@ if (sendBtn) sendBtn.onclick = async () => {
 
 };
 // Funzione per salvare JSON
-function savePredictToJSON(predict) {
-    // Aggiungi all'array
-    predicts.push(predict);
-    
-    // Salva in localStorage ,, METTERE DB E SALVARE DA DB
+
+
+async function savePredictToJSON(predict) {
     try {
-        const savedPredicts = JSON.parse(localStorage.getItem('userPredicts') || '[]');
-        savedPredicts.push(predict);
-        localStorage.setItem('userPredicts', JSON.stringify(savedPredicts));
-        console.log("✅ Saved to localStorage");
-    } catch (e) {
-        console.error("Error saving to localStorage:", e);
+        // 1. Salva sul backend
+        const response = await fetch('http://localhost:3000/api/predicts', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(predict)
+        });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const savedPredict = await response.json();
+        
+        // 2. Aggiorna l'array locale con il dato tornato dal server
+        predicts.push(savedPredict);
+        
+        // 3. Aggiorna l'interfaccia
+        renderPredicts();
+        
+        console.log("✅ Saved to backend:", savedPredict);
+        
+        // 4. Mantieni anche localStorage come cache
+        try {
+            const savedPredicts = JSON.parse(localStorage.getItem('userPredicts') || '[]');
+            savedPredicts.push(savedPredict);
+            localStorage.setItem('userPredicts', JSON.stringify(savedPredicts));
+            console.log("✅ Also cached to localStorage");
+        } catch (e) {
+            console.error("Error caching to localStorage:", e);
+        }
+        
+        return savedPredict;
+        
+    } catch (error) {
+        console.error("Error saving to backend:", error);
+        
+        // Fallback: salva solo in localStorage
+        predicts.push(predict);
+        
+        try {
+            const savedPredicts = JSON.parse(localStorage.getItem('userPredicts') || '[]');
+            savedPredicts.push(predict);
+            localStorage.setItem('userPredicts', JSON.stringify(savedPredicts));
+            console.log("✅ Saved to localStorage (fallback)");
+        } catch (e) {
+            console.error("Error saving to localStorage:", e);
+        }
+        
+        renderPredicts();
+        return predict;
     }
-    
-    // Mostra in console
-    console.log("📄 JSON Created:");
-    console.log(JSON.stringify(predict, null, 2));
 }
 
 // Carica predictions da localStorage ,, CARICARE DA DB
-function loadSavedPredicts() {
+// RIMPIAZZA la funzione loadSavedPredicts():
+
+async function loadSavedPredicts() {
     try {
-        const savedPredicts = localStorage.getItem('userPredicts');
-        if (savedPredicts) {
-            const parsed = JSON.parse(savedPredicts);
-            if (Array.isArray(parsed)) {
-                // Sostituisci array esistente
-                predicts.length = 0;
-                parsed.forEach(p => predicts.push(p));
-                console.log(`📂 Loaded ${predicts.length} saved predicts`);
-                
-                // Renderizza le card esistenti
-                if (predicts.length > 0) {
+        // Carica dal backend invece che localStorage
+        const response = await fetch('http://localhost:3000/api/predicts');
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        
+        // Sostituisci array esistente
+        predicts.length = 0;
+        predicts.push(...data);
+        
+        console.log(`📂 Loaded ${predicts.length} predicts from backend`);
+        
+        // Renderizza le card
+        if (predicts.length > 0) {
+            renderPredicts();
+        }
+    } catch (error) {
+        console.error("Error loading from backend:", error);
+        
+        // Fallback a localStorage se il backend non risponde
+        try {
+            const savedPredicts = localStorage.getItem('userPredicts');
+            if (savedPredicts) {
+                const parsed = JSON.parse(savedPredicts);
+                if (Array.isArray(parsed)) {
+                    predicts.length = 0;
+                    parsed.forEach(p => predicts.push(p));
+                    console.log(`📂 Loaded ${predicts.length} predicts from localStorage (fallback)`);
                     renderPredicts();
                 }
             }
+        } catch (e) {
+            console.error("Error loading from localStorage:", e);
         }
-    } catch (e) {
-        console.error("Error loading from localStorage:", e);
     }
 }
 
@@ -1001,10 +1071,11 @@ function createSimpleCard(predict, idx) {
             const idx = parseInt(buttonElement.dataset.idx);
             
             if (action === 'comments') {
-                showComments(idx);
+                showPredictDetails(predict, idx, true); // Passa true per scrollare ai commenti
             } else if (action === 'share') {
                 console.log("Share predict:", idx);
                 // Aggiungi qui la logica per condividere
+                sharePredict(predict);
             }
             return;
         }
@@ -1012,8 +1083,8 @@ function createSimpleCard(predict, idx) {
         // (non sui bottoni specifici)
         console.log("📊 Opening predict details for ID:", predict.id);
         
-        // APRI I DETTAGLI - versione immediata con alert
-        showPredictDetails(predict, idx);
+        // APRI I DETTAGLI - senza scrollare ai commenti
+        showPredictDetails(predict, idx, false);
     });
     const shareBtn = card.querySelector('.share-btn');
     if (shareBtn) {
@@ -1022,8 +1093,6 @@ function createSimpleCard(predict, idx) {
             sharePredict(predict);
         });
     }
-
-
 
     return card;
 }
@@ -1130,9 +1199,6 @@ document.addEventListener("click", () => {
 
 
 
-
-
-
 // Funzione per aprire i dettagli del market
 function openMarketDetail(predictId) {
     console.log("Opening market details for ID:", predictId);
@@ -1154,9 +1220,8 @@ function openMarketDetail(predictId) {
     }
 }
 
-function showPredictDetails(predict, idx) {
+function showPredictDetails(predict, idx, scrollToComments = false) {
 
-    /* ========== BLOCCA SCROLL BACKGROUND ========== */
     document.body.style.overflow = 'hidden';
 
     /* ================= OVERLAY ================= */
@@ -1164,10 +1229,11 @@ function showPredictDetails(predict, idx) {
     overlay.style.cssText = `
         position: fixed;
         inset: 0;
-        background: rgba(0,0,0,0.8);
+        background: rgba(0,0,0,0.75);
         z-index: 10000;
         display: flex;
         justify-content: center;
+        align-items: center;
     `;
 
     /* ================= SHEET ================= */
@@ -1175,11 +1241,13 @@ function showPredictDetails(predict, idx) {
     sheet.style.cssText = `
         width: 100%;
         max-width: 720px;
-        height: 100%;
-        background: #1e2936f3;
+        height: 95vh;
+        background: #111827;
         color: #e5e7eb;
         display: flex;
         flex-direction: column;
+        border-radius: 16px;
+        overflow: hidden;
     `;
 
     /* ================= HEADER ================= */
@@ -1188,24 +1256,24 @@ function showPredictDetails(predict, idx) {
         position: sticky;
         top: 0;
         z-index: 5;
-        background: #1e2936f3;
+        background: #111827;
         padding: 14px 16px;
         border-bottom: 1px solid rgba(255,255,255,0.08);
         display: flex;
         justify-content: space-between;
         align-items: center;
     `;
-
     header.innerHTML = `
-        <div style="font-size:16px;opacity:.8;">
+        <div style="font-size:14px;color:#9ca3af;">
             ${predict.category || 'Market'}
         </div>
         <button id="close-market" style="
             background:none;
             border:none;
             color:#9ca3af;
-            font-size:22px;
+            font-size:28px;
             cursor:pointer;
+            line-height:1;
         ">×</button>
     `;
 
@@ -1215,443 +1283,563 @@ function showPredictDetails(predict, idx) {
         flex: 1;
         overflow-y: auto;
         padding: 16px 16px 160px;
-        overscroll-behavior: contain;
     `;
 
     /* ================= TITLE ================= */
-    content.innerHTML += `
-        <div style="display:flex;gap:12px;margin-bottom:8px;">
+    const titleSection = document.createElement('div');
+    titleSection.innerHTML = `
+        <div style="display:flex;gap:12px;margin-bottom:6px;">
             <img src="${predict.image || 'https://via.placeholder.com/48'}"
-                 style="width:48px;height:48px;border-radius:10px;object-fit:cover;">
-            <h1 style="font-size:20px;line-height:1.3;margin:0;">
+                 style="width:48px;height:48px;border-radius:10px;">
+            <h1 style="font-size:18px;line-height:1.3;margin:0;">
                 ${predict.title}
             </h1>
         </div>
+        <div style="font-size:13px;color:#9ca3af;margin-bottom:14px;">
+            $${(predict.totalUSD || 0).toLocaleString()} Vol.
+        </div>
     `;
-    const volume = document.createElement('div');
-    volume.style.cssText = `
-        font-size:14px;
-        color:#9ca3af;
-        margin-bottom: 16px;
-    `;
-    volume.textContent = `$${(predict.totalUSD || 0).toLocaleString()} Vol.`;
-
-    content.appendChild(volume);
-
+    content.appendChild(titleSection);
 
     /* ================= CHANCE ================= */
-    const chance = Math.round(predict.yesChance ?? 46);
-    content.innerHTML += `
-        <div style="
-            font-size:22px;
-            font-weight:600;
-            color:white;
-            margin-bottom:10px;
-        ">
-            ${chance}% chance
-        </div>
+    const chance = Math.round(predict.yesChance ?? 50);
+    const chanceSection = document.createElement('div');
+    chanceSection.style.cssText = `
+        font-size:32px;
+        font-weight:700;
+        margin-bottom:4px;
+        color:#22c55e;
     `;
+    chanceSection.textContent = `${chance}%`;
+    content.appendChild(chanceSection);
+
+    const chanceLabel = document.createElement('div');
+    chanceLabel.style.cssText = 'font-size:14px;color:#9ca3af;margin-bottom:16px;';
+    chanceLabel.textContent = 'chance';
+    content.appendChild(chanceLabel);
 
     /* ================= TIMEFRAME ================= */
-    content.innerHTML += `
-        <div style="display:flex;gap:8px;margin-bottom:10px;">
-            ${['6H','1D','1W','ALL'].map(t => `
-                <button style="
-                    background:${t === 'ALL' ? '#1e293b' : 'transparent'};
-                    border:1px solid rgba(255,255,255,0.15);
-                    border-radius:10px;
-                    padding:6px 10px;
-                    color:#e5e7eb;
-                    font-size:13px;
-                ">${t}</button>
-            `).join('')}
-        </div>
-    `;
+    const timeframeSection = document.createElement('div');
+    timeframeSection.style.cssText = 'display:flex;gap:8px;margin-bottom:12px;';
+    let activeTimeframe = 'ALL';
+    
+    ['6H','1D','1W','ALL'].forEach(t => {
+        const btn = document.createElement('button');
+        btn.textContent = t;
+        btn.className = 'timeframe-btn-' + t;
+        btn.dataset.timeframe = t;
+        btn.style.cssText = `
+            padding:6px 10px;
+            border-radius:999px;
+            border:1px solid rgba(255,255,255,.15);
+            background:${t === 'ALL' ? 'rgba(255,255,255,.12)' : 'transparent'};
+            color:#e5e7eb;
+            font-size:12px;
+            cursor:pointer;
+        `;
+        timeframeSection.appendChild(btn);
+    });
+    content.appendChild(timeframeSection);
 
-    /* ================= CHART (VERTICAL SCROLL) ================= */
-    const chartViewport = document.createElement('div');
-    chartViewport.style.cssText = `
-        height: 160px;
-        overflow-y: auto;
-        background: #1e2936f3;
-        border-radius: 14px;
+    /* ================= CHART CONTAINER ================= */
+    const chartContainer = document.createElement('div');
+    chartContainer.style.cssText = `
+        height: 200px;
         margin-bottom: 24px;
         position: relative;
-        padding: 10px;
+        background: rgba(0,0,0,0.2);
+        border-radius: 12px;
+        border: 1px solid rgba(255,255,255,0.06);
     `;
+    content.appendChild(chartContainer);
 
-    const canvas = document.createElement('canvas');
-    canvas.id = `market-chart-${idx}`;
-    canvas.style.cssText = `
-        display: block;
-        width: 100%;
-        height: 400px;
+    /* ================= ORDER BOOK ================= */
+    const orderBook = document.createElement('div');
+    orderBook.style.cssText = `
+        background:#0f172a;
+        border-radius:14px;
+        padding:14px;
+        margin-bottom:24px;
     `;
-    chartViewport.appendChild(canvas);
-    content.appendChild(chartViewport);
-
-    // Funzione separata per disegnare il grafico
-    function drawChart() {
-        const canvas = document.getElementById(`market-chart-${idx}`);
-        if (!canvas) return;
-        
-        const ctx = canvas.getContext('2d');
-        
-        // Imposta dimensioni REALI del canvas
-        const displayWidth = canvas.clientWidth;
-        const displayHeight = canvas.clientHeight;
-        
-        // Controlla se il canvas è visibile e ha dimensioni
-        if (displayWidth === 0 || displayHeight === 0) {
-            console.warn('Canvas ha dimensioni zero, ritento...');
-            setTimeout(drawChart, 50);
-            return;
-        }
-        
-        canvas.width = displayWidth;
-        canvas.height = displayHeight;
-        
-        console.log('Drawing chart with dimensions:', canvas.width, 'x', canvas.height);
-        
-        const w = canvas.width;
-        const h = canvas.height;
-        
-        // Pulisci
-        ctx.clearRect(0, 0, w, h);
-        
-        // Dati
-        const data = Array.from({ length: 80 }, (_, i) =>
-            Math.max(0, Math.min(100,
-                50 + Math.sin(i / 6) * 30 + Math.random() * 10
-            ))
-        );
-        
-        // Background
-        ctx.fillStyle = '#1e2936f3';
-        ctx.fillRect(0, 0, w, h);
-        
-        // Griglia
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
-        ctx.lineWidth = 1;
-        ctx.font = '10px sans-serif';
-        ctx.fillStyle = '#9ca3af';
-        
-        for (let p = 0; p <= 100; p += 25) {
-            const y = h - (p / 100) * h;
-            
-            ctx.beginPath();
-            ctx.moveTo(0, y);
-            ctx.lineTo(w, y);
-            ctx.stroke();
-            
-            ctx.fillText(`${p}%`, 5, y - 5);
-        }
-        
-        // Linea del grafico
-        ctx.strokeStyle = '#60a5fa';
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        
-        data.forEach((value, index) => {
-            const x = (index / (data.length - 1)) * w;
-            const y = h - (value / 100) * h;
-            
-            if (index === 0) {
-                ctx.moveTo(x, y);
-            } else {
-                ctx.lineTo(x, y);
-            }
-        });
-        
-        ctx.stroke();
-        
-        // Punto finale
-        const lastValue = data[data.length - 1];
-        const lastX = w;
-        const lastY = h - (lastValue / 100) * h;
-        
-        ctx.fillStyle = '#60a5fa';
-        ctx.beginPath();
-        ctx.arc(lastX, lastY, 4, 0, Math.PI * 2);
-        ctx.fill();
-    }
-
-    // Disegna il grafico con un ritardo
-    setTimeout(drawChart, 200);    /* ================= ORDER BOOK ================= */
-    content.innerHTML += `
-        <div style="
-            background:#1e2936f3;
-            border-radius:14px;
-            padding:14px;
-            margin-bottom:24px;
-        ">
-            <div onclick="this.nextElementSibling.style.display =
-                this.nextElementSibling.style.display === 'none' ? 'block' : 'none'"
-                style="display:flex;justify-content:space-between;cursor:pointer;">
-                <span>Order Book</span><span>⌄</span>
-            </div>
-            <div style="display:none;margin-top:12px;color:#9ca3af;font-size:14px;">
-                Liquidity data placeholder
-            </div>
+    orderBook.innerHTML = `
+        <div onclick="this.nextElementSibling.style.display =
+            this.nextElementSibling.style.display === 'none' ? 'block' : 'none'"
+            style="display:flex;justify-content:space-between;cursor:pointer;">
+            <span>Order Book</span><span>⌄</span>
+        </div>
+        <div style="display:none;margin-top:12px;color:#9ca3af;font-size:14px;">
+            Liquidity data placeholder
         </div>
     `;
+    content.appendChild(orderBook);
 
     /* ================= ABOUT ================= */
-    content.innerHTML += `
-        <div style="font-size:18px;margin-bottom:6px;">About</div>
-        <div style="font-size:15px;color:#9ca3af;line-height:1.6; ">
+    const aboutSection = document.createElement('div');
+    aboutSection.innerHTML = `
+        <div style="font-size:16px;margin-bottom:6px;">About</div>
+        <div style="font-size:14px;color:#9ca3af;line-height:1.6;margin-bottom:20px;">
             ${predict.description || 'No description available.'}
         </div>
     `;
-    content.innerHTML += `
-        <div style="font-size:15px;margin-bottom:6px;margin-top:6px">Comments</div>
-    `;
+    content.appendChild(aboutSection);
 
-    /* ================= BOTTOM BAR ================= */
-    const { yesPrice, noPrice } = createSimpleCard(predict, idx);
+    /* ================= COMMENTS ================= */
+    const commentsWrapper = document.createElement('div');
+    commentsWrapper.id = 'comments-section';
+    commentsWrapper.style.marginTop = '24px';
 
-    const bottomBar = document.createElement('div');
-    bottomBar.style.cssText = `
-        position: sticky;
-        bottom: 0;
-        background:#1e2936f3;
-        border-top:1px solid rgba(255,255,255,0.08);
-        padding:14px 16px env(safe-area-inset-bottom);
-        display:grid;
-        grid-template-columns:1fr 1fr;
-        gap:12px;
-    `;
-
-    bottomBar.innerHTML = `
-        <button onclick="openBetModal(${idx},'yes')" style="
-            background:#3bb04b54;
-            border:1px solid #3bb04b9a;
-            border-radius:14px;
-            padding:14px;
-            font-size:16px;
-            font-weight:600;
-            color:#3bb04b;
-        ">Buy Yes ${yesPrice}¢</button>
-
-        <button onclick="openBetModal(${idx},'no')" style="
-            background:#f03e3e71;
-            border:1px solid #f03e3eb4;
-            border-radius:14px;
-            padding:14px;
-            font-size:16px;
-            font-weight:600;
-            color:#f03e3e;
-        ">Buy No ${noPrice}¢</button>
-    `;
-
-        /* ================= COMMENTS ================= */
-    const commentsSection = document.createElement('div');
-    commentsSection.style.cssText = `
-        margin-top: 29px;
-        padding: 14px;
-        border-radius: 14px;
-        color: #e5e7eb;
-        font-size: 14px;
-        background:#1e2936f3;
-    `;
-
-    // Input per scrivere un commento
-    const commentInput = document.createElement('div');
-    commentInput.style.cssText = `
-        display:flex; 
-        gap:8px; 
+    const commentsTitle = document.createElement('div');
+    commentsTitle.textContent = 'Comments';
+    commentsTitle.style.cssText = `
+        font-size:15px;
+        font-weight:600;
         margin-bottom:10px;
+        color:#e5e7eb;
     `;
-    commentInput.innerHTML = `
-        <input type="text" placeholder="Write a comment..." 
+    commentsWrapper.appendChild(commentsTitle);
+
+    const commentsList = document.createElement('div');
+    commentsList.id = 'comments-list';
+    commentsList.style.cssText = `
+        display:flex;
+        flex-direction:column;
+        gap:14px;
+        max-height:320px;
+        overflow-y:auto;
+        padding-bottom:60px;
+    `;
+    commentsWrapper.appendChild(commentsList);
+
+    const newCommentDiv = document.createElement('div');
+    newCommentDiv.style.cssText = 'display:flex;gap:8px;margin-top:10px;';
+    newCommentDiv.innerHTML = `
+        <input id="new-comment-input" type="text" placeholder="Write a comment..."
             style="
                 flex:1;
-                padding:10px 12px;
-                border-radius:10px;
+                padding:8px 10px;
+                border-radius:8px;
                 border:1px solid rgba(255,255,255,0.15);
                 background:#1e2936f3;
                 color:#e5e7eb;
+                outline:none;
             ">
         <button style="
-            background:#3b82f6;
+            background:linear-gradient(135deg,#1a1d23 35%,#1e2936f3 65%);
             border:none;
             color:white;
-            padding:10px 14px;
-            border-radius:10px;
+            padding:8px 12px;
+            border-radius:8px;
             cursor:pointer;
-        ">Post</button>
+        ">Send</button>
     `;
-// Container principale
-    const commentsContainer = document.createElement('div');
-    commentsContainer.id = 'comments-container';
-    content.appendChild(commentsContainer);
+    commentsWrapper.appendChild(newCommentDiv);
+    content.appendChild(commentsWrapper);
 
-    // Input per nuovo commento (separato dal render dei commenti)
-    const newCommentDiv = document.createElement('div');
-    newCommentDiv.style.cssText = 'display:flex; gap:6px; margin-bottom:12px; ';
-    newCommentDiv.innerHTML = `
-        <input id="new-comment-input" type="text" placeholder="write about it" style="flex:1; padding:6px 8px; border-radius:8px; border:1px solid rgba(255,255,255,0.15); background:#1e2936f3; color:#e5e7eb;">
-        <button style="background:linear-gradient(135deg, #1a1d23  35%,#1e2936f3 65%); border:none; color:white; padding:6px 10px; border-radius:8px; cursor:pointer;">Send</button>
-    `;
-    commentsContainer.appendChild(newCommentDiv);
-
-    // Funzione per renderizzare solo i commenti
-
+    /* ================= RENDER COMMENTS ================= */
     function renderComments() {
         const comments = predict.comments || [];
-
-        let commentsList = document.getElementById('comments-list');
-        if (!commentsList) {
-            commentsList = document.createElement('div');
-            commentsList.id = 'comments-list';
-            commentsList.style.cssText = `
-                max-height: 300px;
-                overflow-y: auto;
-                display: flex;
-                flex-direction: column;
-                gap: 8px;
-                padding-bottom: 60px; /* spazio per la barra fissa */
-            `;
-            commentsContainer.insertBefore(commentsList, newCommentDiv);
-        }
         commentsList.innerHTML = '';
 
-        comments.forEach((c, idx) => {
+        comments.forEach((c) => {
             const commentDiv = document.createElement('div');
             commentDiv.style.cssText = `
                 display:flex;
                 gap:12px;
-                padding:8px 0;
-                border-bottom:1px solid rgba(255,255,255,0.1);
-                flex-direction: column;
+                border-bottom:1px solid rgba(255,255,255,0.08);
+                padding-bottom:10px;
             `;
 
             commentDiv.innerHTML = `
-                <div style="display:flex; gap:8px; align-items:flex-start;">
-                    <img src="${c.avatar || 'https://via.placeholder.com/32'}" 
-                        style="width:32px; height:32px; border-radius:50%; object-fit:cover;">
-                    <div style="flex:1; display:flex; flex-direction:column; gap:4px;">
-                        <div style="font-weight:500; color:#e5e7eb;">${c.user}</div>
-                        <div style="color:#9ca3af; line-height:1.4;">${c.text}</div>
-                        <div style="display:flex; gap:12px; font-size:13px; color:#9ca3af;">
-                            <button style="background:none; border:none; cursor:pointer; display:flex; align-items:center; gap:4px;color:#9ca3af;">
-                                <span>${c.likes || 0}</span> <i class='bxr  bx-like'></i> 
-                            </button>
-                            <button style="background:none; border:none; color:#9ca3af; cursor:pointer; font-weight:500;">
-                                Show replies (${(c.replies || []).length})
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <div id="replies-${idx}" style="margin-top:6px; display:none; flex-direction:column; gap:6px; padding-left:40px;">
-                    ${(c.replies || []).map(r => `
-                        <div style="display:flex; gap:8px; align-items:flex-start;">
-                            <img src="${r.avatar || 'https://via.placeholder.com/28'}"
-                                style="width:28px; height:28px; border-radius:50%; object-fit:cover;">
-                            <div style="display:flex; flex-direction:column; gap:2px;">
-                                <div style="font-weight:500; color:#e5e7eb;">${r.user}</div>
-                                <div style="color:#9ca3af; line-height:1.3;">${r.text}</div>
-                            </div>
-                        </div>
-                    `).join('')}
-                    <div id="reply-input-${idx}" style="display:flex; gap:6px; margin-top:4px; align-items:center;">
-                        <input type="text" placeholder="Reply..." 
-                            style="flex:1; padding:6px 8px; border-radius:6px; border:1px solid rgba(255,255,255,0.15); background:none; color:#e5e7eb;">
-                        <button style="background:linear-gradient(135deg, #1a1d23  35%,#1e2936f3 65%); border:none; color:white; padding:6px 10px; border-radius:6px; cursor:pointer;">
-                            Add
+                <img src="${c.avatar || 'https://via.placeholder.com/32'}"
+                    style="width:32px;height:32px;border-radius:50%;object-fit:cover;">
+
+                <div style="flex:1;display:flex;flex-direction:column;gap:4px;">
+                    <div style="font-weight:600;color:#e5e7eb;">${c.user}</div>
+                    <div style="color:#9ca3af;line-height:1.4;">${c.text}</div>
+
+                    <div style="display:flex;gap:14px;font-size:13px;color:#9ca3af;margin-top:2px;">
+                        <button style="background:none;border:none;color:#9ca3af;cursor:pointer;">
+                            ${c.likes || 0} <i class='bxr bx-like'></i>
                         </button>
+                        <button class="show-replies"
+                            style="background:none;border:none;color:#9ca3af;cursor:pointer;">
+                            Show replies (${(c.replies || []).length})
+                        </button>
+                    </div>
+
+                    <div class="replies"
+                        style="display:none;flex-direction:column;gap:6px;margin-top:6px;padding-left:36px;">
+                        ${(c.replies || []).map(r => `
+                            <div style="display:flex;gap:8px;">
+                                <img src="${r.avatar || 'https://via.placeholder.com/28'}"
+                                    style="width:28px;height:28px;border-radius:50%;">
+                                <div>
+                                    <div style="font-weight:500;color:#e5e7eb;">${r.user}</div>
+                                    <div style="color:#9ca3af;font-size:13px;">${r.text}</div>
+                                </div>
+                            </div>
+                        `).join('')}
+
+                        <div style="display:flex;gap:6px;margin-top:4px;">
+                            <input type="text" placeholder="Reply..."
+                                style="
+                                    flex:1;
+                                    padding:6px 8px;
+                                    border-radius:6px;
+                                    border:1px solid rgba(255,255,255,0.15);
+                                    background:none;
+                                    color:#e5e7eb;
+                                ">
+                            <button style="
+                                background:linear-gradient(135deg,#1a1d23 35%,#1e2936f3 65%);
+                                border:none;
+                                color:white;
+                                padding:6px 10px;
+                                border-radius:6px;
+                                cursor:pointer;
+                            ">Add</button>
+                        </div>
                     </div>
                 </div>
             `;
 
             commentsList.appendChild(commentDiv);
 
-            const showRepliesBtn = commentDiv.querySelector('button:nth-child(2)');
-            const repliesDiv = commentDiv.querySelector(`#replies-${idx}`);
-            const replyInputDiv = commentDiv.querySelector(`#reply-input-${idx}`);
+            const repliesBtn = commentDiv.querySelector('.show-replies');
+            const repliesBox = commentDiv.querySelector('.replies');
+            const replyInput = repliesBox.querySelector('input');
+            const addBtn = repliesBox.querySelector('button');
 
-            showRepliesBtn.onclick = () => {
-                const isVisible = repliesDiv.style.display === 'flex';
-                repliesDiv.style.display = isVisible ? 'none' : 'flex';
-                replyInputDiv.style.display = isVisible ? 'none' : 'flex';
+            repliesBtn.onclick = () => {
+                repliesBox.style.display =
+                    repliesBox.style.display === 'flex' ? 'none' : 'flex';
             };
 
-            const addBtn = replyInputDiv.querySelector('button');
-            const input = replyInputDiv.querySelector('input');
             addBtn.onclick = () => {
-                const replyText = input.value.trim();
-                if(!replyText) return;
-                const reply = {user: 'CurrentUser', text: replyText};
+                const txt = replyInput.value.trim();
+                if (!txt) return;
                 c.replies = c.replies || [];
-                c.replies.push(reply);
+                c.replies.push({ user: 'CurrentUser', text: txt });
                 renderComments();
-                input.value = '';
             };
         });
-        newCommentDiv.style.bottom = '0';
-        newCommentDiv.style.background = '#1e2936f3'; // sfondo pieno
-        newCommentDiv.style.zIndex = '10';
-        newCommentDiv.style.padding = '8px 0';
-        newCommentDiv.style.display = 'flex';
-        newCommentDiv.style.gap = '6px';
-        newCommentDiv.style.alignItems = 'center';
     }
 
-
-
-
-    // Gestione nuovo commento
     newCommentDiv.querySelector('button').onclick = () => {
         const input = document.getElementById('new-comment-input');
-        const text = input.value.trim();
-        if(!text) return;
+        const txt = input.value.trim();
+        if (!txt) return;
 
-        const comment = {user: 'CurrentUser', text, likes:0, replies:[]};
         predict.comments = predict.comments || [];
-        predict.comments.push(comment);
-
-        renderComments(); // render immediato
-        input.value = '';
-
-        fetch('/api/add-comment', {
-            method:'POST',
-            headers:{'Content-Type':'application/json'},
-            body: JSON.stringify(comment)
+        predict.comments.push({
+            user: 'CurrentUser',
+            text: txt,
+            likes: 0,
+            replies: []
         });
+
+        input.value = '';
+        renderComments();
     };
 
-    // Mostra/nascondi replies
-    window.toggleReplies = function(idx) {
-        const el = document.getElementById(`replies-${idx}`);
-        if(el) el.style.display = el.style.display === 'none' ? 'block' : 'none';
-    }
+    /* ================= BOTTOM BAR ================= */
+    const { yesPrice, noPrice } = createSimpleCard(predict, idx);
+    const bottomBar = document.createElement('div');
+    bottomBar.style.cssText = `
+        position: sticky;
+        bottom: 0;
+        background:#111827;
+        border-top:1px solid rgba(255,255,255,.08);
+        padding:14px;
+        display:grid;
+        grid-template-columns:1fr 1fr;
+        gap:12px;
+    `;
+    bottomBar.innerHTML = `
+        <button onclick="openBetModal(${idx},'yes')" style="
+            background:#22c55e;border:none;border-radius:14px;padding:14px;color:white;font-size:16px;font-weight:600;cursor:pointer;">
+            Buy Yes ${yesPrice}¢
+        </button>
+        <button onclick="openBetModal(${idx},'no')" style="
+            background:#ef4444;border:none;border-radius:14px;padding:14px;color:white;font-size:16px;font-weight:600;cursor:pointer;">
+            Buy No ${noPrice}¢
+        </button>
+    `;
 
-    // Primo render
-    renderComments();
-
-
-
-
-
-
-
-
-    /* ================= ASSEMBLY ================= */
-    sheet.append(header, content, bottomBar);
+    /* ================= ASSEMBLE DOM ================= */
+    sheet.appendChild(header);
+    sheet.appendChild(content);
+    sheet.appendChild(bottomBar);
     overlay.appendChild(sheet);
     document.body.appendChild(overlay);
 
-    /* ================= CLOSE ================= */
-    header.querySelector('#close-market').onclick = close;
-    overlay.onclick = e => { if (e.target === overlay) close(); };
+    /* ================= CREATE CHART AFTER DOM ================= */
+    let chart, lineSeries, fullChartData;
+    
+    setTimeout(() => {
+        if (typeof LightweightCharts !== 'undefined') {
+            chart = LightweightCharts.createChart(chartContainer, {
+                layout: {
+                    background: { color: 'transparent' },
+                    textColor: '#9ca3af',
+                    fontSize: 11,
+                },
+                grid: {
+                    vertLines: { color: 'rgba(255,255,255,0.05)' },
+                    horzLines: { color: 'rgba(255,255,255,0.05)' },
+                },
+                rightPriceScale: {
+                    visible: true,
+                    borderVisible: false,
+                    scaleMargins: { top: 0.1, bottom: 0.1 },
+                },
+                timeScale: { 
+                    visible: true,
+                    borderVisible: false,
+                    timeVisible: true,
+                    secondsVisible: false,
+                },
+                crosshair: { 
+                    mode: LightweightCharts.CrosshairMode.Normal,
+                    vertLine: {
+                        color: 'rgba(255,255,255,0.2)',
+                        width: 1,
+                        style: LightweightCharts.LineStyle.Dashed,
+                    },
+                    horzLine: {
+                        color: 'rgba(255,255,255,0.2)',
+                        width: 1,
+                        style: LightweightCharts.LineStyle.Dashed,
+                    },
+                },
+                handleScroll: {
+                    vertTouchDrag: false,
+                },
+                handleScale: {
+                    axisPressedMouseMove: false,
+                },
+            });
 
-    function close() {
-        document.body.style.overflow = '';
-        overlay.remove();
+            lineSeries = chart.addLineSeries({
+                color: '#22c55e',
+                lineWidth: 2.5,
+                priceLineVisible: false,
+                crosshairMarkerVisible: true,
+                crosshairMarkerRadius: 4,
+                crosshairMarkerBorderColor: '#22c55e',
+                crosshairMarkerBackgroundColor: '#22c55e',
+            });
+
+            // Genera dati storici se non presenti
+            const now = Math.floor(Date.now() / 1000);
+            if (predict.historicalData) {
+                fullChartData = predict.historicalData;
+            } else {
+                // Genera 30 giorni di dati
+                fullChartData = Array.from({ length: 720 }, (_, i) => ({
+                    time: now - (720 - i) * 3600, // ogni ora
+                    value: Math.max(1, Math.min(99, chance + Math.sin(i / 20) * 10 + Math.random() * 4 - 2))
+                }));
+            }
+
+            lineSeries.setData(fullChartData);
+            chart.timeScale().fitContent();
+            chart.resize(chartContainer.clientWidth, 200);
+
+            // Funzione per filtrare i dati in base al timeframe
+            function updateChartTimeframe(timeframe) {
+                activeTimeframe = timeframe;
+                const now = Math.floor(Date.now() / 1000);
+                let filteredData = [...fullChartData];
+                
+                if (timeframe === '6H') {
+                    filteredData = filteredData.filter(d => d.time > now - 6 * 3600);
+                } else if (timeframe === '1D') {
+                    filteredData = filteredData.filter(d => d.time > now - 24 * 3600);
+                } else if (timeframe === '1W') {
+                    filteredData = filteredData.filter(d => d.time > now - 7 * 24 * 3600);
+                }
+                
+                lineSeries.setData(filteredData);
+                chart.timeScale().fitContent();
+
+                // Aggiorna gli stili dei bottoni
+                document.querySelectorAll('[data-timeframe]').forEach(btn => {
+                    btn.style.background = btn.dataset.timeframe === timeframe 
+                        ? 'rgba(255,255,255,.12)' 
+                        : 'transparent';
+                });
+            }
+
+            // Aggiungi event listeners ai bottoni timeframe
+            document.querySelectorAll('[data-timeframe]').forEach(btn => {
+                btn.onclick = () => updateChartTimeframe(btn.dataset.timeframe);
+            });
+
+        } else {
+            chartContainer.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#9ca3af;font-size:14px;">Chart library not loaded. Add Lightweight Charts script.</div>';
+        }
+    }, 100);
+
+    renderComments();
+
+    if (scrollToComments) {
+        requestAnimationFrame(() => {
+            const commentsSection = content.querySelector('#comments-section');
+            if (commentsSection) {
+                commentsSection.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
     }
 
+    
+
+    
+
+    /* ================= CLOSE MODAL ================= */
+    header.querySelector('#close-market').onclick = () => {
+        document.body.style.overflow = '';
+        if (chart) chart.remove();
+        overlay.remove();
+    };
 }
 
+
+card.onclick = () => {
+    showPredictDetails(predict, idx);
+};
+commentsBtn.onclick = (e) => {
+    e.stopPropagation(); // evita il click della card
+    showPredictDetails(predict, idx, true);
+};
+
+
+
+
+
+
+
+// Funzione helper per generare dati storici (opzionale)
+function generateHistoricalData(currentChance, days, trend = 'steady') {
+    const data = [];
+    const now = Math.floor(Date.now() / 1000);
+    const hoursPerDay = 24;
+    const totalHours = days * hoursPerDay;
+    
+    for (let i = totalHours; i >= 0; i--) {
+        const timestamp = now - (i * 3600);
+        let value;
+        
+        if (trend === 'bullish') {
+            value = currentChance - (i * 0.03) + Math.random() * 3 - 1.5;
+        } else if (trend === 'bearish') {
+            value = currentChance + (i * 0.03) + Math.random() * 3 - 1.5;
+        } else if (trend === 'volatile') {
+            value = currentChance + Math.sin(i / 10) * 8 + Math.random() * 6 - 3;
+        } else {
+            value = currentChance + Math.sin(i / 20) * 3 + Math.random() * 2 - 1;
+        }
+        
+        value = Math.max(1, Math.min(99, value));
+        
+        data.push({
+            time: timestamp,
+            value: value
+        });
+    }
+    
+    return data;
+}
+
+
+
+
+async function addComment(predictId, commentText) {
+    try {
+        const comment = {
+            text: commentText,
+            user: 'CurrentUser', // Sostituisci con utente reale
+            timestamp: new Date().toISOString(),
+            likes: 0,
+            replies: []
+        };
+        
+        const response = await fetch(`http://localhost:3000/api/predicts/${predictId}/comments`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(comment)
+        });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const savedComment = await response.json();
+        
+        // Aggiorna la predict locale
+        const predict = predicts.find(p => p.id === predictId);
+        if (predict) {
+            predict.comments = predict.comments || [];
+            predict.comments.push(savedComment);
+        }
+        
+        return savedComment;
+        
+    } catch (error) {
+        console.error("Error adding comment:", error);
+        throw error;
+    }
+}
+
+async function loadComments(predictId) {
+    try {
+        const response = await fetch(`http://localhost:3000/api/predicts/${predictId}/comments`);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        return await response.json();
+        
+    } catch (error) {
+        console.error("Error loading comments:", error);
+        return [];
+    }
+}
+function showLoading(show = true) {
+    const loadingEl = document.getElementById('loading-indicator') || createLoadingIndicator();
+    
+    if (show) {
+        loadingEl.style.display = 'flex';
+    } else {
+        loadingEl.style.display = 'none';
+    }
+}
+
+function createLoadingIndicator() {
+    const loadingEl = document.createElement('div');
+    loadingEl.id = 'loading-indicator';
+    loadingEl.style.cssText = `
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(0,0,0,0.8);
+        color: white;
+        padding: 20px;
+        border-radius: 10px;
+        z-index: 10000;
+        display: none;
+    `;
+    loadingEl.innerHTML = 'Loading...';
+    document.body.appendChild(loadingEl);
+    return loadingEl;
+}
 
 const questsList = document.getElementById('quests-list');
 const questModal = document.getElementById('quest-modal');
@@ -1672,14 +1860,14 @@ const questsFromBackend = [
     { 
         title: "Boost Giftomania RUS channel", 
         img: "gift.png", 
-        reward: "+2 🎁 +800 💎", 
+        reward: "2$", 
         progress: 0.6,
         steps: ["Join channel", "Like 2 posts", "Share channel"]
     },
     { 
         title: "Open InkLand and Activate Bonus", 
         img: "inkland.png", 
-        reward: "+0.6 🎁 +700 💎", 
+        reward: "2$", 
         progress: 0.1,
         steps: ["Open InkLand app", "Activate bonus", "Finish tutorial"]
     }
@@ -1735,13 +1923,277 @@ function renderQuests(quests) {
     });
 }
 
+// chiudi modal
 closeModalBtn.addEventListener('click', () => {
     questModal.style.display = 'none';
 });
 
-
+// render iniziale
 renderQuests(questsFromBackend);
 
+function renderProfile(user) {
+    document.body.style.overflow = 'hidden';
+
+    const overlay = document.createElement('div');
+    overlay.style.cssText = `
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.85);
+        z-index: 10000;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        padding-top: 20px;
+        overflow-y: auto;
+    `;
+
+    const sheet = document.createElement('div');
+    sheet.style.cssText = `
+        width: 100%;
+        max-width: 800px;
+        background: #111827;
+        color: #e5e7eb;
+        display: flex;
+        flex-direction: column;
+        border-radius: 12px;
+        margin-bottom: 40px;
+    `;
+
+    // HEADER AVATAR + NOME + ID
+    const header = document.createElement('div');
+    header.style.cssText = `
+        display:flex;
+        align-items:center;
+        gap:16px;
+        padding:16px;
+        position: sticky;
+        top:0;
+        background:#111827;
+        z-index:10;
+    `;
+    header.innerHTML = `
+        <img src="${user.avatar||'https://via.placeholder.com/64'}" style="width:64px;height:64px;border-radius:12px;">
+        <div style="display:flex;flex-direction:column;">
+            <div style="font-size:20px;font-weight:700;">${user.name}</div>
+            <div style="font-size:12px;color:#9ca3af;">ID #${user.id||'12345'}</div>
+        </div>
+        <button id="close-profile" style="
+            margin-left:auto;
+            background:none;
+            border:none;
+            color:#9ca3af;
+            font-size:22px;
+            cursor:pointer;
+        ">×</button>
+    `;
+
+    const content = document.createElement('div');
+    content.style.cssText = `
+        padding:16px;
+        display:flex;
+        flex-direction:column;
+        gap:20px;
+    `;
+
+    // STATISTICHE TRASPARENTI
+    const statsDiv = document.createElement('div');
+    statsDiv.style.cssText = `
+        display:flex;
+        gap:12px;
+        flex-wrap:wrap;
+    `;
+
+    const stats = [
+        {label:'Positions Value', value:`$${user.positionsValue?.toLocaleString()||'4,462.37'}`},
+        {label:'Biggest Win', value:`$${user.biggestWin?.toLocaleString()||'1,099.61'}`},
+        {label:'Predictions', value:user.predictions||42},
+        {label:'Profit/Loss', value:`$${user.profitLoss?.toLocaleString()||'1,356.05'}`}
+    ];
+
+    stats.forEach(s=>{
+        const statBox = document.createElement('div');
+        statBox.style.cssText = `
+            flex:1;
+            min-width:100px;
+            background: rgba(255,255,255,0.05);
+            padding:12px;
+            border-radius:10px;
+            text-align:center;
+        `;
+        statBox.innerHTML = `
+            <div style="font-size:12px;color:#9ca3af;">${s.label}</div>
+            <div style="font-size:16px;font-weight:600;">${s.value}</div>
+        `;
+        statsDiv.appendChild(statBox);
+    });
+
+    content.appendChild(statsDiv);
+
+    // PROFIT/Loss GRANDE SOPRA GRAFICO
+    const profitDiv = document.createElement('div');
+    profitDiv.style.cssText = `
+        font-size:24px;
+        font-weight:700;
+        color:#22c55e;
+    `;
+    profitDiv.textContent = `$${user.profitLoss?.toLocaleString()||'1,356.05'}`;
+    content.appendChild(profitDiv);
+
+    // TIMEFRAME
+    const timeframeDiv = document.createElement('div');
+    timeframeDiv.style.cssText = `display:flex;gap:8px;margin-bottom:8px;`;
+    ['1D','1W','1M','ALL'].forEach(t=>{
+        const btn = document.createElement('button');
+        btn.textContent = t;
+        btn.style.cssText = `
+            padding:6px 10px;
+            border-radius:999px;
+            border:1px solid rgba(255,255,255,.15);
+            background:${t==='ALL'?'rgba(255,255,255,.1)':'transparent'};
+            color:#e5e7eb;
+            font-size:12px;
+            cursor:pointer;
+        `;
+        timeframeDiv.appendChild(btn);
+    });
+    content.appendChild(timeframeDiv);
+
+    // GRAFICO
+    const chartWrap = document.createElement('div');
+    chartWrap.id = 'profile-chart';
+    chartWrap.style.cssText = `height:160px;position:relative;margin-bottom:16px;`;
+    content.appendChild(chartWrap);
+
+    setTimeout(()=>{
+        const chart = LightweightCharts.createChart(chartWrap,{
+            layout:{background:{color:'transparent'},textColor:'rgba(229,231,235,0.7)',fontSize:11},
+            grid:{vertLines:{color:'rgba(255,255,255,0.04)'},horzLines:{color:'rgba(255,255,255,0.04)'}},
+            rightPriceScale:{visible:true,borderVisible:false,scaleMargins:{top:0.15,bottom:0.15}},
+            timeScale:{visible:false},
+            crosshair:{mode:LightweightCharts.CrosshairMode.Normal},
+            handleScroll:false,
+            handleScale:false,
+        });
+        const series = chart.addLineSeries({color:'#60a5fa',lineWidth:2,priceLineVisible:false,crosshairMarkerVisible:true});
+        const now = Math.floor(Date.now()/1000);
+        const data = Array.from({length:80},(_,i)=>({time:now-(80-i)*60,value:Math.max(5, Math.min(95, Math.random()*100))}));
+        series.setData(data);
+        chart.resize(chartWrap.clientWidth,160);
+    },50);
+
+    // POSITIONS
+    const positionsList = document.createElement('div');
+    positionsList.id = 'positions-list';
+    content.appendChild(positionsList);
+
+    const positionsData = user.positions || [];
+    renderPositions(positionsData);
+
+    sheet.appendChild(content);
+    overlay.appendChild(sheet);
+    document.body.appendChild(overlay);
+
+    // CHIUSURA
+    document.getElementById('close-profile').onclick = ()=>{
+        overlay.remove();
+        document.body.style.overflow = '';
+    };
+}
+
+/* ================= CLICK SULLA LEADERBOARD ================= */
+document.getElementById('leaderboard-users').addEventListener('click',(e)=>{
+    const row = e.target.closest('.leader-row');
+    if(!row) return;
+    const idx = Array.from(document.getElementById('leaderboard-users').children).indexOf(row);
+    const user = users[idx];
+    renderProfile(user);
+});
+
+
+renderPositions([
+    {
+        img: 'https://via.placeholder.com/64',
+        title: 'Mavericks vs Jazz: O/U 241.5',
+        shares: '182,065.9',
+        price: 49,
+        tag: 'Under',
+        value: 86481.30,
+        pnl: -2736.81,
+        pnlPerc: -3.07
+    },
+    {
+        img: 'https://via.placeholder.com/64',
+        title: 'Al Kholoood vs Al Ittihad',
+        shares: '100,000.0',
+        price: 59,
+        tag: 'Under',
+        value: 60500.00,
+        pnl: 1500.00,
+        pnlPerc: 2.54
+    },
+        {
+        img: 'https://via.placeholder.com/64',
+        title: 'Al Kholoood vs Al Ittihad',
+        shares: '100,000.0',
+        price: 59,
+        tag: 'Under',
+        value: 60500.00,
+        pnl: 1500.00,
+        pnlPerc: 2.54
+    },
+        {
+        img: 'https://via.placeholder.com/64',
+        title: 'Al Kholoood vs Al Ittihad',
+        shares: '100,000.0',
+        price: 59,
+        tag: 'Under',
+        value: 60500.00,
+        pnl: 1500.00,
+        pnlPerc: 2.54
+    }
+]);
+
+
+
+
+
+function renderPositions(positions) {
+    const list = document.getElementById('positions-list');
+    list.innerHTML = '';
+
+    positions.forEach(p => {
+        const div = document.createElement('div');
+        div.className = 'position-item';
+
+        // ✅ CLICK APRE I DETTAGLI
+        div.onclick = () => openMarketDetail(p.id);
+
+        const pnlClass = p.pnl >= 0 ? 'pnl-green' : 'pnl-red';
+        const tagClass =
+            p.tag === 'Yes' ? 'tag-yes' :
+            p.tag === 'Under' ? 'tag-under' : 'tag-team';
+
+        div.innerHTML = `
+            <div class="position-left">
+                <img src="${p.img}" class="position-avatar">
+                <div class="position-info">
+                    <div class="position-title">${p.title}</div>
+                    <div class="position-sub">${p.shares} shares at ${p.price}¢</div>
+                    <div class="position-tag ${tagClass}">${p.tag}</div>
+                </div>
+            </div>
+
+            <div class="position-right">
+                <div class="position-value">$${p.value.toLocaleString()}</div>
+                <div class="position-pnl ${pnlClass}">
+                    ${p.pnl >= 0 ? '+' : ''}${p.pnl.toFixed(2)} (${p.pnlPerc}%)
+                </div>
+            </div>
+        `;
+
+        list.appendChild(div);
+    });
+}
 
 
 
