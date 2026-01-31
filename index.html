@@ -18,6 +18,7 @@
         setThemeClass();
 
     </script>
+    
     <title>DeltaPredict</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -30,6 +31,7 @@
 </head>
 
 <body>
+    
   <div id="overlay"></div>
   <nav id="top-menu"> 
     <img src="Gemini_Generated_Image_lua8pdlua8pdlua8-removebg-preview.png" alt="DeltaPredict logo" class="logo">
@@ -225,7 +227,18 @@
         </button>
     </div>
 
-    <h1><b>Active positions</b> </h1>    
+    <h1><b>Active positions</b> </h1> 
+    <div class="positions-wrapper">
+        <div class="positions-search">
+            <i class='bx bx-search'></i>
+            <input type="text" placeholder="Search positions" id="search-positions">
+        </div>
+
+        <div id="positions-list"></div>
+    </div>
+    
+
+
     <div id="buy-menu" role="dialog" aria-hidden="true" class="buy-menu" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); z-index:10001;">
         <button class="close-btn" id="buy-close" aria-label="Close">×</button>
         <h3 class="buy-title">Deposit your amount!</h3>
@@ -416,43 +429,37 @@
 
 
 
-<nav id="bottom-menu" class="bottom-nav">
+    <nav id="bottom-menu" class="bottom-nav">
 
-    <button onclick="switchTab('markets')" class="nav-item">
-        <img src="Gemini_Generated_Image_lua8pdlua8pdlua8-removebg-preview.png"
-            alt="DeltaPredict logo"
-            class="nav-logo">
-    </button>
-
-
-    <button onclick="switchTab('earn')" class="nav-item">
-        <i class='bx bx-dollar-circle'></i>
-        <span>Earn</span>
-    </button>
-
-    <button onclick="switchTab('wallet')" class="nav-item">
-        <i class='bx bx-wallet-note'></i>
-        <span>Wallet</span>
-    </button>
-
-    <button onclick="switchTab('ranking')" class="nav-item">
-        <i class='bxr  bx-trophy-star'></i> 
-        <span>Ranking</span>
-    </button>
-
-</nav>
+        <button onclick="switchTab('markets')" class="nav-item">
+            <img src="Gemini_Generated_Image_lua8pdlua8pdlua8-removebg-preview.png"
+                alt="DeltaPredict logo"
+                class="nav-logo">
+        </button>
 
 
+        <button onclick="switchTab('earn')" class="nav-item">
+            <i class='bx bx-dollar-circle'></i>
+            <span>Earn</span>
+        </button>
+
+        <button onclick="switchTab('wallet')" class="nav-item">
+            <i class='bx bx-wallet-note'></i>
+            <span>Wallet</span>
+        </button>
+
+        <button onclick="switchTab('ranking')" class="nav-item">
+            <i class='bxr  bx-trophy-star'></i> 
+            <span>Ranking</span>
+        </button>
+
+    </nav>
 
 
 
 
 
-
-
-
-
-
-<script src="index.js"></script>
+    <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
+    <script src="index.js"></script>
 </body>
 
